@@ -5,12 +5,7 @@ This file is for project-specific instructions and preferences for the Gemini CL
 ## Project Overview
 
 *   **Name**: Football Cards App
-*   **Description**: A web application for creating Ultimate team football/soccer style trading cards.  Features:
-        * Set player full name
-        * Four core stats (Def, Ctrl, Att, Total) - set randomly or manually
-        * Choose Club, Nationality, League, Position, Preferred foot
-        * Upload player photo
-        * Ability to save and retrieve cards
+*   **Description**: A web application for creating Ultimate team football/soccer style trading cards. See `REQUIREMENTS.md` for detailed functional requirements.
 *   **Primary Language**: 
         - Python backend
         - React (TypeScript)
@@ -18,7 +13,7 @@ This file is for project-specific instructions and preferences for the Gemini CL
 ## Key Libraries & Frameworks
 
 *   **Backend**: FastAPI
-*   **Database**: PostgreSQL
+*   **Database**: None for MVP (using browser Local Storage).
 *   **Frontend**: React, Material-UI
 
 ## Architectural Patterns

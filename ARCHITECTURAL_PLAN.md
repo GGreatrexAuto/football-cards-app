@@ -13,14 +13,11 @@ This document outlines the phased development plan for the Football Cards applic
 
 2.  **Finalize Technical Stack:**
     *   **Backend:** FastAPI (Python)
-    *   **Database:** PostgreSQL
+    *   **Database:** None for MVP (using browser Local Storage)
     *   **Frontend:** React with TypeScript, Material-UI
 
 3.  **Define API Contract:**
-    *   Design RESTful API endpoints and specify their JSON request/response structures.
-
-4.  **Design Database Schema:**
-    *   Define the `cards` table structure, columns, and data types.
+    *   Design RESTful API endpoints for proxying data from the external football API to the frontend.
 
 5.  **Frontend UI/UX Design:**
     *   Create wireframes or mockups for the main application page layout.
@@ -37,9 +34,9 @@ This document outlines the phased development plan for the Football Cards applic
     *   Install dependencies.
     *   Create the directory structure.
 
-8.  **Build API & Data Models:**
-    *   Implement API routes in FastAPI using Pydantic models for validation.
-    *   Implement the database connection and data access layer.
+8.  **Build API Proxy:**
+    *   Implement API routes in FastAPI to fetch, cache, and serve data from the external football API.
+    *   Use Pydantic models for data validation.
 
 9.  **Write Backend Tests:**
     *   Develop unit tests (`pytest`).
@@ -53,7 +50,9 @@ This document outlines the phased development plan for the Football Cards applic
     *   Install frontend dependencies.
 
 11. **Build UI Components & State:**
-    *   Develop React components, manage state, and create a service to communicate with the backend.
+    *   Develop React components for the card and UI controls.
+    *   Manage application state, including saving and retrieving cards from browser Local Storage.
+    *   Create a service to communicate with the backend API proxy.
 
 12. **Write Frontend Tests:**
     *   Develop component tests for individual React components.
