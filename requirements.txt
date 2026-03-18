@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+pydantic
+httpx
+pytest
+schemathesis
+behave
+black
+isort
+flake8
+pylint

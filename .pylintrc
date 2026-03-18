@@ -1,0 +1,11 @@
+[MASTER]
+load-plugins=pylint.extensions.docparams
+
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116,R0903
+
+[REPORTS]
+output-format=colorized
+
+[DESIGN]
+max-attributes=10
