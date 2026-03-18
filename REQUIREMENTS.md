@@ -49,3 +49,10 @@ As a user, I want to output the card I have created so I can have a physical cop
     *   A "Print" button shall be available.
     *   When clicked, the browser's print dialog shall be opened for the user to print the card.
     *   The default print styling should format the card to be slightly larger than a standard credit card (e.g., ~3.5 x 2.5 inches).
+
+## 4. UI/UX and Branding
+
+*   **4.1 Color Palette:** The application will use a primary color of `#1976D2` (blue), a secondary color of `#FFC107` (yellow/gold), and a light gray background (`#F5F5F5`).
+*   **4.2 Typography:** The application will use the `Roboto` font. Headings will be bold and in the primary color, while body text will be in a dark gray.
+*   **4.3 Card Design:** The football card will have a dynamic gradient background using the primary and secondary colors. The player's name will be prominent, and the stats will be clearly displayed.
+*   **4.4 Iconography:** The application will use Material Icons for a consistent look and feel.

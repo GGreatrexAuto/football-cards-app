@@ -19,6 +19,23 @@ This document outlines the phased development plan for the Football Cards applic
 3.  **Define API Contract:**
     *   Design RESTful API endpoints for proxying data from the external football API to the frontend.
 
+4.  **UI/UX and Branding Guidelines:**
+    *   **Color Palette:**
+        *   **Primary:** `#1976D2` (A strong, classic blue)
+        *   **Secondary:** `#FFC107` (A vibrant, energetic yellow/gold)
+        *   **Accent:** `#FFFFFF` (White for text and highlights)
+        *   **Background:** `#F5F5F5` (A light gray for the main application background)
+    *   **Typography:**
+        *   **Primary Font:** `Roboto`, a modern and readable sans-serif font, will be used for all text. It is the default font for Material-UI.
+        *   **Headings:** Bold and in the primary color.
+        *   **Body Text:** Regular weight and in a dark gray (`#333333`).
+    *   **Card Design:**
+        *   **Layout:** The card will have a clear visual hierarchy. The player's photo will be the most prominent element, followed by the player's name and rating.
+        *   **Colors:** The card background will be a gradient of the primary and secondary colors to create a dynamic and visually appealing effect.
+        *   **Fonts:** Player names will be in a large, bold font. Stats will be in a smaller, clear font.
+    *   **Iconography:**
+        *   Material Icons will be used for all icons in the application to ensure consistency with the Material-UI library.
+
 5.  **Frontend UI/UX Design:**
     *   Create wireframes or mockups for the main application page layout.
     *   Define the visual design and component breakdown of the football card template itself.
