@@ -55,7 +55,7 @@ todos:
   },
   {
     "description": "Create API contract tests with schemathesis",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "description": "Implement BDD integration tests with behave",
