@@ -1,7 +1,7 @@
 fastapi
-uvicorn[standard]
+uvicorn
 pydantic
-httpx
+requests
 pytest
 schemathesis
 behave
@@ -9,3 +9,4 @@ black
 isort
 flake8
 pylint
+pytest-asyncio

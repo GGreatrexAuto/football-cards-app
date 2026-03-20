@@ -1,5 +1,3 @@
-check
-WriteTodos...,[object Object]
 Arguments
 todos:
 [
@@ -29,34 +27,39 @@ todos:
   },
   {
     "description": "Create pyproject.toml for black and isort",
-    "status": "in_progress"
+    "status": "completed"
+  },
+  {
+    "description": "Add pylint and pytest configuration to pyproject.toml",
+    "status": "completed"
   },
   {
     "description": "Create frontend linting configuration files",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "description": "Create yamllint configuration file",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "description": "Define API contract in API_CONTRACT.md",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "description": "Create frontend wireframes in WIREFRAMES.md",
-    "status": "pending"
+    "status": "completed"
   },
-    {
+  {
     "description": "Create backend unit tests with pytest",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "description": "Create API contract tests with schemathesis",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "description": "Implement BDD integration tests with behave",
     "status": "pending"
   }
 ]
+stat_minus_1
