@@ -59,7 +59,7 @@ todos:
   },
   {
     "description": "Implement BDD integration tests with behave",
-    "status": "pending"
+    "status": "completed"
   }
 ]
 stat_minus_1
