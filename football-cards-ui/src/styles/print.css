@@ -1,0 +1,35 @@
+@media print {
+  /* Hide everything except the printable card */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only the printable card */
+  .printable-card,
+  .printable-card * {
+    visibility: visible;
+  }
+
+  /* Position the card at the top left of the page */
+  .printable-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3.5in !important;
+    height: 2.5in !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Set page size and margins */
+  @page {
+    size: 3.5in 2.5in;
+    margin: 0;
+  }
+
+  /* Ensure no background colors are printed (optional) */
+  .printable-card {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}

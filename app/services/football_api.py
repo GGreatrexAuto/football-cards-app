@@ -1,3 +1,6 @@
+from app.services.test_data import MOCK_CLUBS, MOCK_LEAGUES, MOCK_NATIONS
+
+
 async def get_clubs():
     # This is a placeholder. In a real application, you would make a
     # request to the external API.
@@ -8,14 +11,14 @@ async def get_clubs():
     #     )
     #     response.raise_for_status()
     #     return response.json()
-    return [{"id": "1", "name": "Real Madrid"}, {"id": "2", "name": "Barcelona"}]
+    return MOCK_CLUBS
 
 
 async def get_nations():
     # Placeholder
-    return [{"id": "1", "name": "Spain"}, {"id": "2", "name": "Brazil"}]
+    return MOCK_NATIONS
 
 
 async def get_leagues():
     # Placeholder
-    return [{"id": "1", "name": "La Liga"}, {"id": "2", "name": "Premier League"}]
+    return MOCK_LEAGUES

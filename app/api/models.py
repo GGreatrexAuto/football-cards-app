@@ -2,15 +2,16 @@ from pydantic import BaseModel
 
 
 class Club(BaseModel):
-    id: str
+    id: int
     name: str
+    league_id: int
 
 
 class Nation(BaseModel):
-    id: str
+    id: int
     name: str
 
 
 class League(BaseModel):
-    id: str
+    id: int
     name: str
