@@ -217,6 +217,19 @@
 - [x] Avoid `dangerouslySetInnerHTML` usage
 - [x] Document security approach
 
+### Subtask 11.14: Enhancements
+- [ ] Ability to change font of text e.g name, club, nationality
+- [ ] Add override to create a unique club e.g mytown united
+- [ ] Change player stock photos to those of human players
+- [ ] Add option to choose alternative card layouts e.g all stats at bottom, all at top, bigger photo frame etc
+- [ ] Add ability to edit shape of cards e.g shield
+- [ ] Update create card form, section headings reordering of fields
+- [ ] Make Club selection dynamic based on selected league
+- [ ] Add randomise stat button for each stat
+- [ ] Add 2 buttons reset Card Background & Player photo to revert to original values
+- [ ] Add reset all changes button
+- [ ] Ability to choose either club or national team card
+- [ ] Card style 2.0
 ---
 
 ## Task 12: Write Frontend Tests
@@ -359,6 +372,107 @@
 ## Cross-Cutting Concerns
 
 ### Code Quality
+
+#### Bug #1: Create Card Form "Failed to Fetch Data" Error
+**Issue**: CardForm component displays "Failed to fetch data" error instead of loading dropdowns for clubs, nationalities, and leagues.
+
+**Root Cause**: API endpoint mismatch - frontend calls `/api/clubs` but backend routes are registered at `/api/v1/clubs` prefix.
+
+**Resolution Subtasks**:
+- [x] **Step 1: Fix API Service Configuration**
+  - [x] Update `src/services/api.ts` baseURL from `http://localhost:8000/api` to `http://localhost:8000/api/v1`
+  - [x] Test locally that API calls now resolve correctly
+  - [x] Verify backend is running on port 8000
+
+- [x] **Step 2: Improve Error Handling & Diagnostics**
+  - [x] Update CardForm error catch block to log detailed error information
+  - [x] Display error details to user for debugging (instead of generic "Failed to fetch data")
+  - [x] Add error logging to browser console with full error stack
+  - [ ] Consider adding fallback data or retry mechanism
+
+- [x] **Step 3: Write Unit Tests for API Service**
+  - [x] Create `src/services/api.test.ts` (if not already complete)
+  - [x] Test getClubs() with mocked axios
+  - [x] Test getNationalities() with mocked axios
+  - [x] Test getLeagues() with mocked axios
+  - [x] Test error handling for failed requests
+  - [x] Mock axios to return 503 and verify error handling
+  - [x] Achieve 95%+ code coverage for api.ts
+
+- [x] **Step 4: Write Integration Tests for CardForm Data Loading**
+  - [x] Update `src/components/CardForm.test.tsx` with integration tests
+  - [x] Test that CardForm successfully fetches and displays clubs on mount
+  - [x] Test that CardForm successfully fetches and displays nationalities on mount
+  - [x] Test that CardForm successfully fetches and displays leagues on mount
+  - [x] Test error state when API calls fail
+  - [x] Test loading state during API fetch
+  - [x] Mock API service using jest.mock()
+  - [x] Verify dropdown menus populate correctly after data loads
+
+- [x] **Step 5: Verify Full Flow**
+  - [x] Start backend server
+  - [x] Start frontend dev server
+  - [x] Verify CREATE CARD tab loads without error
+  - [x] Verify all three dropdown menus (Club, Nationality, League) populate correctly
+  - [ ] Test selecting values from each dropdown
+  - [x] Test that error message is displayed correctly with diagnostic info
+
+- [x] **Step 6: Documentation & Prevention**
+  - [ ] Document the API versioning scheme in API_CONTRACT.md
+  - [ ] Add note about baseURL configuration in frontend README
+  - [ ] Document common "Failed to fetch" debugging steps
+  - [ ] Add this endpoint mismatch to known issues/lessons learned
+
+#### Bug #2: Create Card Form Changing Background Colour in UI does not update preview
+
+**Issue**: When user selects a background image in the Card Background section, the preview card doesn't visually show the selected background image. Only the default gradient appears.
+
+**Root Cause**: The linear gradient in `CardPreview.tsx` is **opaque** (using full rgb() colors) and is layered on top of the background image URL. The gradient completely covers the background image, making it invisible.
+
+Current CSS:
+```css
+backgroundImage: linear-gradient(135deg, rgb(25, 118, 210) 0%, rgb(255, 193, 7) 100%), url("https://...")
+```
+The gradient (first background) is on top and blocks the image (second background).
+
+**Resolution Subtasks**:
+- [x] **Step 1: Fix CardPreview Background Gradient Opacity**
+  - [x] Update `src/components/CardPreview.tsx` cardStyle object
+  - [x] Change gradient colors from `rgb()` to `rgba()` with ~0.7 opacity
+  - [x] New gradient: `linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%)`
+  - [x] This makes gradient semi-transparent so background image shows through
+
+- [ ] **Step 2: Test Background Selection in Browser**
+  - [ ] Select "Stadium Blue" background - verify blue sky image is visible
+  - [ ] Select "Classic Green" background - verify green image is visible
+  - [ ] Select "Champions Gold" background - verify gold image is visible
+  - [ ] Verify gradient overlay still looks good with transparency
+  - [ ] Test with different player photos to ensure good contrast
+
+- [ ] **Step 3: Write Unit Tests for CardPreview Background**
+  - [ ] Test that background gradient includes rgba values (semi-transparent)
+  - [ ] Test that cardBackground prop is applied to background style
+  - [ ] Test that gradient + image combination renders correctly
+  - [ ] Mock different cardBackground URLs and verify they appear in output
+  - [ ] Test that without cardBackground, only gradient appears
+
+- [ ] **Step 4: Write Integration Test for Background Selection Flow**
+  - [ ] Create test that selects background option and checks preview updates
+  - [ ] Verify clicking background card updates card state
+  - [ ] Verify preview card background style includes the selected image URL
+  - [ ] Test multiple background selections in sequence
+  - [ ] Verify visual styling reflects the selection
+
+- [ ] **Step 5: Verify Full Flow**
+  - [ ] Reload frontend app
+  - [ ] Create a new card
+  - [ ] Select "Stadium Blue" background - should see blue sky showing through gradient
+  - [ ] Switch to "Champions Gold" - should see stadium image showing through gradient
+  - [ ] Switch back to gradient-only (deselect) - gradient fills entire card
+  - [ ] Save card and verify background persists
+  - [ ] Load saved card and verify background appears in preview  
+
+#### Other Code Quality Items
 - [ ] Ensure all TypeScript strict mode enabled
 - [ ] Resolve all linting warnings
 - [ ] Achieve minimum 80% test coverage globally
@@ -383,6 +497,7 @@
 - [ ] Test on Firefox (latest)
 - [ ] Test on Safari (latest)
 - [ ] Test on Edge (latest)
+- [ ] Test on Mobile browsers (latest)
 - [ ] Verify localStorage support
 - [ ] Test print functionality across browsers
 

@@ -260,6 +260,7 @@ See `PHASE_3_FRONTEND_TODO.md` for frontend task details.
 
 - **Project README**: `README.md`
 - **Requirements**: `docs/plans/REQUIREMENTS.md`
+- **P3 plan**: `PHASE_3_FRONTEND_TODO.md`
 - **Architecture**: `docs/plans/ARCHITECTURAL_PLAN.md`
 - **Frontend Guide**: `football-cards-ui/README.md`
 - **Test Plan**: `docs/plans/testplan.md`

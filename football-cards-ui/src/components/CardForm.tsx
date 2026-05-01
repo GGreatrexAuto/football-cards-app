@@ -87,7 +87,12 @@ const CardForm: React.FC = () => {
         setNationalities(nationalitiesData);
         setLeagues(leaguesData);
       } catch (err) {
-        setError('Failed to fetch data');
+        const errorMessage =
+          err instanceof Error ? err.message : 'Unknown error occurred';
+        console.error('Failed to fetch data:', err);
+        setError(
+          `Failed to fetch data: ${errorMessage}. Please ensure the backend API is running on http://localhost:8000`,
+        );
       } finally {
         setLoading(false);
       }

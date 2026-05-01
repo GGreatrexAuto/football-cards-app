@@ -43,6 +43,7 @@ pip install -r requirements.txt
 # Start backend server
 python app/main.py
 ```
+cd "d:\Gareth's Docs\Gareths Code\Python\football-cards" && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 Backend API runs at `http://localhost:8000`
 

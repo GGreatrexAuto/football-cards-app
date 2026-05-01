@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CardForm from './CardForm';
+import CardPreview from './CardPreview';
 import { CardProvider } from '../context/CardContext';
 import { getClubs, getNationalities, getLeagues } from '../services/api';
 import { saveCard } from '../services/storage';
@@ -40,6 +41,14 @@ describe('CardForm Component', () => {
     render(
       <CardProvider>
         <CardForm />
+      </CardProvider>,
+    );
+
+  const renderWithPreview = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+        <CardPreview />
       </CardProvider>,
     );
 
@@ -138,5 +147,102 @@ describe('CardForm Component', () => {
       await screen.findByText(/Card saved successfully/i),
     ).toBeInTheDocument();
     expect(saveCard).toHaveBeenCalled();
+  });
+
+  test('displays error message when API calls fail', async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    (getClubs as jest.Mock).mockRejectedValue(
+      new Error('Network Error: Failed to fetch /api/v1/clubs'),
+    );
+
+    renderWithProvider();
+
+    const errorText = await screen.findByText(/Failed to fetch data/i);
+    expect(errorText).toBeInTheDocument();
+    expect(errorText.textContent).toContain(
+      'ensure the backend API is running',
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  test('loads dropdowns successfully when API calls succeed', async () => {
+    renderWithProvider();
+
+    // Wait for the component to finish loading
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Verify API functions were called
+    expect(getClubs).toHaveBeenCalled();
+    expect(getNationalities).toHaveBeenCalled();
+    expect(getLeagues).toHaveBeenCalled();
+
+    // Verify form elements are in the document (selects, inputs, buttons)
+    expect(screen.getAllByRole('combobox').length).toBeGreaterThanOrEqual(3);
+    expect(
+      screen.getByRole('button', { name: /randomize stats/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('selects background option when clicked', async () => {
+    renderWithPreview();
+
+    // Wait for form to load
+    await screen.findByLabelText(/Player Name/i);
+
+    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    expect(stadiumBlueImage).toBeInTheDocument();
+    fireEvent.click(stadiumBlueImage);
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundImage = previewCard.dataset.backgroundImage || '';
+    const backgroundCss = previewCard.dataset.backgroundCss || '';
+
+    expect(backgroundImage).toContain('picsum.photos/300/200?random=2');
+    expect(backgroundCss).toContain('linear-gradient');
+  });
+
+  test('updates background selection and reflects in preview', async () => {
+    renderWithPreview();
+
+    await screen.findByLabelText(/Player Name/i);
+
+    const classicGreenImage = screen.getByAltText('Classic Green');
+    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+
+    fireEvent.click(classicGreenImage);
+
+    let previewCard = await screen.findByTestId('card-preview');
+    let backgroundImage = previewCard.dataset.backgroundImage || '';
+    expect(backgroundImage).toContain('picsum.photos/300/200?random=1');
+
+    fireEvent.click(stadiumBlueImage);
+
+    previewCard = await screen.findByTestId('card-preview');
+    backgroundImage = previewCard.dataset.backgroundImage || '';
+    expect(backgroundImage).toContain('picsum.photos/300/200?random=2');
+  });
+
+  test('displays semi-transparent gradient overlay with background', async () => {
+    renderWithPreview();
+
+    await screen.findByLabelText(/Player Name/i);
+
+    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    fireEvent.click(stadiumBlueImage);
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundImage = previewCard.dataset.backgroundImage || '';
+    const backgroundCss = previewCard.dataset.backgroundCss || '';
+
+    expect(backgroundCss).toContain('linear-gradient');
+    expect(backgroundCss).toContain('rgba(25, 118, 210, 0.7)');
+    expect(backgroundCss).toContain('rgba(255, 193, 7, 0.7)');
+    expect(backgroundImage).toContain('picsum.photos/300/200?random=2');
   });
 });

@@ -89,4 +89,82 @@ describe('CardPreview Component', () => {
       expect(screen.getByText('100', { selector: 'div' })).toBeInTheDocument();
     });
   });
+
+  test('applies gradient background with correct rgba opacity', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewSetup />
+      </CardProvider>,
+    );
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundCss = previewCard.dataset.backgroundCss || '';
+
+    // Verify gradient is semi-transparent (rgba with 0.7 opacity)
+    expect(backgroundCss).toContain(
+      'linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%)',
+    );
+  });
+
+  test('includes cardBackground image URL in background style', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewSetup />
+      </CardProvider>,
+    );
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundImage = previewCard.dataset.backgroundImage || '';
+    // Verify the background URL is present
+    expect(backgroundImage).toBe('https://example.com/background.png');
+  });
+
+  test('displays gradient and image with correct layering', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewSetup />
+      </CardProvider>,
+    );
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundCss = previewCard.dataset.backgroundCss || '';
+    const backgroundImage = previewCard.dataset.backgroundImage || '';
+
+    // Verify both gradient and image are present
+    expect(backgroundCss).toContain('linear-gradient');
+    expect(backgroundImage).toBe('https://example.com/background.png');
+  });
+
+  test('renders with gradient only when no cardBackground is set', async () => {
+    const TestPreviewNoBackground = () => {
+      const { updateCard } = useCard();
+
+      useEffect(() => {
+        updateCard({
+          playerName: 'Test Player',
+          cardBackground: null, // No background
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return <CardPreview />;
+    };
+
+    render(
+      <CardProvider>
+        <TestPreviewNoBackground />
+      </CardProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Player')).toBeInTheDocument();
+    });
+
+    const previewCard = await screen.findByTestId('card-preview');
+    const backgroundCss = previewCard.dataset.backgroundCss || '';
+    const backgroundImage = previewCard.dataset.backgroundImage || '';
+    // Verify only gradient, no URL when cardBackground is null
+    expect(backgroundCss).toContain('linear-gradient');
+    expect(backgroundImage).toBe('');
+  });
 });

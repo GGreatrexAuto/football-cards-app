@@ -30,9 +30,9 @@ const CardPreview: React.FC = () => {
     maxWidth: 350,
     margin: 'auto',
     mt: 2,
-    background: cardBackground
-      ? `linear-gradient(135deg, #1976D2 0%, #FFC107 100%), url(${cardBackground})`
-      : 'linear-gradient(135deg, #1976D2 0%, #FFC107 100%)',
+    backgroundImage: cardBackground
+      ? `linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%), url(${cardBackground})`
+      : 'linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     color: 'white',
@@ -43,7 +43,13 @@ const CardPreview: React.FC = () => {
   };
 
   return (
-    <Card sx={cardStyle}>
+    <Card
+      sx={cardStyle}
+      style={cardStyle}
+      data-testid="card-preview"
+      data-background-css={cardStyle.backgroundImage}
+      data-background-image={cardBackground || ''}
+    >
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Player Photo */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
