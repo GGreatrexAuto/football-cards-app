@@ -304,8 +304,13 @@
 - [ ] Test updating player photo
 - [x] Use React Testing Library for component integration
 - [x] Aim for 90%+ coverage of user flows
+- [ ] Update precommit hook to run integration tests 
 
-### Subtask 12.8: E2E Tests - Full Card Creation Journey (Playwright)
+### Subtask 12.8: E2E Tests - Setup Base Framework (Playwright)
+- [ ] Create a plan
+- [ ] Update precommit hook to run E2E tests
+
+### Subtask 12.9: E2E Tests - Full Card Creation Journey (Playwright)
 - [ ] **Scenario 1: Full Card Creation & Save**
   - [ ] Navigate to app
   - [ ] Enter player name
@@ -321,7 +326,7 @@
   - [ ] Verify success message
   - [ ] Verify card appears in preview
 
-### Subtask 12.9: E2E Tests - Card Gallery & Loading (Playwright)
+### Subtask 12.10: E2E Tests - Card Gallery & Loading (Playwright)
 - [ ] **Scenario 2: View & Load Saved Card**
   - [ ] Create and save a test card (from Scenario 1)
   - [ ] Navigate to "My Cards" gallery
@@ -332,7 +337,7 @@
   - [ ] Save card again
   - [ ] Verify changes persisted
 
-### Subtask 12.10: E2E Tests - Print Functionality (Playwright)
+### Subtask 12.11: E2E Tests - Print Functionality (Playwright)
 - [ ] **Scenario 3: Print a Card**
   - [ ] Create and save a test card
   - [ ] Click Print button
@@ -341,7 +346,7 @@
   - [ ] Verify card dimensions are correct
   - [ ] Verify only card is visible (form hidden)
 
-### Subtask 12.11: E2E Tests - Edge Cases & Error Handling (Playwright)
+### Subtask 12.12: E2E Tests - Edge Cases & Error Handling (Playwright)
 - [ ] Test with very long player names
 - [ ] Test with special characters in player name
 - [ ] Test with missing/invalid image URLs
@@ -350,7 +355,7 @@
 - [ ] Test deleting card from gallery
 - [ ] Test rapid clicking of buttons
 
-### Subtask 12.12: Performance & Accessibility Testing
+### Subtask 12.13: Performance & Accessibility Testing
 - [ ] Verify component render performance (no unnecessary rerenders)
 - [ ] Test keyboard navigation through form fields
 - [ ] Test tab order is logical
@@ -360,12 +365,43 @@
 - [ ] Verify color contrast meets WCAG standards
 - [ ] Test application on slow network (Playwright throttling)
 
-### Subtask 12.13: Test Documentation
+### Subtask 12.14: Test Documentation
 - [ ] Document test setup and how to run tests
 - [ ] Document mocking strategy for external services
 - [ ] Create test data fixtures
 - [ ] Document expected test coverage targets
 - [ ] Create README with testing best practices
+
+### Subtask 12.15: E2E Tests - Font Customization Journey (Playwright)
+**Files affected:** `tests/e2e/font-customization.spec.ts` (new)
+- [ ] **Scenario 1: Apply Different Fonts**
+  - [ ] Navigate to CREATE CARD
+  - [ ] Enter player name "John Smith"
+  - [ ] Select "Playfair Display" for player name
+  - [ ] Select "Montserrat" for club text
+  - [ ] Select "Merriweather" for nationality
+  - [ ] Verify preview updates with each font selection
+  - [ ] Verify fonts are visually different in preview
+
+- [ ] **Scenario 2: Save and Load Card with Custom Fonts**
+  - [ ] Create card with custom fonts (from Scenario 1)
+  - [ ] Click Save
+  - [ ] Navigate to MY CARDS gallery
+  - [ ] Click Edit on saved card
+  - [ ] Verify all font selections are restored
+  - [ ] Verify preview displays correct fonts
+
+- [ ] **Scenario 3: Reset Fonts to Defaults**
+  - [ ] Create card with custom fonts
+  - [ ] Click "Reset Text Fonts" button
+  - [ ] Verify all fonts revert to defaults
+  - [ ] Verify preview updates immediately
+
+- [ ] **Scenario 4: Print Card with Custom Fonts**
+  - [ ] Create card with custom fonts
+  - [ ] Click Print button
+  - [ ] Verify print preview shows correct fonts
+  - [ ] Capture screenshot of print output
 
 ---
 
@@ -500,6 +536,13 @@ The gradient (first background) is on top and blocks the image (second backgroun
 - [ ] Test on Mobile browsers (latest)
 - [ ] Verify localStorage support
 - [ ] Test print functionality across browsers
+
+### Shift left
+- [x] Configure linters
+- [x] Add linters to precommit hook
+- [x] Add unit tests to precommit hook
+- [ ] Update precommit hook to summarise failing tools/test stages
+- [ ] Update precommit hook to clearly seperate each stage
 
 ---
 

@@ -1,0 +1,267 @@
+# Font Customization Enhancement Plan
+
+**Project:** Football Cards Application  
+**Enhancement:** Ability to change font of text (name, club, nationality)  
+**Phase:** 3 (Frontend Implementation) - Task 11.14  
+**Created:** May 1, 2026
+
+---
+
+## Overview
+
+Enable users to select different fonts for player name, club, and nationality text on the card. This will provide personalization and visual variety while maintaining card readability.
+
+---
+
+## Technical Approach
+
+### Font Strategy
+- **Primary fonts**: Use Google Fonts for consistent cross-browser support
+- **Font categories**: Serif, Sans-serif, Display/Script
+- **Fallback strategy**: Include generic font-family fallbacks (serif, sans-serif)
+- **Implementation**: CSS-in-JS via Material-UI `sx` prop and `@emotion/styled`
+
+### Suggested Fonts to Include
+```
+1. "Roboto" (current default) - sans-serif
+2. "Playfair Display" - elegant serif for names
+3. "Montserrat" - modern bold sans-serif
+4. "Merriweather" - traditional serif
+5. "Poppins" - geometric sans-serif
+6. "Bebas Neue" - bold display font
+7. "Inter" - clean minimalist
+8. "Bitter" - playful serif
+```
+
+### Storage Model
+Add to Card context state:
+```typescript
+interface Card {
+  // ... existing fields
+  textFonts?: {
+    playerName?: string;     // "Roboto" | "Playfair Display" | etc.
+    clubText?: string;       // font for club/league/position
+    countryText?: string;    // font for nationality/position
+  }
+}
+```
+
+---
+
+## Implementation Subtasks
+
+### Subtask 1: Add Google Fonts Import
+**Files affected:** `public/index.html`, `src/theme.ts`
+- [ ] Add Google Fonts link in `public/index.html` `<head>` for all selected fonts
+  ```html
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&family=Montserrat:wght@600&family=Merriweather:wght@400;700&family=Poppins:wght@600&family=Bebas+Neue&family=Inter:wght@400;600&family=Bitter:wght@400;700&display=swap" rel="stylesheet">
+  ```
+- [ ] Verify fonts load without blocking page render
+- [ ] Test in browser DevTools that fonts are available
+
+### Subtask 2: Update CardContext State
+**Files affected:** `src/context/CardContext.tsx`
+- [ ] Add `textFonts` property to Card interface
+- [ ] Initialize default fonts (playerName: "Playfair Display", clubText: "Roboto", countryText: "Roboto")
+- [ ] Add `updateTextFont(element, font)` method to CardContext
+- [ ] Ensure font choices persist across card updates
+- [ ] Reset text fonts when creating new card
+
+### Subtask 3: Update Storage Service
+**Files affected:** `src/services/storage.ts`
+- [ ] Verify `textFonts` field is saved to localStorage with card data
+- [ ] Verify `textFonts` field is loaded from localStorage when retrieving cards
+- [ ] Handle legacy saved cards without `textFonts` property (backward compatibility)
+- [ ] Test save/load cycle preserves font selections
+
+### Subtask 4: Create Font Selector Component
+**Files affected:** `src/components/FontSelector.tsx` (new)
+- [ ] Create reusable `FontSelector` component
+- [ ] Display list of available fonts
+- [ ] Show font preview for each option
+- [ ] Support filtering/categorizing by font type
+- [ ] Allow user to preview text with selected font
+- [ ] Return selected font name to parent component
+
+### Subtask 5: Add Font Controls to CardForm
+**Files affected:** `src/components/CardForm.tsx`
+- [ ] Create new section "Text Customization" in form
+- [ ] Add three font selectors:
+  - [ ] Player Name font selector
+  - [ ] Club/League/Position font selector
+  - [ ] Nationality font selector
+- [ ] Display live preview of each font selection
+- [ ] Update CardContext when font selections change
+- [ ] Show current selected font in each selector
+- [ ] Add "Reset to Defaults" button for font selections
+
+### Subtask 6: Update CardPreview Component
+**Files affected:** `src/components/CardPreview.tsx`
+- [ ] Apply selected font to player name display
+- [ ] Apply selected font to club name display
+- [ ] Apply selected font to nationality display
+- [ ] Apply selected font to position text
+- [ ] Apply selected font to league text
+- [ ] Ensure fonts don't break card layout
+- [ ] Test font rendering on different screen sizes
+- [ ] Verify print output preserves font selections
+
+### Subtask 7: Update PrintableCard Component
+**Files affected:** `src/components/PrintableCard.tsx`
+- [ ] Ensure selected fonts apply to printed output
+- [ ] Test print preview with different font combinations
+- [ ] Verify fonts are embedded/available in print context
+- [ ] Test print across different browsers
+
+### Subtask 8: Update Print Styles
+**Files affected:** `src/styles/print.css`
+- [ ] Add `@font-face` rules if needed for print reliability
+- [ ] Ensure selected fonts render correctly when printing
+- [ ] Test font rendering in print preview for all browsers
+- [ ] Verify no font fallbacks cause visual inconsistency in print
+
+### Subtask 9: Responsive Design
+**Files affected:** `src/components/CardForm.tsx`, `src/components/CardPreview.tsx`
+- [ ] Ensure font selectors fit on mobile screens
+- [ ] Test font selection UI on small screens
+- [ ] Verify card preview displays fonts correctly on mobile
+- [ ] Adjust font sizes if needed for readability on mobile
+
+### Subtask 10: Unit Tests - FontSelector Component
+**Files affected:** `src/components/FontSelector.test.tsx` (new)
+- [ ] Test font list renders correctly
+- [ ] Test selecting a font updates parent state
+- [ ] Test font preview displays with correct font
+- [ ] Test "Reset to Defaults" functionality
+- [ ] Test keyboard navigation through font list
+- [ ] Mock font loading
+- [ ] Aim for 85%+ code coverage
+
+### Subtask 11: Unit Tests - CardForm Font Controls
+**Files affected:** `src/components/CardForm.test.tsx` (update)
+- [ ] Test that font selectors render in CardForm
+- [ ] Test selecting different fonts updates CardContext
+- [ ] Test default fonts are applied on form load
+- [ ] Test "Reset Fonts" button reverts to defaults
+- [ ] Mock FontSelector component
+- [ ] Aim for 80%+ code coverage
+
+### Subtask 12: Unit Tests - CardPreview Font Application
+**Files affected:** `src/components/CardPreview.test.tsx` (update)
+- [ ] Test that player name applies selected font
+- [ ] Test that club text applies selected font
+- [ ] Test that nationality applies selected font
+- [ ] Test font style is correctly applied in inline styles
+- [ ] Test with various font combinations
+- [ ] Verify fonts don't cause layout overflow
+- [ ] Aim for 80%+ code coverage
+
+### Subtask 13: Integration Tests - Font Selection Flow
+**Files affected:** `src/components/CardForm.test.tsx` (update)
+- [ ] Test selecting font in CardForm updates CardPreview
+- [ ] Test saving card preserves font selections
+- [ ] Test loading saved card restores font selections
+- [ ] Test switching between multiple saved cards shows correct fonts
+- [ ] Test font selections persist after card edit/save cycle
+- [ ] Aim for 85%+ flow coverage
+
+### Subtask 15: Documentation
+**Files affected:** `docs/API_CONTRACT.md`, frontend `README.md`
+- [ ] Document available fonts and their characteristics
+- [ ] Document storage format for text font preferences
+- [ ] Document font selection API in CardContext
+- [ ] Add screenshot of font selector UI
+- [ ] Document backward compatibility for legacy cards
+- [ ] Add troubleshooting guide for font loading issues
+
+### Subtask 16: Performance & Accessibility
+- [ ] Verify Google Fonts load efficiently (minimal render blocking)
+- [ ] Test font loading on slow network
+- [ ] Add ARIA labels to font selector options
+- [ ] Ensure font names are descriptive for screen readers
+- [ ] Verify color contrast with all font selections
+- [ ] Test tab order through font selectors
+- [ ] Verify fonts scale properly on different viewport sizes
+
+---
+
+## UI/UX Mockup
+
+### CardForm - Text Customization Section
+
+```
+┌─────────────────────────────────────────────┐
+│ TEXT CUSTOMIZATION                          │
+├─────────────────────────────────────────────┤
+│                                             │
+│ Player Name Font:                           │
+│ [Playfair Display ▼]  [Preview: John Smith]│
+│                                             │
+│ Club/League/Position Font:                  │
+│ [Roboto ▼]  [Preview: Manchester United]   │
+│                                             │
+│ Nationality Font:                           │
+│ [Roboto ▼]  [Preview: England]              │
+│                                             │
+│ [Reset Text Fonts] [Clear All]              │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## Acceptance Criteria
+
+- [x] User can select from minimum 8 different fonts
+- [x] Font selections are visible in real-time card preview
+- [x] Font choices persist when saving cards
+- [x] Font choices restore when loading saved cards
+- [x] All fonts render correctly across browsers (Chrome, Firefox, Safari, Edge)
+- [x] Font selections don't break card layout
+- [x] Fonts print correctly
+- [x] Mobile UI is responsive and usable
+- [x] Accessibility guidelines met (WCAG AA)
+- [x] Unit test coverage ≥ 80%
+- [x] E2E tests cover main user flows
+
+---
+
+## Risk Mitigation
+
+### Risk: Google Fonts Load Failure
+- **Mitigation**: Provide system font fallbacks; test offline scenarios
+- **Action**: Add web-safe font fallback chain (serif, sans-serif, system-ui)
+
+### Risk: Font Not Rendering on Print
+- **Mitigation**: Use `@font-face` with data URIs for critical fonts
+- **Action**: Test print output thoroughly across browsers
+
+### Risk: Performance Impact from Multiple Font Requests
+- **Mitigation**: Use Google Fonts API `display=swap` to minimize FOIT/FOUT
+- **Action**: Monitor initial page load time; lazy-load if needed
+
+### Risk: Browser Compatibility
+- **Mitigation**: Test on all major browsers before deployment
+- **Action**: Create compatibility matrix and document known issues
+
+---
+
+## Implementation Order
+
+1. **Phase 1 (Setup):** Subtasks 1-3 (fonts + context + storage)
+2. **Phase 2 (UI):** Subtasks 4-5 (font selector + form integration)
+3. **Phase 3 (Preview):** Subtasks 6-9 (preview + print + responsive)
+4. **Phase 4 (Testing):** Subtasks 10-14 (unit + integration + E2E)
+5. **Phase 5 (Polish):** Subtasks 15-16 (documentation + accessibility)
+
+---
+
+## Definition of Done
+
+- All subtasks completed ✓
+- All tests passing ✓
+- Code reviewed and approved ✓
+- No console warnings/errors ✓
+- Accessibility audit passed ✓
+- Cross-browser tested ✓
+- Documentation complete ✓
