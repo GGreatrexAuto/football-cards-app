@@ -53,6 +53,7 @@ const CardPreview: React.FC = () => {
         {/* Player Photo */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
           <Avatar
+            data-testid="player-photo"
             src={playerPhoto || undefined}
             sx={{
               width: 80,

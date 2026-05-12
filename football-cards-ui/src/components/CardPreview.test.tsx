@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CardPreview from './CardPreview';
@@ -115,8 +115,44 @@ describe('CardPreview Component', () => {
 
     const previewCard = await screen.findByTestId('card-preview');
     const backgroundImage = previewCard.dataset.backgroundImage || '';
-    // Verify the background URL is present
+    const avatar = await screen.findByTestId('player-photo');
+    const photo = within(avatar).getByRole('img');
+
+    // Verify the background URL is present and the player photo is rendered
     expect(backgroundImage).toBe('https://example.com/background.png');
+    expect(photo).toHaveAttribute('src', 'https://example.com/photo.jpg');
+  });
+
+  test('renders player photo when provided', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewSetup />
+      </CardProvider>,
+    );
+
+    const avatar = await screen.findByTestId('player-photo');
+    const photo = within(avatar).getByRole('img');
+
+    expect(photo).toHaveAttribute('src', 'https://example.com/photo.jpg');
+  });
+
+  test('renders correctly when window is resized for responsive use', async () => {
+    window.innerWidth = 375;
+    window.dispatchEvent(new Event('resize'));
+
+    render(
+      <CardProvider>
+        <TestPreviewSetup />
+      </CardProvider>,
+    );
+
+    const previewCard = await screen.findByTestId('card-preview');
+    expect(previewCard).toBeVisible();
+
+    window.innerWidth = 1200;
+    window.dispatchEvent(new Event('resize'));
+
+    expect(previewCard).toBeVisible();
   });
 
   test('displays gradient and image with correct layering', async () => {
@@ -132,6 +168,7 @@ describe('CardPreview Component', () => {
 
     // Verify both gradient and image are present
     expect(backgroundCss).toContain('linear-gradient');
+    expect(backgroundCss).toContain('url(https://example.com/background.png)');
     expect(backgroundImage).toBe('https://example.com/background.png');
   });
 
