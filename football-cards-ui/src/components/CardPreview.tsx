@@ -45,7 +45,6 @@ const CardPreview: React.FC = () => {
   return (
     <Card
       sx={cardStyle}
-      style={cardStyle}
       data-testid="card-preview"
       data-background-css={cardStyle.backgroundImage}
       data-background-image={cardBackground || ''}

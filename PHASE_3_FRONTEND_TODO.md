@@ -478,25 +478,25 @@ The gradient (first background) is on top and blocks the image (second backgroun
   - [x] New gradient: `linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%)`
   - [x] This makes gradient semi-transparent so background image shows through
 
-- [ ] **Step 2: Test Background Selection in Browser**
-  - [ ] Select "Stadium Blue" background - verify blue sky image is visible
-  - [ ] Select "Classic Green" background - verify green image is visible
+- [x] **Step 2: Test Background Selection in Browser**
+  - [x] Select "Stadium Blue" background - verify blue sky image is visible
+  - [x] Select "Classic Green" background - verify green image is visible
   - [ ] Select "Champions Gold" background - verify gold image is visible
-  - [ ] Verify gradient overlay still looks good with transparency
+  - [x] Verify gradient overlay still looks good with transparency
   - [ ] Test with different player photos to ensure good contrast
 
-- [ ] **Step 3: Write Unit Tests for CardPreview Background**
-  - [ ] Test that background gradient includes rgba values (semi-transparent)
-  - [ ] Test that cardBackground prop is applied to background style
-  - [ ] Test that gradient + image combination renders correctly
+- [x] **Step 3: Write Unit Tests for CardPreview Background**
+  - [x] Test that background gradient includes rgba values (semi-transparent)
+  - [x] Test that cardBackground prop is applied to background style
+  - [x] Test that gradient + image combination renders correctly
   - [ ] Mock different cardBackground URLs and verify they appear in output
-  - [ ] Test that without cardBackground, only gradient appears
+  - [x] Test that without cardBackground, only gradient appears
 
-- [ ] **Step 4: Write Integration Test for Background Selection Flow**
-  - [ ] Create test that selects background option and checks preview updates
-  - [ ] Verify clicking background card updates card state
-  - [ ] Verify preview card background style includes the selected image URL
-  - [ ] Test multiple background selections in sequence
+- [x] **Step 4: Write Integration Test for Background Selection Flow**
+  - [x] Create test that selects background option and checks preview updates
+  - [x] Verify clicking background card updates card state
+  - [x] Verify preview card background style includes the selected image URL
+  - [x] Test multiple background selections in sequence
   - [ ] Verify visual styling reflects the selection
 
 - [ ] **Step 5: Verify Full Flow**
@@ -541,8 +541,8 @@ The gradient (first background) is on top and blocks the image (second backgroun
 - [x] Configure linters
 - [x] Add linters to precommit hook
 - [x] Add unit tests to precommit hook
-- [ ] Update precommit hook to summarise failing tools/test stages
-- [ ] Update precommit hook to clearly seperate each stage
+- [x] Update precommit hook to summarise failing tools/test stages
+- [x] Update precommit hook to clearly seperate each stage visually in both script and logs to console
 
 ---
 
