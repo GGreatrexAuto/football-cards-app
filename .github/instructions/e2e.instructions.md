@@ -11,6 +11,10 @@ This applies to end-to-end tests in `tests/e2e/` using Playwright test framework
 
 ---
 
+## BDD
+
+E2E tests at this level use **Behavior-Driven Development (BDD)** principles to define features and scenarios in a human-readable format. This promotes collaboration between developers, testers, and non-technical stakeholders.
+
 ## 🎭 Playwright Overview
 
 Playwright is a browser automation framework for **E2E testing**:

@@ -46,6 +46,9 @@ Tests follow a **shift-left, pyramid-shaped strategy**:
 
 ---
 
+## BDD & Gherkin
+For tests at integration test level in the pyramid and above we use **Behavior-Driven Development (BDD)** with Gherkin syntax to define features and scenarios in a human-readable format. This promotes collaboration between developers, testers, and non-technical stakeholders.
+
 ## 🤝 Contract Tests (API Schema Validation)
 
 **Location**: `tests/contract/`
@@ -194,8 +197,6 @@ def test_clubs():
 def test_1():
     pass
 ```
-
----
 
 ## 🎭 Integration Tests (Behave + BDD)
 
