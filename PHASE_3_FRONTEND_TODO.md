@@ -557,6 +557,22 @@ The gradient (first background) is on top and blocks the image (second backgroun
 
 ---
 
+## New Tasks
+
+### Task 13: Add Positions Endpoint
+- [ ] Implement `/api/v1/positions` endpoint in backend
+- [ ] Add positions data (GK, DEF, MID, FWD)
+- [ ] Update frontend to use dynamic positions from API instead of hardcoded
+- [ ] Test positions dropdown loads from API
+
+### Task 14: Fix Mocking Bugs for Clubs, Leagues, and Nations
+- [ ] Replace mock data in `football_api.py` with real external API calls
+- [ ] Implement proper error handling for external API failures
+- [ ] Add fallback to mock data if external API is unavailable
+- [ ] Update tests to handle both real and mock scenarios
+
+---
+
 ## Notes
 
 - **Phase 2 (Backend)** should be completed before heavy frontend development - ensure API endpoints are ready for integration

@@ -165,8 +165,8 @@ npm run format                     # Prettier
 ## API Conventions
 
 ### Endpoint Design
-- **Base URL**: `http://localhost:8000/api`
-- **Routes**: `/api/clubs`, `/api/nations`, `/api/leagues`, `/api/positions`
+- **Base URL**: `http://localhost:8000/api/v1`
+- **Routes**: `/api/v1/clubs`, `/api/v1/nations`, `/api/v1/leagues`, `/api/v1/positions`
 - **Methods**: GET for fetching, POST for creating, PUT for updates, DELETE for removal
 - **Status codes**: 200 (success), 201 (created), 400 (bad request), 404 (not found), 500 (error)
 
