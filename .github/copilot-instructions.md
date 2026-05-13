@@ -129,3 +129,4 @@ npm test                       # Component & e2e (from football-cards-ui/)
 - Run formatters before committing: `black .`, `isort .`, `npm run lint`
 - Add tests alongside new features
 - Keep PRs focused on single features
+- keep PHASE_3_FRONTEND_TODO updated with new tasks and progress
