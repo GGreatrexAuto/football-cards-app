@@ -356,6 +356,9 @@
 - [ ] Test rapid clicking of buttons
 
 ### Subtask 12.13: Performance & Accessibility Testing
+- [ ] Implement pytest benchmark tests to identify performance bottlenecks in backend code
+- [ ] Implement backend load tests using tool tbc (Jmeter or python equivalent)
+- [ ] SPIKE: ui performance test approach
 - [ ] Verify component render performance (no unnecessary rerenders)
 - [ ] Test keyboard navigation through form fields
 - [ ] Test tab order is logical
