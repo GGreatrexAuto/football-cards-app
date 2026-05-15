@@ -142,14 +142,18 @@ football-cards/
 - **npm**: v8+
 
 ### Environment Variables
-- **Backend**: Create `.env` file (see `app/core/config.py` for required vars)
+- **Backend**: Copy `.env.example` → `.env` and fill in values:
+  - `FOOTBALL_DATA_API_KEY` — free key from https://www.football-data.org/client/register
+  - `FOOTBALL_DATA_API_URL` — defaults to `https://api.football-data.org/v4` (no change needed)
+  - `FOOTBALL_DATA_COMPETITIONS` — comma-separated competition codes, e.g. `PL,PD,BL1,SA,FL1`
+  - Without a key the backend automatically serves built-in mock data — the app works without one.
 - **Frontend**: Create `.env.local` for development
   - `REACT_APP_API_URL`: Backend URL (default: http://localhost:8000)
 
 ### Development Commands
 ```bash
 # Backend
-python app/main.py                 # Start server
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload  # Start server
 pytest tests/                      # Run all tests
 black app tests                    # Format code
 flake8 app tests                   # Lint code
@@ -167,7 +171,7 @@ npm run format                     # Prettier
 
 ### Endpoint Design
 - **Base URL**: `http://localhost:8000/api/v1`
-- **Routes**: `/api/v1/clubs`, `/api/v1/nations`, `/api/v1/leagues`, `/api/v1/positions`
+- **Routes**: `/api/v1/clubs`, `/api/v1/nations`, `/api/v1/leagues`
 - **Methods**: GET for fetching, POST for creating, PUT for updates, DELETE for removal
 - **Status codes**: 200 (success), 201 (created), 400 (bad request), 404 (not found), 500 (error)
 
@@ -251,7 +255,7 @@ pytest tests/ --cov=app
 
 ## Phase Status
 - **Phase 1**: Planning & Requirements ✅
-- **Phase 2**: Backend Implementation ⏳
+- **Phase 2**: Backend Implementation ✅ (live Football-Data.org integration with mock fallback)
 - **Phase 3**: Frontend Implementation ⏳ (80% complete)
 - **Phase 4**: Testing & Deployment ⏳
 

@@ -12,11 +12,23 @@ app/
 │   └── endpoints/
 │       └── proxy.py     # Route handlers (APIRouter)
 ├── core/
-│   └── config.py        # Settings & environment variables
+│   └── config.py        # Settings loaded from .env (see .env.example)
 └── services/
-    ├── football_api.py  # External API integration (async)
-    └── test_data.py     # Mock data constants for development/testing
+    ├── football_api.py  # Football-Data.org integration — falls back to mock data if no key
+    └── test_data.py     # Built-in mock data (fallback + test fixtures)
 ```
+
+## Configuration & Environment
+
+Settings are in `app/core/config.py` (pydantic-settings, reads `.env`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `FOOTBALL_DATA_API_KEY` | `""` (empty) | Football-Data.org v4 API key — empty = use mock data |
+| `FOOTBALL_DATA_API_URL` | `https://api.football-data.org/v4` | Base URL |
+| `FOOTBALL_DATA_COMPETITIONS` | `PL,PD,BL1,SA,FL1` | Leagues to fetch clubs from |
+
+Copy `.env.example` to `.env` and set `FOOTBALL_DATA_API_KEY` to activate live data.
 
 ## Code Style
 
@@ -37,9 +49,12 @@ Import ordering (isort/black enforced):
 All service functions **must** be `async def`. All route handlers **must** be `async def` and `await` their service calls.
 
 ```python
-# services/football_api.py
-async def get_clubs() -> list[Club]:
-    return MOCK_CLUBS
+# services/football_api.py — calls Football-Data.org when key is set, else mock fallback
+async def get_clubs() -> list[dict]:
+    if not settings.football_data_api_key:
+        return MOCK_CLUBS
+    async with httpx.AsyncClient() as client:
+        ...  # real HTTP call; exceptions caught → returns MOCK_CLUBS
 
 # api/endpoints/proxy.py
 @router.get("/clubs")

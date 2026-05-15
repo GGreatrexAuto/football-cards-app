@@ -28,22 +28,53 @@ Run order: unit → contract → integration → E2E.
 - Use `@pytest.mark.asyncio` for every async function
 - Mock external dependencies with `unittest.mock.patch`
 
+The service has three paths to test for every function: no API key (returns mock), successful API call (verify transformation), and API error (falls back to mock). Always mock `settings` and `httpx.AsyncClient` — never make real HTTP calls in unit tests.
+
 ```python
 import pytest
-from unittest.mock import patch
-from app.services.football_api import get_clubs
-from app.services.test_data import MOCK_CLUBS
+from unittest.mock import AsyncMock, MagicMock, patch
+from app.services.football_api import get_clubs, get_leagues
+from app.services.test_data import MOCK_CLUBS, MOCK_LEAGUES
 
+# Helper: build a mock httpx async context manager
+def _make_client_mock(responses):
+    mock_client = AsyncMock()
+    mock_client.get = AsyncMock(side_effect=responses)
+    mock_class = MagicMock()
+    mock_class.return_value.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_class.return_value.__aexit__ = AsyncMock(return_value=False)
+    return mock_class
+
+# 1. No API key → mock data returned without any HTTP call
 @pytest.mark.asyncio
-async def test_get_clubs_returns_mock_data():
-    clubs = await get_clubs()
-    assert clubs == MOCK_CLUBS
+async def test_get_clubs_no_api_key_returns_mock():
+    with patch("app.services.football_api.settings") as s:
+        s.football_data_api_key = ""
+        assert await get_clubs() == MOCK_CLUBS
 
-@patch('app.services.football_api.httpx.AsyncClient.get')
-async def test_get_clubs_handles_api_error(mock_get):
-    mock_get.side_effect = Exception("timeout")
-    with pytest.raises(Exception):
-        await get_clubs()
+# 2. Successful API call → transformed response
+@pytest.mark.asyncio
+async def test_get_leagues_transforms_api_response():
+    resp = MagicMock()
+    resp.raise_for_status = MagicMock()
+    resp.json.return_value = {"competitions": [{"id": 2021, "name": "Premier League"}]}
+    mock_class = _make_client_mock([resp])
+    with patch("app.services.football_api.settings") as s, \
+         patch("app.services.football_api.httpx.AsyncClient", mock_class):
+        s.football_data_api_key = "test-key"
+        s.football_data_api_url = "https://api.football-data.org/v4"
+        result = await get_leagues()
+    assert result == [{"id": 2021, "name": "Premier League"}]
+
+# 3. API error → fallback to mock (no exception raised)
+@pytest.mark.asyncio
+async def test_get_leagues_api_error_falls_back_to_mock():
+    mock_class = _make_client_mock([Exception("timeout")])
+    with patch("app.services.football_api.settings") as s, \
+         patch("app.services.football_api.httpx.AsyncClient", mock_class):
+        s.football_data_api_key = "test-key"
+        s.football_data_api_url = "https://api.football-data.org/v4"
+        assert await get_leagues() == MOCK_LEAGUES
 ```
 
 **Test naming**: `test_<function>_<scenario>` — descriptive, not vague (`test_clubs` is bad).

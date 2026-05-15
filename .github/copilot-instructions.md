@@ -53,10 +53,11 @@ football-cards/
 - **CORS**: Configured for localhost:3000 (React dev server)
 
 ### Common Endpoints
-- `GET /clubs` → Returns `Club[]` (id, name, league_id)
-- `GET /nations` → Returns `Nation[]` (id, name)
-- `GET /leagues` → Returns `League[]` (id, name)
-- `GET /positions` → Returns `string[]`
+- `GET /clubs` → Returns `Club[]` (id, name, league_id) — aggregated from Football-Data.org competitions
+- `GET /nations` → Returns `Nation[]` (id, name) — sourced from Football-Data.org areas
+- `GET /leagues` → Returns `League[]` (id, name) — sourced from Football-Data.org competitions
+
+All endpoints fall back to built-in mock data when `FOOTBALL_DATA_API_KEY` is not set or the external API is unreachable.
 
 ### Frontend Storage
 - Player cards stored in Browser Local Storage (serialized JSON)
@@ -81,6 +82,11 @@ football-cards/
 - Keep GEMINI.md in sync with actual patterns
 - Update README.md when changing quick-start steps
 - Add docstrings to public functions (Google-style for Python)
+
+### Environment / API Key
+- Backend reads `FOOTBALL_DATA_API_KEY` from `.env` (copy `.env.example` to get started)
+- No key → mock data returned automatically; the app works without a key
+- Configured competitions are in `FOOTBALL_DATA_COMPETITIONS` (comma-separated codes, e.g. `PL,PD,BL1,SA,FL1`)
 
 ### Testing Standards
 - **Test Pyramid**: Unit → Contract → Integration → E2E

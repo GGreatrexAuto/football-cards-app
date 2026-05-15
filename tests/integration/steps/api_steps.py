@@ -1,3 +1,4 @@
+import os
 from unittest.mock import patch
 
 from behave import given, then, when  # pylint: disable=import-error
@@ -48,3 +49,21 @@ def step_given_external_api_unavailable(context):
 def step_then_response_contains_error(context):
     response_json = context.response.json()
     assert "detail" in response_json
+
+
+@given("the Football-Data.org API key is configured")  # pylint: disable=not-callable
+def step_given_api_key_configured(_context):
+    assert os.environ.get(
+        "FOOTBALL_DATA_API_KEY"
+    ), "FOOTBALL_DATA_API_KEY not set — cannot run external API smoke test"
+
+
+@then('the response should include an "{field}" field')  # pylint: disable=E1102
+def step_then_response_has_field(context, field):
+    assert field in context.response.json()
+
+
+@then('each item in the array should have a "{field}" field')  # pylint: disable=E1102
+def step_then_each_item_has_field(context, field):
+    for item in context.response.json():
+        assert field in item

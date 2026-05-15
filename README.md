@@ -34,16 +34,19 @@ Frontend runs at `http://localhost:3000`
 
 ```bash
 # Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv/Scripts/activate
+python -m venv .venv
+.venv\Scripts\activate  # On macOS/Linux: source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
+# Configure Football-Data.org API key (optional — falls back to mock data without it)
+cp .env.example .env   # then set FOOTBALL_DATA_API_KEY to your free key
+                       # Register at https://www.football-data.org/client/register
+
 # Start backend server
-python app/main.py
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-cd "d:\Gareth's Docs\Gareths Code\Python\football-cards" && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 Backend API runs at `http://localhost:8000`
 
@@ -178,10 +181,11 @@ npm run test:coverage
 
 The backend proxies data from the free **Football-Data.org API**:
 
-- `GET /api/clubs` - List all clubs
-- `GET /api/nations` - List all nationalities
-- `GET /api/leagues` - List all leagues
-- `GET /api/positions` - List all positions (if available)
+- `GET /api/v1/clubs` - List all clubs (aggregated from configured competitions)
+- `GET /api/v1/nations` - List all nationalities (from Football-Data.org areas)
+- `GET /api/v1/leagues` - List all leagues/competitions
+
+When `FOOTBALL_DATA_API_KEY` is not set, all endpoints return built-in mock data so the app works out of the box without an API key.
 
 ### Frontend API Service
 
@@ -248,7 +252,8 @@ See [football-cards-ui/package.json](football-cards-ui/package.json) for complet
 ```
 fastapi
 uvicorn
-requests
+httpx
+pydantic-settings
 ```
 
 See [requirements.txt](requirements.txt) for complete list.
@@ -307,8 +312,8 @@ See [football-cards-ui/src/components/CardForm.tsx](football-cards-ui/src/compon
 ## 📅 Phases Overview
 
 - **Phase 1**: Project planning & requirements (✅ Complete)
-- **Phase 2**: Backend implementation (🔲 Not started)
-- **Phase 3**: Frontend implementation (🔲 In progress)
+- **Phase 2**: Backend implementation (✅ Complete — live Football-Data.org integration with mock fallback)
+- **Phase 3**: Frontend implementation (⏳ In progress — ~80% complete)
 - **Phase 4**: Testing, optimization, deployment (🔲 Not started)
 
 ---
@@ -335,4 +340,4 @@ For issues, questions, or contributions, refer to the project documentation or c
 
 ---
 
-**Last Updated**: April 26, 2026
+**Last Updated**: May 15, 2026
