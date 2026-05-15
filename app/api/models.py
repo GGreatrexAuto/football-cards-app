@@ -15,3 +15,8 @@ class Nation(BaseModel):
 class League(BaseModel):
     id: int
     name: str
+
+
+class Position(BaseModel):
+    code: str
+    name: str

@@ -19,9 +19,11 @@ import {
   getClubs,
   getNationalities,
   getLeagues,
+  getPositions,
   Club,
   Nationality,
   League,
+  Position,
 } from '../services/api';
 import { saveCard, updateCard as updateSavedCard } from '../services/storage';
 
@@ -30,6 +32,7 @@ const CardForm: React.FC = () => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [nationalities, setNationalities] = useState<Nationality[]>([]);
   const [leagues, setLeagues] = useState<League[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState('');
@@ -78,14 +81,17 @@ const CardForm: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [clubsData, nationalitiesData, leaguesData] = await Promise.all([
-          getClubs(),
-          getNationalities(),
-          getLeagues(),
-        ]);
+        const [clubsData, nationalitiesData, leaguesData, positionsData] =
+          await Promise.all([
+            getClubs(),
+            getNationalities(),
+            getLeagues(),
+            getPositions(),
+          ]);
         setClubs(clubsData);
         setNationalities(nationalitiesData);
         setLeagues(leaguesData);
+        setPositions(positionsData);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : 'Unknown error occurred';
@@ -273,10 +279,11 @@ const CardForm: React.FC = () => {
               onChange={(e) => updateCard({ position: e.target.value })}
               label="Position"
             >
-              <MenuItem value="GK">Goalkeeper</MenuItem>
-              <MenuItem value="DEF">Defender</MenuItem>
-              <MenuItem value="MID">Midfielder</MenuItem>
-              <MenuItem value="FWD">Forward</MenuItem>
+              {positions.map((pos) => (
+                <MenuItem key={pos.code} value={pos.code}>
+                  {pos.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>

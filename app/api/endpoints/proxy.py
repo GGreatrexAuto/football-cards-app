@@ -30,3 +30,12 @@ async def get_leagues():
         return await football_api.get_leagues()
     except Exception as exc:
         raise HTTPException(status_code=503, detail="Service Unavailable") from exc
+
+
+@router.get("/positions", response_model=List[models.Position])
+async def get_positions():
+    """Return all player positions."""
+    try:
+        return await football_api.get_positions()
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Service Unavailable") from exc

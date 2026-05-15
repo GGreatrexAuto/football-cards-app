@@ -46,3 +46,10 @@ MOCK_LEAGUES = [
     {"id": 5, "name": "MLS"},
     {"id": 6, "name": "Saudi Pro League"},
 ]
+
+MOCK_POSITIONS = [
+    {"code": "GK", "name": "Goalkeeper"},
+    {"code": "DEF", "name": "Defender"},
+    {"code": "MID", "name": "Midfielder"},
+    {"code": "FWD", "name": "Forward"},
+]

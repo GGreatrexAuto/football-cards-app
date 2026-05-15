@@ -99,6 +99,29 @@ Returns a list of competitions/leagues available from Football-Data.org.
 
 ---
 
+### `GET /api/v1/positions`
+
+Returns the fixed set of player positions. Data is static — no external API is consulted.
+
+**Response `200`** — `Position[]`
+```json
+[
+  { "code": "GK", "name": "Goalkeeper" },
+  { "code": "DEF", "name": "Defender" },
+  { "code": "MID", "name": "Midfielder" },
+  { "code": "FWD", "name": "Forward" }
+]
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `code` | `str` | Short position code used as the stored value |
+| `name` | `str` | Human-readable position label |
+
+**Response `503`** — same as `/clubs` (in practice this cannot occur as data is static).
+
+---
+
 ## Error Format
 
 All error responses use FastAPI's default shape:

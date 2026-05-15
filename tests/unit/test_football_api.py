@@ -4,8 +4,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.services.football_api import get_clubs, get_leagues, get_nations
-from app.services.test_data import MOCK_CLUBS, MOCK_LEAGUES, MOCK_NATIONS
+from app.services.football_api import get_clubs, get_leagues, get_nations, get_positions
+from app.services.test_data import (
+    MOCK_CLUBS,
+    MOCK_LEAGUES,
+    MOCK_NATIONS,
+    MOCK_POSITIONS,
+)
 
 
 def _make_response(json_data: dict) -> MagicMock:
@@ -132,6 +137,20 @@ async def test_get_nations_api_error_falls_back_to_mock():
         result = await get_nations()
 
     assert result == MOCK_NATIONS
+
+
+# ---------------------------------------------------------------------------
+# get_positions
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_get_positions_returns_all_positions():
+    """Positions are static — always returns MOCK_POSITIONS regardless of API key."""
+    result = await get_positions()
+    assert result == MOCK_POSITIONS
+    assert len(result) == 4
+    assert all("code" in p and "name" in p for p in result)
 
 
 # ---------------------------------------------------------------------------

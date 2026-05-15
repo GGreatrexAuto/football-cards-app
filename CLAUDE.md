@@ -27,13 +27,16 @@ football-cards/
 │   ├── unit/
 │   ├── contract/
 │   └── integration/
+├── scripts/                    # Developer convenience scripts
+│   ├── start.sh                # Start both servers (bash)
+│   └── start.ps1               # Start both servers (PowerShell)
 └── docs/plans/                 # Architecture & requirements docs
 ```
 
 ## API Contract
 
 - **Base URL**: `http://localhost:8000/api/v1`
-- **Endpoints**: `GET /clubs`, `GET /nations`, `GET /leagues`
+- **Endpoints**: `GET /clubs`, `GET /nations`, `GET /leagues`, `GET /positions`
 - **CORS**: configured for `localhost:3000` (React dev server)
 - Frontend state managed via React Context API; cards persisted to `localStorage`
 - **External API**: Football-Data.org v4 — set `FOOTBALL_DATA_API_KEY` in `.env` (copy `.env.example`). Without a key the backend returns built-in mock data automatically.
@@ -41,7 +44,11 @@ football-cards/
 ## Quick Start
 
 ```bash
-# Backend (from repo root, .venv activated)
+# Start both servers at once
+bash scripts/start.sh        # Bash (Git Bash / WSL)
+.\scripts\start.ps1          # PowerShell (opens separate windows)
+
+# Or individually — backend (from repo root, .venv activated):
 # Optional: copy .env.example → .env and set FOOTBALL_DATA_API_KEY for live data
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 

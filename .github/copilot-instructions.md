@@ -56,6 +56,7 @@ football-cards/
 - `GET /clubs` → Returns `Club[]` (id, name, league_id) — aggregated from Football-Data.org competitions
 - `GET /nations` → Returns `Nation[]` (id, name) — sourced from Football-Data.org areas
 - `GET /leagues` → Returns `League[]` (id, name) — sourced from Football-Data.org competitions
+- `GET /positions` → Returns `Position[]` (code, name) — static list (GK, DEF, MID, FWD); no external API
 
 All endpoints fall back to built-in mock data when `FOOTBALL_DATA_API_KEY` is not set or the external API is unreachable.
 

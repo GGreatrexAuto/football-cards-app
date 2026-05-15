@@ -19,6 +19,11 @@ export interface League {
   name: string;
 }
 
+export interface Position {
+  code: string;
+  name: string;
+}
+
 export const getClubs = async (): Promise<Club[]> => {
   try {
     const response = await api.get('/clubs');
@@ -49,7 +54,7 @@ export const getLeagues = async (): Promise<League[]> => {
   }
 };
 
-export const getPositions = async (): Promise<string[]> => {
+export const getPositions = async (): Promise<Position[]> => {
   try {
     const response = await api.get('/positions');
     return response.data;

@@ -4,7 +4,12 @@ import '@testing-library/jest-dom';
 import CardForm from './CardForm';
 import CardPreview from './CardPreview';
 import { CardProvider } from '../context/CardContext';
-import { getClubs, getNationalities, getLeagues } from '../services/api';
+import {
+  getClubs,
+  getNationalities,
+  getLeagues,
+  getPositions,
+} from '../services/api';
 import { saveCard } from '../services/storage';
 
 jest.mock('axios', () => ({
@@ -28,11 +33,16 @@ const mockedLeagues = [
   { id: 1, name: 'Test League' },
   { id: 2, name: 'Mock League' },
 ];
+const mockedPositions = [
+  { code: 'GK', name: 'Goalkeeper' },
+  { code: 'FWD', name: 'Forward' },
+];
 
 beforeEach(() => {
   (getClubs as jest.Mock).mockResolvedValue(mockedClubs);
   (getNationalities as jest.Mock).mockResolvedValue(mockedNations);
   (getLeagues as jest.Mock).mockResolvedValue(mockedLeagues);
+  (getPositions as jest.Mock).mockResolvedValue(mockedPositions);
   (saveCard as jest.Mock).mockClear();
 });
 
@@ -183,6 +193,7 @@ describe('CardForm Component', () => {
     expect(getClubs).toHaveBeenCalled();
     expect(getNationalities).toHaveBeenCalled();
     expect(getLeagues).toHaveBeenCalled();
+    expect(getPositions).toHaveBeenCalled();
 
     // Verify form elements are in the document (selects, inputs, buttons)
     expect(screen.getAllByRole('combobox').length).toBeGreaterThanOrEqual(3);

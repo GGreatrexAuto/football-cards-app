@@ -6,7 +6,12 @@ from typing import Any
 import httpx
 
 from app.core.config import settings
-from app.services.test_data import MOCK_CLUBS, MOCK_LEAGUES, MOCK_NATIONS
+from app.services.test_data import (
+    MOCK_CLUBS,
+    MOCK_LEAGUES,
+    MOCK_NATIONS,
+    MOCK_POSITIONS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -97,3 +102,12 @@ async def get_leagues() -> list[dict[str, Any]]:
     except Exception:  # pylint: disable=broad-exception-caught
         logger.warning("External API unavailable for leagues; using mock data")
         return MOCK_LEAGUES
+
+
+async def get_positions() -> list[dict[str, Any]]:
+    """Return available player positions.
+
+    Returns:
+        List of position dicts with code and name.
+    """
+    return MOCK_POSITIONS

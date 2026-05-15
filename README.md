@@ -20,35 +20,46 @@ A web application for creating Ultimate team football/soccer style trading cards
 - **Python** (v3.10+) and pip/conda
 - **Git**
 
-### Frontend Setup
+### First-time setup
 
 ```bash
-cd football-cards-ui
-npm install
-npm start
-```
-
-Frontend runs at `http://localhost:3000`
-
-### Backend Setup
-
-```bash
-# Create virtual environment
+# Create virtual environment and install dependencies
 python -m venv .venv
-.venv\Scripts\activate  # On macOS/Linux: source .venv/bin/activate
+source .venv/Scripts/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 
-# Install dependencies
 pip install -r requirements.txt
+
+cd football-cards-ui && npm install && cd ..
 
 # Configure Football-Data.org API key (optional — falls back to mock data without it)
 cp .env.example .env   # then set FOOTBALL_DATA_API_KEY to your free key
                        # Register at https://www.football-data.org/client/register
-
-# Start backend server
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Backend API runs at `http://localhost:8000`
+### Starting both servers
+
+```bash
+# Bash (Git Bash / WSL)
+bash scripts/start.sh
+
+# PowerShell
+.\scripts\start.ps1
+```
+
+Both scripts start the backend (`http://localhost:8000`) and frontend (`http://localhost:3000`).  
+The bash script runs both in the same terminal — Ctrl+C stops both cleanly.  
+The PowerShell script opens each server in its own terminal window.
+
+### Starting servers individually
+
+```bash
+# Backend
+source .venv/Scripts/activate
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Frontend
+cd football-cards-ui && npm start
+```
 
 ---
 
@@ -91,6 +102,10 @@ football-cards/
 │       ├── frontend-plan.md
 │       ├── testplan.md
 │       └── WIREFRAMES.md
+│
+├── scripts/                      # Developer convenience scripts
+│   ├── start.sh                  # Start both servers (bash)
+│   └── start.ps1                 # Start both servers (PowerShell)
 │
 ├── GEMINI.md                     # Project configuration & conventions
 ├── PHASE_3_FRONTEND_TODO.md      # Frontend implementation tasks

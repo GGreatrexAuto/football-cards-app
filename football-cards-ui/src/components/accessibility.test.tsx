@@ -6,7 +6,12 @@ import CardForm from './CardForm';
 import CardPreview from './CardPreview';
 import CardGallery from './CardGallery';
 import { CardProvider } from '../context/CardContext';
-import { getClubs, getNationalities, getLeagues } from '../services/api';
+import {
+  getClubs,
+  getNationalities,
+  getLeagues,
+  getPositions,
+} from '../services/api';
 import { getSavedCards, deleteCard } from '../services/storage';
 
 jest.mock('axios', () => ({
@@ -40,6 +45,10 @@ beforeEach(() => {
   (getClubs as jest.Mock).mockResolvedValue(mockedClubs);
   (getNationalities as jest.Mock).mockResolvedValue(mockedNations);
   (getLeagues as jest.Mock).mockResolvedValue(mockedLeagues);
+  (getPositions as jest.Mock).mockResolvedValue([
+    { code: 'GK', name: 'Goalkeeper' },
+    { code: 'FWD', name: 'Forward' },
+  ]);
   (getSavedCards as jest.Mock).mockReturnValue(mockedCards);
   (deleteCard as jest.Mock).mockImplementation(() => {});
 });

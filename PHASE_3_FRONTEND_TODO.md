@@ -808,16 +808,26 @@ The gradient (first background) is on top and blocks the image (second backgroun
 ## New Tasks
 
 ### Task 13: Add Positions Endpoint
-- [ ] Implement `/api/v1/positions` endpoint in backend
-- [ ] Add positions data (GK, DEF, MID, FWD)
-- [ ] Update frontend to use dynamic positions from API instead of hardcoded
-- [ ] Test positions dropdown loads from API
+- [x] Implement `/api/v1/positions` endpoint in backend
+- [x] Add positions data (GK, DEF, MID, FWD)
+- [x] Update frontend to use dynamic positions from API instead of hardcoded
+- [x] Test positions dropdown loads from API
 
 ### Task 14: Fix Mocking Bugs for Clubs, Leagues, and Nations
 - [x] Replace mock data in `football_api.py` with real external API calls
 - [x] Implement proper error handling for external API failures
 - [x] Add fallback to mock data if external API is unavailable
 - [x] Update tests to handle both real and mock scenarios
+
+### Task 15: Fix Firefox E2E Compatibility
+Firefox E2E tests are currently excluded from the pre-commit hook because they time out waiting for the form to become editable. Root cause: the loading spinner that shows while API data loads (`getClubs`, `getNationalities`, `getLeagues`, `getPositions`) takes longer to clear in Firefox than in Chromium/WebKit.
+
+- [ ] Reproduce the failure reliably: run `npx playwright test --project=firefox` locally and confirm the `locator.fill` timeout on `player-name`
+- [ ] In `CardCreatorPage.ts` `fillPlayerName()`, add an explicit wait for the loading state to clear before attempting `fill` — e.g. wait for the loading spinner to be hidden or for the submit button to be enabled
+- [ ] Alternatively, increase the per-action timeout in `playwright.config.ts` for Firefox only (use `projects` config with a Firefox-specific `actionTimeout`)
+- [ ] Investigate the `networkidle` timeout in `critical-paths.spec.ts:61` — replace `waitForLoadState('networkidle')` with a more deterministic wait (e.g. wait for a visible element after reload)
+- [ ] Re-enable Firefox in the pre-commit hook (`--project=chromium --project=webkit --project=firefox`) once all tests pass
+- [ ] Confirm all 21 E2E tests pass across Chromium, Firefox, and WebKit before closing this task
 
 ---
 

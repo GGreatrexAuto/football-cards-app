@@ -9,7 +9,12 @@ import {
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import App from '../App';
-import { getClubs, getNationalities, getLeagues } from '../services/api';
+import {
+  getClubs,
+  getNationalities,
+  getLeagues,
+  getPositions,
+} from '../services/api';
 
 jest.setTimeout(20000);
 
@@ -43,6 +48,12 @@ describe('CardCreator integration flow', () => {
     (getClubs as jest.Mock).mockResolvedValue(mockedClubs);
     (getNationalities as jest.Mock).mockResolvedValue(mockedNations);
     (getLeagues as jest.Mock).mockResolvedValue(mockedLeagues);
+    (getPositions as jest.Mock).mockResolvedValue([
+      { code: 'GK', name: 'Goalkeeper' },
+      { code: 'DEF', name: 'Defender' },
+      { code: 'MID', name: 'Midfielder' },
+      { code: 'FWD', name: 'Forward' },
+    ]);
   });
 
   test('fills out form, updates background/photo, saves card, and displays it in gallery', async () => {
