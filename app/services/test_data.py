@@ -21,6 +21,8 @@ MOCK_CLUBS = [
     {"id": 18, "name": "Inter Milan", "league_id": 4},
     {"id": 19, "name": "Napoli", "league_id": 4},
     {"id": 20, "name": "Roma", "league_id": 4},
+    {"id": 21, "name": "Inter Miami", "league_id": 5},
+    {"id": 22, "name": "Al-Nassr", "league_id": 6},
 ]
 
 MOCK_NATIONS = [
@@ -41,4 +43,6 @@ MOCK_LEAGUES = [
     {"id": 2, "name": "Premier League"},
     {"id": 3, "name": "Bundesliga"},
     {"id": 4, "name": "Serie A"},
+    {"id": 5, "name": "MLS"},
+    {"id": 6, "name": "Saudi Pro League"},
 ]

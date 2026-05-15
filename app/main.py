@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,3 +20,12 @@ app.include_router(proxy.router, prefix="/api/v1")
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.get("/api/v1/health")
+def health_check():
+    return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

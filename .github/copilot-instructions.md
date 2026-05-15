@@ -31,11 +31,12 @@ description: "Football Cards App - root-level context for GitHub Copilot with pr
 football-cards/
 ├── app/                    # FastAPI backend
 ├── football-cards-ui/      # React + TypeScript frontend
+│   ├── tests/
+│   │   └── e2e/           # Playwright
 ├── tests/                  # Test pyramid
 │   ├── unit/              # pytest
 │   ├── integration/       # Behave + TestClient
 │   ├── contract/          # API contract tests
-│   └── e2e/               # Playwright
 ├── docs/plans/            # Architecture & requirements
 └── .github/
     └── instructions/      # Context files per directory
@@ -87,6 +88,8 @@ football-cards/
 - **Contract tests**: All API endpoints validated against OpenAPI schema (Schemathesis)
 - **Adjacent test files**: e.g., `Component.tsx` → `Component.test.tsx`
 - **Property-based testing**: Contract tests auto-generate edge cases
+- **E2E Testability**: Add `data-testid` and `aria-label` attributes to interactive elements (inputs, buttons, selects) for reliable Playwright selectors
+- **E2E Imports**: Import `{ expect, test }` from `./base/test-base` in E2E spec files for consistent test utilities
 
 ---
 
@@ -104,11 +107,11 @@ npm start  # Runs on localhost:3000
 ```
 
 **Tests**:
-pytest tests/contract/         # API contract tests (schema validation)
 ```bash
+pytest tests/contract/         # API contract tests (schema validation)
 pytest tests/unit              # Unit tests
 behave tests/integration       # BDD integration tests
-npm test                       # Component & e2e (from football-cards-ui/)
+cd football-cards-ui && npm run test:e2e  # E2E tests
 ```
 
 ---

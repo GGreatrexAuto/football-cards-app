@@ -29,7 +29,7 @@ All tests have an appropriate place on the test pyramid, tests should be shifted
 *   **Unit Tests**: Use `pytest` for unit tests. Test files are located in the `tests/unit` directory and should mirror the structure of the application code.
 *   **Contract Tests**: API contracts should be tested using schemathesis `tests/contract`
 *   **Integration Tests**: Integration tests are written with `behave` and are located in `tests/integration`.
-*   **E2E Tests**: Front end app tests should implement `playwright` and are located in `tests/e2e` 
+*   **E2E Tests**: Front end app tests should implement `playwright` and are located in `football-cards-ui/tests/e2e` 
 *   **Coverage Target**: Minimum 80% globally
 *   **CI/CD**: To be decided, but we would be looking for a low cost / free option
 
@@ -39,11 +39,12 @@ All tests have an appropriate place on the test pyramid, tests should be shifted
 football-cards/
 ├── app/                    # Backend (FastAPI)
 ├── football-cards-ui/      # Frontend (React + TypeScript)
+│   ├── tests/
+│   │   └── e2e/
 ├── tests/                  # Test files
 │   ├── unit/
 │   ├── contract/
-│   ├── integration/
-│   └── e2e/
+│   └── integration/
 ├── docs/                   # Documentation
 │   └── plans/
 ├── README.md               # Project overview & quick start

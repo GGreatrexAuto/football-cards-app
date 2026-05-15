@@ -1,13 +1,13 @@
 ---
 name: e2e-playwright
-description: "Use when: writing end-to-end tests in tests/e2e/ - Playwright test syntax, selectors, user workflows, assertions"
-applyTo: "tests/e2e/**"
+description: "Use when: writing end-to-end tests in football-cards-ui/tests/e2e/ - Playwright test syntax, selectors, user workflows, assertions"
+applyTo: "football-cards-ui/tests/e2e/**"
 ---
 
 # E2E Tests (Playwright) Context
 
 ## 📍 Scope
-This applies to end-to-end tests in `tests/e2e/` using Playwright test framework.
+This applies to end-to-end tests in `football-cards-ui/tests/e2e/` using Playwright test framework.
 
 ---
 
@@ -25,7 +25,7 @@ Playwright is a browser automation framework for **E2E testing**:
 
 ### Directory Structure
 ```
-tests/e2e/
+football-cards-ui/tests/e2e/
 ├── card-creation.spec.ts    # E2E test file (.spec.ts)
 └── [more .spec.ts files]
 ```
@@ -40,7 +40,7 @@ tests/e2e/
 
 ### Basic Test File Template
 
-**File: `tests/e2e/card-creation.spec.ts`**
+**File: `football-cards-ui/tests/e2e/card-creation.spec.ts`**
 
 ```typescript
 import { test, expect } from '@playwright/test';
@@ -238,7 +238,7 @@ await expect(page.locator('.success-message')).toBeVisible({
 
 ## 🧪 Complete E2E Test Example
 
-**File: `tests/e2e/card-creation.spec.ts`**
+**File: `football-cards-ui/tests/e2e/card-creation.spec.ts`**
 
 ```typescript
 import { test, expect } from '@playwright/test';

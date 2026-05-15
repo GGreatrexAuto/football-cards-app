@@ -311,20 +311,20 @@
 - [ ] Implement E2E tests from plan (D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\e2e-test-framework-plan.md)
 
 ### Subtask 12.9: E2E Tests - Full Card Creation Journey (Playwright)
-- [ ] **Scenario 1: Full Card Creation & Save**
-  - [ ] Navigate to app
-  - [ ] Enter player name
-  - [ ] Select club from dropdown
-  - [ ] Select nationality from dropdown
-  - [ ] Select league from dropdown
-  - [ ] Select position from dropdown
-  - [ ] Click randomize stats button
-  - [ ] Verify stats populated with random values
-  - [ ] Upload player photo
-  - [ ] Select card background
-  - [ ] Click Save button
-  - [ ] Verify success message
-  - [ ] Verify card appears in preview
+- [x] **Scenario 1: Full Card Creation & Save**
+  - [x] Navigate to app
+  - [x] Enter player name
+  - [x] Select club from dropdown
+  - [x] Select nationality from dropdown
+  - [x] Select league from dropdown
+  - [x] Select position from dropdown
+  - [x] Click randomize stats button
+  - [x] Verify stats populated with random values
+  - [x] Upload player photo
+  - [x] Select card background
+  - [x] Click Save button
+  - [x] Verify success message
+  - [x] Verify card appears in preview
 
 ### Subtask 12.10: E2E Tests - Card Gallery & Loading (Playwright)
 - [ ] **Scenario 2: View & Load Saved Card**

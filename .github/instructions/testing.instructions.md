@@ -33,7 +33,7 @@ Tests follow a **shift-left, pyramid-shaped strategy**:
 | **Unit** | pytest | `tests/unit/` | Single function/component | ⚡ Fast |
 | **Contract** | Schemathesis | `tests/contract/` | API schema compliance (OpenAPI) | ⚡ Fast |
 | **Integration** | Behave + TestClient | `tests/integration/` | API endpoints + business logic | 🔶 Medium |
-| **E2E** | Playwright | `tests/e2e/` | Full user workflows | 🐢 Slow |
+| **E2E** | Playwright | `football-cards-ui/tests/e2e/` | Full user workflows | 🐢 Slow |
 
 ### Coverage Target
 **Minimum 80% globally** - Higher for critical paths (core business logic).

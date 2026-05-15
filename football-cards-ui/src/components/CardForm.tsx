@@ -193,14 +193,23 @@ const CardForm: React.FC = () => {
         fullWidth
         value={card.playerName}
         onChange={(e) => updateCard({ playerName: e.target.value })}
+        inputProps={{
+          'data-testid': 'player-name',
+          'aria-label': 'Player Name',
+        }}
       />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
-            <InputLabel>Club</InputLabel>
+            <InputLabel id="club-label">Club</InputLabel>
             <Select
+              labelId="club-label"
+              id="club-select"
+              data-testid="club-select"
+              aria-label="Club"
               value={card.club}
               onChange={(e) => updateCard({ club: e.target.value })}
+              label="Club"
             >
               {clubs?.map((club) => (
                 <MenuItem key={club.id} value={club.name}>
@@ -212,10 +221,15 @@ const CardForm: React.FC = () => {
         </Box>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
-            <InputLabel>Nationality</InputLabel>
+            <InputLabel id="nationality-label">Nationality</InputLabel>
             <Select
+              labelId="nationality-label"
+              id="nationality-select"
+              data-testid="nationality-select"
+              aria-label="Nationality"
               value={card.nationality}
               onChange={(e) => updateCard({ nationality: e.target.value })}
+              label="Nationality"
             >
               {nationalities?.map((nationality) => (
                 <MenuItem key={nationality.id} value={nationality.name}>
@@ -229,10 +243,15 @@ const CardForm: React.FC = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
-            <InputLabel>League</InputLabel>
+            <InputLabel id="league-label">League</InputLabel>
             <Select
+              labelId="league-label"
+              id="league-select"
+              data-testid="league-select"
+              aria-label="League"
               value={card.league}
               onChange={(e) => updateCard({ league: e.target.value })}
+              label="League"
             >
               {leagues?.map((league) => (
                 <MenuItem key={league.id} value={league.name}>
@@ -244,10 +263,15 @@ const CardForm: React.FC = () => {
         </Box>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
-            <InputLabel>Position</InputLabel>
+            <InputLabel id="position-label">Position</InputLabel>
             <Select
+              labelId="position-label"
+              id="position-select"
+              data-testid="position-select"
+              aria-label="Position"
               value={card.position}
               onChange={(e) => updateCard({ position: e.target.value })}
+              label="Position"
             >
               <MenuItem value="GK">Goalkeeper</MenuItem>
               <MenuItem value="DEF">Defender</MenuItem>
@@ -260,10 +284,15 @@ const CardForm: React.FC = () => {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
-            <InputLabel>Preferred Foot</InputLabel>
+            <InputLabel id="preferred-foot-label">Preferred Foot</InputLabel>
             <Select
+              labelId="preferred-foot-label"
+              id="preferred-foot-select"
+              data-testid="preferred-foot-select"
+              aria-label="Preferred Foot"
               value={card.preferredFoot}
               onChange={(e) => updateCard({ preferredFoot: e.target.value })}
+              label="Preferred Foot"
             >
               <MenuItem value="Left">Left</MenuItem>
               <MenuItem value="Right">Right</MenuItem>
@@ -278,7 +307,12 @@ const CardForm: React.FC = () => {
             fullWidth
             value={card.defence}
             onChange={(e) => updateCard({ defence: Number(e.target.value) })}
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{
+              min: 0,
+              max: 100,
+              'data-testid': 'defence-input',
+              'aria-label': 'Defence',
+            }}
           />
         </Box>
         <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
@@ -288,7 +322,12 @@ const CardForm: React.FC = () => {
             fullWidth
             value={card.control}
             onChange={(e) => updateCard({ control: Number(e.target.value) })}
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{
+              min: 0,
+              max: 100,
+              'data-testid': 'control-input',
+              'aria-label': 'Control',
+            }}
           />
         </Box>
         <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
@@ -298,11 +337,22 @@ const CardForm: React.FC = () => {
             fullWidth
             value={card.attack}
             onChange={(e) => updateCard({ attack: Number(e.target.value) })}
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{
+              min: 0,
+              max: 100,
+              'data-testid': 'attack-input',
+              'aria-label': 'Attack',
+            }}
           />
         </Box>
       </Box>
-      <Button variant="contained" onClick={handleRandomizeStats} fullWidth>
+      <Button
+        variant="contained"
+        onClick={handleRandomizeStats}
+        fullWidth
+        data-testid="randomize-stats"
+        aria-label="Randomize Stats"
+      >
         🎲 Randomize Stats
       </Button>
 
@@ -316,11 +366,17 @@ const CardForm: React.FC = () => {
             accept="image/*"
             style={{ display: 'none' }}
             id="photo-upload"
+            data-testid="photo-upload"
             type="file"
             onChange={handleFileUpload}
           />
           <label htmlFor="photo-upload">
-            <Button variant="outlined" component="span" fullWidth>
+            <Button
+              variant="outlined"
+              component="span"
+              fullWidth
+              aria-label="Upload Photo"
+            >
               Upload Photo
             </Button>
           </label>
@@ -331,15 +387,27 @@ const CardForm: React.FC = () => {
             fullWidth
             value={photoUrl}
             onChange={(e) => setPhotoUrl(e.target.value)}
+            inputProps={{
+              'data-testid': 'photo-url',
+              'aria-label': 'Photo URL',
+            }}
           />
-          <Button variant="outlined" onClick={handleUrlInput}>
+          <Button
+            variant="outlined"
+            onClick={handleUrlInput}
+            data-testid="set-url"
+            aria-label="Set Photo URL"
+          >
             Set URL
           </Button>
         </Box>
         <Typography variant="subtitle2" gutterBottom>
           Or select a stock photo:
         </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Box
+          data-testid="stock-photos"
+          sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
+        >
           {stockPhotos.map((photo) => (
             <Box key={photo.id} sx={{ flex: '0 0 30%', minWidth: '80px' }}>
               <Card
@@ -351,6 +419,7 @@ const CardForm: React.FC = () => {
                       : '1px solid #ccc',
                 }}
                 onClick={() => updateCard({ playerPhoto: photo.url })}
+                data-testid={`stock-photo-${photo.id}`}
               >
                 <CardMedia
                   component="img"
@@ -381,6 +450,7 @@ const CardForm: React.FC = () => {
                       : '1px solid #ccc',
                 }}
                 onClick={() => updateCard({ cardBackground: bg.url })}
+                data-testid={`background-${bg.name.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 <CardMedia
                   component="img"
@@ -397,22 +467,46 @@ const CardForm: React.FC = () => {
         </Box>
       </Box>
 
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleSaveCard}
-        fullWidth
-      >
-        Save Card
-      </Button>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleSaveCard}
+          fullWidth
+          data-testid="save-card"
+          aria-label="Save Card"
+        >
+          Save Card
+        </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          size="large"
+          onClick={() => {
+            resetCard();
+            setPhotoUrl('');
+            setValidationError('');
+            setSuccessMessage('');
+          }}
+          fullWidth
+          data-testid="reset-form"
+          aria-label="Reset Form"
+        >
+          Reset Form
+        </Button>
+      </Box>
 
       <Snackbar
         open={Boolean(successMessage)}
         autoHideDuration={3000}
         onClose={() => setSuccessMessage('')}
       >
-        <Alert severity="success" onClose={() => setSuccessMessage('')}>
+        <Alert
+          severity="success"
+          onClose={() => setSuccessMessage('')}
+          data-testid="success-message"
+        >
           {successMessage}
         </Alert>
       </Snackbar>
@@ -422,7 +516,11 @@ const CardForm: React.FC = () => {
         autoHideDuration={4000}
         onClose={() => setValidationError('')}
       >
-        <Alert severity="error" onClose={() => setValidationError('')}>
+        <Alert
+          severity="error"
+          onClose={() => setValidationError('')}
+          data-testid="error-message"
+        >
           {validationError}
         </Alert>
       </Snackbar>

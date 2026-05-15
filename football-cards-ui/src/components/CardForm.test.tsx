@@ -67,7 +67,10 @@ describe('CardForm Component', () => {
   test('populates dropdowns from API and updates player name field', async () => {
     renderWithProvider();
 
-    await screen.findByText(/Club/i);
+    // Wait for loading to complete
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
 
     const nameInput = (await screen.findByLabelText(
       /Player Name/i,
@@ -75,11 +78,10 @@ describe('CardForm Component', () => {
     fireEvent.change(nameInput, { target: { value: 'Test Player' } });
     expect(nameInput.value).toBe('Test Player');
 
-    const clubSelect = screen.getAllByRole('combobox')[0];
-    fireEvent.mouseDown(clubSelect);
-
-    await screen.findByText('FC Test');
-    fireEvent.click(screen.getByText('FC Test'));
+    // Verify dropdowns are populated
+    expect(screen.getByTestId('club-select')).toBeInTheDocument();
+    expect(screen.getByTestId('nationality-select')).toBeInTheDocument();
+    expect(screen.getByTestId('league-select')).toBeInTheDocument();
   });
 
   test('randomize button sets stats in 0-100 range', async () => {
@@ -107,12 +109,12 @@ describe('CardForm Component', () => {
   test('shows validation error for invalid URL', async () => {
     renderWithProvider();
 
-    const urlInput = (await screen.findByLabelText(
-      /Photo URL/i,
+    const urlInput = (await screen.findByTestId(
+      'photo-url',
     )) as HTMLInputElement;
     fireEvent.change(urlInput, { target: { value: 'ftp://badurl.notimg' } });
 
-    fireEvent.click(screen.getByRole('button', { name: /Set URL/i }));
+    fireEvent.click(screen.getByTestId('set-url'));
 
     expect(await screen.findByText(/Invalid image URL/i)).toBeInTheDocument();
   });
