@@ -1,7 +1,10 @@
 import { expect, test } from './base/test-base';
 import { CardCreatorPage } from './base/page-objects/CardCreatorPage';
-import { SAMPLE_PLAYERS } from './base/fixtures/test-data';
 import { clearBrowserStorage } from './base/helpers/test-helpers';
+
+// NOTE: Form validation, randomize-stat range, and form reset are covered
+// at component level in CardForm.test.tsx and CardContext.test.tsx.
+// This spec tests only what a real browser + real backend can prove.
 
 test.describe('Card Creation Journey', () => {
   let cardCreator: CardCreatorPage;
@@ -12,7 +15,9 @@ test.describe('Card Creation Journey', () => {
     await testBase.gotoApp();
   });
 
-  test('@smoke should create a card successfully', async () => {
+  test('@smoke should create a card and persist it in localStorage', async ({
+    page,
+  }) => {
     await cardCreator.fillCardForm({
       name: 'Test Player',
       club: 'Arsenal',
@@ -22,55 +27,21 @@ test.describe('Card Creation Journey', () => {
     });
 
     await cardCreator.randomizeStats();
-    const stats = await cardCreator.getStats();
-
-    expect(stats.defence).toBeGreaterThanOrEqual(0);
-    expect(stats.defence).toBeLessThanOrEqual(100);
-    expect(stats.control).toBeGreaterThanOrEqual(0);
-    expect(stats.control).toBeLessThanOrEqual(100);
-    expect(stats.attack).toBeGreaterThanOrEqual(0);
-    expect(stats.attack).toBeLessThanOrEqual(100);
-
     await cardCreator.selectBackground('Classic Green');
     await cardCreator.saveCard();
 
     expect(await cardCreator.isSuccessMessageVisible()).toBeTruthy();
     const successMessage = await cardCreator.getSuccessMessage();
     expect(successMessage).toContain('Card saved successfully');
-  });
 
-  test('should handle form validation errors', async () => {
-    await cardCreator.saveCard();
-    expect(await cardCreator.isErrorMessageVisible()).toBeTruthy();
-  });
+    // Navigate away and back to verify real localStorage persistence
+    await page.click('text=My Cards');
+    await page.waitForLoadState('networkidle');
 
-  test('should randomize stats correctly', async () => {
-    await cardCreator.randomizeStats();
-    const stats1 = await cardCreator.getStats();
-
-    await cardCreator.randomizeStats();
-    const stats2 = await cardCreator.getStats();
-
-    const statsChanged =
-      stats1.defence !== stats2.defence ||
-      stats1.control !== stats2.control ||
-      stats1.attack !== stats2.attack;
-
-    expect(statsChanged).toBeTruthy();
-  });
-
-  test('should create card with predefined player data', async () => {
-    await cardCreator.fillCardForm(SAMPLE_PLAYERS.CRISTIANO_RONALDO);
-    await cardCreator.selectBackground('Classic Green');
-    await cardCreator.saveCard();
-    expect(await cardCreator.isSuccessMessageVisible()).toBeTruthy();
-  });
-
-  test('should clear form on reset', async () => {
-    await cardCreator.fillCardForm(SAMPLE_PLAYERS.TEST_PLAYER);
-    await cardCreator.resetForm();
-
-    const nameValue = await cardCreator.playerNameInput.inputValue();
-    expect(nameValue).toBe('');
+    const cards = await page.evaluate(() =>
+      JSON.parse(localStorage.getItem('football-cards') || '[]'),
+    );
+    expect(cards).toHaveLength(1);
+    expect(cards[0].playerName).toBe('Test Player');
   });
 });

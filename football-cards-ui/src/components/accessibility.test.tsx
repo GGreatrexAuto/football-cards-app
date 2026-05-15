@@ -1,0 +1,186 @@
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import { axe } from 'jest-axe';
+import '@testing-library/jest-dom';
+import CardForm from './CardForm';
+import CardPreview from './CardPreview';
+import CardGallery from './CardGallery';
+import { CardProvider } from '../context/CardContext';
+import { getClubs, getNationalities, getLeagues } from '../services/api';
+import { getSavedCards, deleteCard } from '../services/storage';
+
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({ get: jest.fn() })),
+}));
+jest.mock('../services/api');
+jest.mock('../services/storage');
+
+const mockedClubs = [{ id: 1, name: 'FC Test' }];
+const mockedNations = [{ id: 1, name: 'Testland' }];
+const mockedLeagues = [{ id: 1, name: 'Test League' }];
+const mockedCards = [
+  {
+    cardId: 'card_001',
+    playerName: 'Test Player',
+    club: 'FC Test',
+    nationality: 'Testland',
+    league: 'Test League',
+    position: 'Forward',
+    preferredFoot: 'Right',
+    defence: 70,
+    control: 75,
+    attack: 80,
+    rating: 75,
+    playerPhoto: '',
+    cardBackground: '',
+  },
+];
+
+beforeEach(() => {
+  (getClubs as jest.Mock).mockResolvedValue(mockedClubs);
+  (getNationalities as jest.Mock).mockResolvedValue(mockedNations);
+  (getLeagues as jest.Mock).mockResolvedValue(mockedLeagues);
+  (getSavedCards as jest.Mock).mockReturnValue(mockedCards);
+  (deleteCard as jest.Mock).mockImplementation(() => {});
+});
+
+describe('Accessibility — WCAG violations (axe)', () => {
+  test('CardForm has no axe violations after API data loads', async () => {
+    const { container } = render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  test('CardPreview has no axe violations', async () => {
+    const { container } = render(
+      <CardProvider>
+        <CardPreview />
+      </CardProvider>,
+    );
+
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  test('CardGallery has no axe violations when cards are present', async () => {
+    const { container } = render(
+      <CardProvider>
+        <CardGallery />
+      </CardProvider>,
+    );
+
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+
+describe('Accessibility — aria-labels and alt text', () => {
+  test('CardForm: all key inputs are accessible by label', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    expect(screen.getByLabelText(/player name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/defence/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/control/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/attack/i)).toBeInTheDocument();
+  });
+
+  test('CardForm: action buttons have accessible names', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    expect(
+      screen.getByRole('button', { name: /randomize stats/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /save card/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /reset form/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('CardForm: stock photo images have alt text', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const photoImages = screen.queryAllByRole('img');
+    photoImages.forEach((img) => {
+      expect(img).toHaveAttribute('alt');
+    });
+  });
+
+  test('CardGallery: Edit and Delete buttons have accessible names', () => {
+    render(
+      <CardProvider>
+        <CardGallery />
+      </CardProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+  });
+});
+
+describe('Accessibility — keyboard navigation', () => {
+  test('CardForm: key inputs are focusable and reachable via keyboard', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const playerNameInput = screen.getByLabelText(/player name/i);
+    const defenceInput = screen.getByLabelText(/defence/i);
+    const controlInput = screen.getByLabelText(/control/i);
+    const attackInput = screen.getByLabelText(/attack/i);
+
+    // Verify each key input can receive focus — confirms it is not disabled or
+    // removed from the tab sequence. Uses toHaveFocus() (jest-dom) not document.activeElement.
+    playerNameInput.focus();
+    expect(playerNameInput).toHaveFocus();
+
+    defenceInput.focus();
+    expect(defenceInput).toHaveFocus();
+
+    controlInput.focus();
+    expect(controlInput).toHaveFocus();
+
+    attackInput.focus();
+    expect(attackInput).toHaveFocus();
+  });
+});

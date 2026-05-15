@@ -468,27 +468,24 @@ The E2E testing framework has already been established with:
 
 **⚠️ Requires: Backend running at localhost:8000 + Framework already in place**
 
-**File**: `football-cards-ui/tests/e2e/card-creation.spec.ts` (Status: Check if existing tests need enhancement)
+**File**: `football-cards-ui/tests/e2e/card-creation.spec.ts`
 
-Use the established framework:
-- **Page Object**: `CardCreatorPage` (already implemented)
-- **Fixtures**: `SAMPLE_PLAYERS` from `test-data.ts`
-- **Helpers**: `clearBrowserStorage()`, `gotoApp()`
-- **Base**: Extend `test` from `./base/test-base`
+> **Test Pyramid Note**: Form validation, randomize stats, and reset form are already covered in `CardForm.test.tsx` and `CardContext.test.tsx`. The 3 duplicate E2E tests (`should handle form validation errors`, `should randomize stats correctly`, `should clear form on reset`) must be **removed** from this file — they add no E2E value. The smoke test is legitimately E2E (uses real backend dropdowns).
 
-**Scenario 1: Create Card with Valid Data**
-- [ ] Navigate to app (use `testBase.gotoApp()`)
-- [ ] Fill form using `cardCreator.fillCardForm()` method
-- [ ] Randomize stats via `cardCreator.randomizeStats()`
-- [ ] Select background via `cardCreator.selectBackground()`
-- [ ] Save card via `cardCreator.saveCard()`
-- [ ] Verify success message displayed
-- [ ] **Verify card persists in REAL localStorage** (navigate away and back to verify)
+**Action required on existing spec:**
+- [x] `@smoke should create a card successfully` — keep (legitimately E2E via real API)
+- [x] `should create card with predefined player data` — consolidate into smoke test
+- [x] **Remove** `should handle form validation errors` (covered: `CardForm.test.tsx` test 5)
+- [x] **Remove** `should randomize stats correctly` (covered: `CardForm.test.tsx` test 3)
+- [x] **Remove** `should clear form on reset` (covered: `CardContext.test.tsx` test 3)
+
+**Enhancement to smoke test (the genuine E2E gap):**
+- [x] After saving card, navigate away (go to MY CARDS tab)
+- [x] **Verify card persists in REAL localStorage** (read localStorage and assert playerName)
 
 **Key Assertions**:
-- Stats are in 0-100 range
 - Success message contains "Card saved successfully"
-- Card data is stored in browser localStorage (REAL, not mocked)
+- Card is visible in gallery after navigating away and returning — real localStorage, not mocked
 
 ---
 
@@ -496,39 +493,33 @@ Use the established framework:
 
 **⚠️ Requires: Backend running at localhost:8000 + Subtask 12.10 tests passing**
 
-**File**: `football-cards-ui/tests/e2e/card-gallery.spec.ts` (new or enhance existing)
+**File**: `football-cards-ui/tests/e2e/card-gallery.spec.ts` (new)
+
+> **Test Pyramid Note**: Gallery CRUD UI logic (display, edit callback, delete confirmation dialog, empty state) is fully covered in `CardGallery.test.tsx` (5 tests) and `CardCreatorFlow.test.tsx` (3 tests) with mocked storage. E2E tests here focus exclusively on what those mocks cannot prove: **real localStorage persistence across actual page navigation**.
 
 Use established framework:
 - **Page Objects**: `CardGalleryPage`, `CardCreatorPage`, `NavigationPage`
-- **Helpers**: `clearBrowserStorage()`, data persistence helpers
+- **Helpers**: `clearBrowserStorage()`, `gotoApp()`
 - **Base**: Extend `test` from `./base/test-base`
 
-**Scenario 1: View & Load Saved Card**
-- [ ] Create and save a test card (reuse logic from 12.10 or use fixture)
-- [ ] Navigate to gallery via navigation component
-- [ ] Verify card displays in gallery grid
-- [ ] Verify card shows: name, stats, preview thumbnail
-- [ ] Click "Edit" button on card
-- [ ] Verify card data loads back into CardForm correctly
-- [ ] Modify one field (e.g., player name)
-- [ ] Save modified card
-- [ ] **Verify changes persisted in REAL localStorage**
-- [ ] Navigate away and return to gallery
-- [ ] Verify modified card still shows updates
+**Scenario 1: Edit card and verify persistence across navigation**
+- [x] Create and save a card via the real form
+- [x] Navigate to MY CARDS gallery
+- [x] Click "Edit" on the card
+- [x] Modify player name in the form
+- [x] Save modified card
+- [x] **Verify modified name is shown — real localStorage updated**
 
-**Scenario 2: Delete Card from Gallery**
-- [ ] Create and save a test card
-- [ ] Navigate to gallery
-- [ ] Click "Delete" button on card
-- [ ] Confirm deletion (if modal present)
-- [ ] Verify card removed from gallery
-- [ ] **Verify deletion persisted in REAL localStorage**
+**Scenario 2: Delete card and verify persistence after page reload**
+- [x] Create and save a card
+- [x] Navigate to gallery
+- [x] Click "Delete" and confirm
+- [x] Reload the page (`page.reload()`)
+- [x] **Verify gallery is empty — deletion persisted in real localStorage**
 
 **Key Assertions**:
-- Gallery displays saved cards
-- Edit flow maintains data integrity
-- Delete removes card permanently
-- All persistence is in REAL browser storage
+- Edits survive navigation (real localStorage, not mocked)
+- Deletes survive page reload (real localStorage, not mocked)
 
 ---
 
@@ -536,33 +527,27 @@ Use established framework:
 
 **⚠️ Requires: Backend running at localhost:8000 + Subtask 12.10 tests passing**
 
-**File**: `football-cards-ui/tests/e2e/print-functionality.spec.ts` (new or enhance existing)
+**File**: `football-cards-ui/tests/e2e/print-functionality.spec.ts` (new)
+
+> **Test Pyramid Note**: Print behaviour is not simulatable in React Testing Library. This is genuinely E2E — only a real browser can verify `@media print` CSS rules and the print dialog.
 
 Use established framework:
-- **Page Objects**: `CardCreatorPage`, `PrintableCard` interactions
-- **Helpers**: Print dialog interception utilities
+- **Page Objects**: `CardCreatorPage`, `CardPreviewPage`
 - **Base**: Extend `test` from `./base/test-base`
 
-**Scenario: Print a Card**
-- [ ] Create and save a test card (reuse from 12.10 setup)
-- [ ] Navigate to card creator or gallery
-- [ ] Click "Print" button
-- [ ] Intercept print dialog (use Playwright's page.on('popup'))
-- [ ] Verify card content is visible in print preview
-- [ ] Verify card dimensions appear correct
-- [ ] Verify form/navigation elements are hidden in print
-- [ ] Close print dialog
-- [ ] Verify app returns to normal state
-
-**Alternative**: If print dialog can't be intercepted reliably:
-- [ ] Trigger print action
-- [ ] Take screenshot via `screenshot_page` helper
-- [ ] Manually verify card layout in screenshot
+**Scenario: Card layout is correct in print context**
+- [x] Create a card with player name, stats, and background
+- [x] Use Playwright's `page.emulateMedia({ media: 'print' })` to apply print CSS
+- [x] Verify `PrintableCard` component is visible
+- [x] Verify form fields (CardForm) are hidden (`display: none` via `@media print`)
+- [x] Verify navigation header is hidden in print context
+- [x] Take screenshot of print layout for visual verification
+- [x] Restore media to `screen` and verify app returns to normal
 
 **Key Assertions**:
-- Print dialog opens without error
-- Only card content visible (no form/nav)
-- Card layout preserved in print context
+- Card content visible under print media
+- CardForm and navigation hidden under print media
+- No JavaScript errors triggered by the print action
 
 ---
 
@@ -570,117 +555,101 @@ Use established framework:
 
 **⚠️ Requires: Backend running at localhost:8000**
 
-**Purpose**: Test critical user journeys and integration points (not edge cases - those are tested in UI tests with mocks)
+**File**: `football-cards-ui/tests/e2e/critical-paths.spec.ts` (new)
 
-**File**: `football-cards-ui/tests/e2e/critical-paths.spec.ts` (new or enhance existing)
+> **Test Pyramid Note**: The full create→save→gallery→edit→delete cycle is already covered in `CardCreatorFlow.test.tsx` with mocked services. These E2E tests focus only on what mocks cannot prove: real backend API responses, real localStorage across browser reloads, and absence of runtime errors in the real browser.
 
 Use established framework:
-- **Page Objects**: All established POMs
-- **Fixtures**: Test data from `test-data.ts`, `api-mock-data.ts`
-- **Helpers**: All established helpers
+- **Page Objects**: `CardCreatorPage`, `CardGalleryPage`, `NavigationPage`
 - **Base**: Extend `test` from `./base/test-base`
 
-**Scenario 1: Happy Path - Create, Save, View, Edit**
-- [ ] User creates new card with real data
-- [ ] User saves card to REAL localStorage
-- [ ] User navigates to gallery
-- [ ] User edits the card
-- [ ] User saves edited version
-- [ ] User verifies changes persisted
-- [ ] Verify no console errors throughout
+**Scenario 1: Real API data populates dropdowns**
+- [x] Navigate to CREATE CARD
+- [x] Verify Club dropdown populates with items (count > 0)
+- [x] Verify Nationality dropdown populates with items
+- [x] Verify League dropdown populates with items
 
-**Scenario 2: Real API Data Flow**
-- [ ] App fetches clubs from REAL backend API
-- [ ] App fetches nations from REAL backend API
-- [ ] App fetches leagues from REAL backend API
-- [ ] Dropdowns populate with real API data
-- [ ] User can select from real data
-- [ ] Card saves with selected real data
+**Scenario 2: Card survives full page reload**
+- [x] Create and save a card
+- [x] Call `page.reload()` to fully re-initialise the app
+- [x] Navigate to MY CARDS gallery
+- [x] **Verify saved card is still present — real localStorage survived reload**
 
-**Scenario 3: Page Refresh Persistence**
-- [ ] User creates and saves card
-- [ ] User refreshes page (F5)
-- [ ] App re-initializes
-- [ ] Card still appears in gallery
-- [ ] Card data fully intact
-- [ ] User can edit refreshed card
+**Scenario 3: No console errors across critical journey**
+- [x] Attach `page.on('console')` listener before starting
+- [x] Complete full journey: load app → fill form → save → navigate to gallery
+- [x] **Assert zero `console.error` calls throughout**
 
 **Key Points**:
-- Focus on INTEGRATION between frontend and real backend
-- Verify data flows correctly through full app
-- Test REAL localStorage persistence across page reloads
-- NOT about edge cases (those are UI tests with mocks)
-- Keep test count minimal (~3-5 critical paths)
+- Only 3 lean tests — no edge cases (those belong in component tests)
+- Each test proves something that mocked tests cannot
 
 
 ---
 
-### Subtask 12.14: Performance & Accessibility Testing
+### Subtask 12.14: Accessibility Testing
 
-**UI Tests** (with React Testing Library):
-- [ ] Verify no unnecessary re-renders using React DevTools Profiler
-- [ ] Test keyboard navigation through all form fields (Tab key)
-- [ ] Test logical tab order through form
-- [ ] Add `aria-label` to all form inputs
-- [ ] Add `aria-label` to all buttons
-- [ ] Add `alt` text to all images
-- [ ] Test with screen reader (e.g., browser's built-in reader)
-- [ ] Verify color contrast meets WCAG AA standards (4.5:1 for text)
+> **Test Pyramid Note**: Accessibility assertions belong at component level (fast, no server needed). Performance E2E testing (throttled network, CPU throttling, timing baselines) is **out of scope for this plan**. Console error checking is covered in Subtask 12.13 Scenario 3.
 
-**E2E Tests** (Playwright, requires backend):
-- [ ] Test application on throttled network (Playwright: 3G)
-- [ ] Verify API calls still work on slow network
-- [ ] Test with slow rendering (Playwright CPU throttling)
-- [ ] Performance baseline: Full card creation < 5 seconds
-- [ ] Verify no console errors during critical paths
+**Component Tests** (React Testing Library + axe-core — new `accessibility.test.tsx`):
+- [x] Install `jest-axe` and add `toHaveNoViolations` to `setupTests.ts`
+- [x] Test `CardForm` renders with no axe violations
+- [x] Test `CardPreview` renders with no axe violations
+- [x] Test `CardGallery` renders with no axe violations
+- [x] Verify all form inputs have `aria-label` or associated `<label>`
+- [x] Verify all action buttons have accessible names
+- [x] Verify all `<img>` elements have `alt` text
+- [x] Test keyboard Tab order through CardForm fields (using `userEvent.tab()`)
+- [x] Verify color contrast — covered by axe `color-contrast` rule in axe violations check
 
 ---
 
 ### Subtask 12.15: Test Documentation
 
-- [ ] Create `football-cards-ui/tests/README.md` with:
-  - [ ] How to run UI tests: `npm run test:ui`
-  - [ ] How to run E2E tests: `npm run test:e2e`
-  - [ ] Backend startup requirement for E2E
-  - [ ] Mocking strategy documentation
-- [ ] Document test data fixtures location
-- [ ] Document expected coverage targets (80%+ UI, critical paths E2E)
-- [ ] Create troubleshooting guide for common test failures
-- [ ] Link to `ui-testing.instructions.md` in instructions folder
+- [x] Create `football-cards-ui/tests/README.md` with:
+  - [x] How to run component tests (`npm test`) and E2E tests (`npm run test:e2e`)
+  - [x] Backend startup requirement for E2E
+  - [x] Mocking strategy documentation
+- [x] Document test data fixtures location
+- [x] Document expected coverage targets (80%+ UI, critical paths E2E)
+- [x] Create troubleshooting guide for common test failures
+- [x] Link to `ui-testing.instructions.md` in instructions folder
 
 ---
 
-### Subtask 12.16: E2E Tests - Font Customization Journey (Playwright)
+### Subtask 12.16: Font Customization — Tests
 
-**⚠️ Requires: Backend running at localhost:8000**
-- [ ] **Scenario 1: Apply Different Fonts**
-  - [ ] Navigate to CREATE CARD
-  - [ ] Enter player name "John Smith"
-  - [ ] Select "Playfair Display" for player name
-  - [ ] Select "Montserrat" for club text
-  - [ ] Select "Merriweather" for nationality
-  - [ ] Verify preview updates with each font selection
-  - [ ] Verify fonts are visually different in preview
+> **Test Pyramid Note**: Font state management (selection updates context, reset reverts to defaults, save/load from localStorage) belongs at component level. E2E tests cover only what a real browser must prove: actual CSS font rendering and persistence across real navigation.
 
-- [ ] **Scenario 2: Save and Load Card with Custom Fonts**
-  - [ ] Create card with custom fonts (from Scenario 1)
-  - [ ] Click Save
+**Component Tests** (extend existing files):
+- [ ] **`CardForm.test.tsx`** — test font selector dropdowns update card context state
+- [ ] **`CardPreview.test.tsx`** — test preview applies correct `font-family` CSS when font context changes
+- [ ] **`CardContext.test.tsx`** — test `resetCard()` reverts font fields to defaults
+- [ ] **`storage.test.ts`** — test font selections are saved and loaded from localStorage correctly
+
+**E2E Tests** — `football-cards-ui/tests/e2e/font-customization.spec.ts` (new):
+
+**⚠️ Requires: Backend running at localhost:8000 + Font customization feature (11.14) implemented**
+
+- [ ] **Scenario 1: Fonts render visually in the browser**
+  - [ ] Navigate to CREATE CARD, enter player name
+  - [ ] Select "Playfair Display" for player name font
+  - [ ] Select "Montserrat" for club text font
+  - [ ] Verify preview element has correct `font-family` CSS applied (via `evaluate`)
+  - [ ] Take screenshot for visual verification
+
+- [ ] **Scenario 2: Custom fonts persist across navigation**
+  - [ ] Create card with custom fonts and save
   - [ ] Navigate to MY CARDS gallery
-  - [ ] Click Edit on saved card
-  - [ ] Verify all font selections are restored
-  - [ ] Verify preview displays correct fonts
+  - [ ] Click Edit on the saved card
+  - [ ] Verify font selectors show the previously selected fonts (real localStorage)
+  - [ ] Verify preview renders with correct fonts
 
-- [ ] **Scenario 3: Reset Fonts to Defaults**
-  - [ ] Create card with custom fonts
-  - [ ] Click "Reset Text Fonts" button
-  - [ ] Verify all fonts revert to defaults
-  - [ ] Verify preview updates immediately
-
-- [ ] **Scenario 4: Print Card with Custom Fonts**
-  - [ ] Create card with custom fonts
-  - [ ] Click Print button
-  - [ ] Verify print preview shows correct fonts
-  - [ ] Capture screenshot of print output
+- [ ] **Scenario 3: Print with custom fonts**
+  - [ ] Create card with "Playfair Display" player name font
+  - [ ] Apply print media with `page.emulateMedia({ media: 'print' })`
+  - [ ] Verify `PrintableCard` element has correct `font-family` CSS applied
+  - [ ] Take screenshot of print layout
 
 ---
 

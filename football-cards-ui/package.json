@@ -51,7 +51,9 @@
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
+    "@types/jest-axe": "^3.5.9",
     "eslint-plugin-react": "^7.37.5",
+    "jest-axe": "^10.0.0",
     "prettier": "^3.8.1"
   }
 }
