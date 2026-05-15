@@ -79,6 +79,46 @@ src/
 
 ---
 
+## 🧪 Component Testing
+
+**When writing `.test.tsx` files**, refer to:
+
+👉 **[`.github/instructions/ui-testing.instructions.md`](./../ui-testing.instructions.md)** for:
+- React Testing Library query priority and best practices
+- Mocking patterns (API, storage, axios)
+- Component test structure and templates
+- Common test scenarios (form validation, dropdowns, async API calls)
+- Debugging tips and troubleshooting
+
+**Key Points**:
+- Use React Testing Library (not enzyme or implementation details)
+- Mock all external services (api.ts, storage.ts, axios)
+- Test user-facing behavior, not implementation
+- Aim for 80%+ coverage per component
+- All `.test.tsx` files should have mocked services (no backend required)
+
+**Example Test Pattern**:
+```typescript
+// src/components/CardForm.test.tsx
+jest.mock('../services/api');
+jest.mock('../services/storage');
+
+describe('CardForm', () => {
+  beforeEach(() => {
+    (getClubs as jest.Mock).mockResolvedValue([...]);
+    (saveCard as jest.Mock).mockClear();
+  });
+
+  test('shows validation error when saving without player name', async () => {
+    render(<CardProvider><CardForm /></CardProvider>);
+    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    expect(await screen.findByText(/required/i)).toBeInTheDocument();
+  });
+});
+```
+
+---
+
 ## ⚛️ React Component Patterns
 
 ### Component Structure

@@ -1,6 +1,6 @@
 ---
 name: e2e-playwright
-description: "Use when: writing end-to-end tests in football-cards-ui/tests/e2e/ - Playwright test syntax, selectors, user workflows, assertions"
+description: "Use when: writing end-to-end tests in football-cards-ui/tests/e2e/ - Playwright test syntax, selectors, user workflows, assertions. IMPORTANT: E2E tests require real backend running"
 applyTo: "football-cards-ui/tests/e2e/**"
 ---
 
@@ -8,6 +8,31 @@ applyTo: "football-cards-ui/tests/e2e/**"
 
 ## 📍 Scope
 This applies to end-to-end tests in `football-cards-ui/tests/e2e/` using Playwright test framework.
+
+---
+
+## ⚠️ CRITICAL: E2E Tests Require Real Backend
+
+**E2E tests are INTEGRATION tests** - they test the real interaction between frontend and backend.
+
+### Before Running E2E Tests
+1. **Backend must be running**:
+   ```bash
+   python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+2. **Frontend must be running**:
+   ```bash
+   cd football-cards-ui
+   npm start  # Runs on localhost:3000
+   ```
+3. **No service mocking** - all API calls are REAL
+4. **Browser storage is REAL** - data persists across test runs
+
+### Contrast with UI Tests
+- **UI Tests** (`.test.tsx`): Use React Testing Library, mock all services, run without backend
+- **E2E Tests** (`.spec.ts`): Use Playwright, REAL backend calls, test integration
+
+For UI testing guidance, see [`.github/instructions/ui-testing.instructions.md`](./../ui-testing.instructions.md)
 
 ---
 
@@ -19,7 +44,7 @@ E2E tests at this level use **Behavior-Driven Development (BDD)** principles to 
 
 Playwright is a browser automation framework for **E2E testing**:
 - Simulates real user interactions
-- Tests full workflows across frontend and backend
+- Tests full workflows across frontend and backend (both REAL)
 - Supports multiple browsers (Chromium, Firefox, WebKit)
 - Fast, reliable, cross-platform
 

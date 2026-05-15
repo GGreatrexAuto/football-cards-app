@@ -1,48 +1,86 @@
 ---
 name: testing-general
-description: "Use when: writing tests in tests/ directory - test pyramid, pytest fixtures, coverage targets, mock patterns"
+description: "Use when: writing tests in tests/ directory - test pyramid, pytest fixtures, coverage targets, mock patterns. Also see ui-testing.instructions.md for frontend component tests"
 applyTo: "tests/**"
 ---
 
 # Testing Context - Test Pyramid & Patterns
 
 ## 📍 Scope
-This applies to all test code in the `tests/` directory across all test types.
+This applies to all test code in the `tests/` directory and frontend component tests. For detailed UI/component testing guidance, see `ui-testing.instructions.md`.
 
 ---
 
-## 🔺 Test Pyramid
+## 🔺 Comprehensive Test Pyramid
 
-Tests follow a **shift-left, pyramid-shaped strategy**:
+Tests follow a **shift-left, pyramid-shaped strategy** with clear differentiation between mocked and real service testing:
 
 ```
           /\
-         /E2E\              ← Few (critical user journeys)
-        /------\            pytest playwright specs
+         /E2E\              ← Few (critical user journeys, REAL backend)
+        /------\            Playwright, full integration
        /  BDD   \           ← More integration tests
-      /----------\          behave + TestClient
+      /----------\          Behave + TestClient
      / Contracts  \         ← Property-based auto-generated
     /   (API)      \        Schemathesis schema validation
-   /   Unit Tests   \       ← Most (fast, focused)
-  /====================\    pytest functions
+   /     UI       \         ← Many (MOCKED services, fast)
+  /   Component    \        React Testing Library + Jest
+ / Tests           \
+/   Unit Tests      \       ← Most (single functions)
+/====================\      pytest, fast
 ```
 
 ### Test Type Breakdown
-| Type | Tool | Location | Scope | Speed |
-|------|------|----------|-------|-------|
-| **Unit** | pytest | `tests/unit/` | Single function/component | ⚡ Fast |
-| **Contract** | Schemathesis | `tests/contract/` | API schema compliance (OpenAPI) | ⚡ Fast |
-| **Integration** | Behave + TestClient | `tests/integration/` | API endpoints + business logic | 🔶 Medium |
-| **E2E** | Playwright | `football-cards-ui/tests/e2e/` | Full user workflows | 🐢 Slow |
+| Type | Tool | Location | Scope | Backend | Speed |
+|------|------|----------|-------|---------|-------|
+| **Unit** (Backend) | pytest | `tests/unit/` | Single function/method | N/A | ⚡ Fast |
+| **Unit/Component** (Frontend) | React Testing Library | `football-cards-ui/src/**/*.test.tsx` | React components | 🔒 MOCKED | ⚡ Fast |
+| **Contract** | Schemathesis | `tests/contract/` | API schema compliance | ✓ Schema only | ⚡ Fast |
+| **Integration** | Behave + TestClient | `tests/integration/` | API endpoints + logic | ✓ Real (TestClient) | 🔶 Medium |
+| **E2E** | Playwright | `football-cards-ui/tests/e2e/` | Full user workflows | ✓ Real (localhost:8000) | 🐢 Slow |
 
 ### Coverage Target
 **Minimum 80% globally** - Higher for critical paths (core business logic).
 
+**Frontend Breakdown**:
+- **UI Component Tests**: 60-70% of frontend tests
+- **E2E Tests**: 5-10% of frontend tests (critical paths only)
+
 ### Test Execution Order (Recommended)
 1. **Unit Tests** (fastest feedback)
-2. **Contract Tests** (catch schema violations early)
-3. **Integration Tests** (full API flows)
-4. **E2E Tests** (user workflows)
+2. **UI/Component Tests** (fast, mocked services)
+3. **Contract Tests** (catch schema violations)
+4. **Integration Tests** (full API flows)
+5. **E2E Tests** (real integration, slowest)
+
+---
+
+## 🎭 Frontend UI/Component Tests
+
+**Location**: `football-cards-ui/src/**/*.test.tsx`  
+**Tools**: React Testing Library + Jest  
+**Services**: ✅ All mocked (api.ts, storage.ts, axios)  
+**Speed**: ⚡ Fast (< 100ms per test)
+
+UI/Component tests verify that React components render correctly and respond to user interactions, with all external services mocked for speed and isolation.
+
+### Key Characteristics
+- Test component rendering and props
+- Test user interactions (clicks, form fills, dropdowns)
+- Test form validation and error messages
+- Test state changes and conditional rendering
+- Mock ALL external services (api, storage, axios)
+- No backend running needed
+- Fast feedback loop
+
+### For Detailed Guidance
+👉 **See `.github/instructions/ui-testing.instructions.md`** for:
+- React Testing Library query priority
+- Mocking patterns (API, storage, axios)
+- Component test structure & templates
+- Common test scenarios (form, dropdown, async)
+- Debugging tips
+- Best practices & pitfalls
 
 ---
 

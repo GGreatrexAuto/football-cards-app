@@ -5,6 +5,14 @@
 **Phase:** 3 (Frontend Implementation) - Tasks 10-12  
 **Created:** March 22, 2026
 
+**📋 Testing Strategy Update (May 15, 2026):**  
+See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for comprehensive guide on UI/Component tests vs E2E tests.
+
+**Key Testing Points:**
+- **UI Tests**: Use React Testing Library with ALL services mocked → Fast feedback, comprehensive coverage
+- **E2E Tests**: Use Playwright with REAL backend running → Minimal tests, critical paths only
+- **New Instructions**: See [`.github/instructions/ui-testing.instructions.md`](.github/instructions/ui-testing.instructions.md) for component testing best practices
+
 ---
 
 ## Task 10: Project Scaffolding & Setup
@@ -306,77 +314,345 @@
 - [x] Aim for 90%+ coverage of user flows
 - [x] Update precommit hook to run integration tests .git/hooks/pre-commit
 
-### Subtask 12.8: E2E Tests - Setup Base Framework (Playwright)
-- [x] Create a plan
-- [ ] Implement E2E tests from plan (D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\e2e-test-framework-plan.md)
+### Subtask 12.8: Comprehensive UI/Component Test Coverage (React Testing Library + Jest)
 
-### Subtask 12.9: E2E Tests - Full Card Creation Journey (Playwright)
-- [x] **Scenario 1: Full Card Creation & Save**
-  - [x] Navigate to app
-  - [x] Enter player name
-  - [x] Select club from dropdown
-  - [x] Select nationality from dropdown
-  - [x] Select league from dropdown
-  - [x] Select position from dropdown
-  - [x] Click randomize stats button
-  - [x] Verify stats populated with random values
-  - [x] Upload player photo
-  - [x] Select card background
-  - [x] Click Save button
-  - [x] Verify success message
-  - [x] Verify card appears in preview
+**Purpose**: Ensure all React components are thoroughly tested with mocked services for fast, focused feedback
 
-### Subtask 12.10: E2E Tests - Card Gallery & Loading (Playwright)
-- [ ] **Scenario 2: View & Load Saved Card**
-  - [ ] Create and save a test card (from Scenario 1)
-  - [ ] Navigate to "My Cards" gallery
-  - [ ] Verify card displays in gallery
-  - [ ] Click Edit button on card
-  - [ ] Verify card data loads back into form
-  - [ ] Modify one field (e.g., name)
-  - [ ] Save card again
-  - [ ] Verify changes persisted
+**All tests should:**
+- Use React Testing Library (not enzyme or implementation details)
+- Mock all external services (API, storage, axios)
+- Include positive case, negative case, and edge cases
+- Aim for 80%+ coverage per component
+- Test user-facing behavior, not implementation details
 
-### Subtask 12.11: E2E Tests - Print Functionality (Playwright)
-- [ ] **Scenario 3: Print a Card**
-  - [ ] Create and save a test card
-  - [ ] Click Print button
-  - [ ] Verify print dialog opens (intercept window.print)
-  - [ ] Take screenshot of print preview
-  - [ ] Verify card dimensions are correct
-  - [ ] Verify only card is visible (form hidden)
+#### CardForm Component Tests
+- [x] Renders without errors
+- [x] Displays loading spinner while API calls in progress
+- [x] Populates dropdowns from mocked API responses
+- [x] Updates player name field on user input
+- [x] Updates stat values on user input (defense, control, attack)
+- [x] Randomize button sets stats in 0-100 range
+- [x] Shows validation errors for invalid URL format
+- [x] Shows validation error when saving without player name
+- [x] Shows validation error when saving without required fields
+- [x] Calls storage.saveCard() with correct data when valid
+- [x] Shows success message after save
+- [x] Handles API errors gracefully with error message
+- [x] Updates context state on successful save
+- [x] Test with disabled form state
+- [x] Test loading state during save
 
-### Subtask 12.12: E2E Tests - Edge Cases & Error Handling (Playwright)
-- [ ] Test with very long player names
-- [ ] Test with special characters in player name
-- [ ] Test with missing/invalid image URLs
-- [ ] Test with network errors during API calls
-- [ ] Test with localStorage full (quota exceeded)
-- [ ] Test deleting card from gallery
-- [ ] Test rapid clicking of buttons
+#### CardPreview Component Tests
+- [x] Renders without errors
+- [x] Displays player name correctly
+- [x] Displays stats correctly
+- [x] Calculates rating as average of defense/control/attack
+- [x] Updates when card context changes
+- [x] Applies selected background correctly
+- [x] Displays player photo when provided
+- [x] Handles missing photo gracefully
+- [x] Responsive layout on mobile
+- [x] Updates rating in real-time as stats change
+- [x] Test styling with different card backgrounds
 
-### Subtask 12.13: Performance & Accessibility Testing
-- [ ] Implement pytest benchmark tests to identify performance bottlenecks in backend code
-- [ ] Implement backend load tests using tool tbc (Jmeter or python equivalent)
-- [ ] SPIKE: ui performance test approach
-- [ ] Verify component render performance (no unnecessary rerenders)
-- [ ] Test keyboard navigation through form fields
-- [ ] Test tab order is logical
-- [ ] Add ARIA labels to form inputs
-- [ ] Add alt text to images
-- [ ] Test with screen reader (e.g., NVDA)
-- [ ] Verify color contrast meets WCAG standards
-- [ ] Test application on slow network (Playwright throttling)
+#### CardGallery Component Tests
+- [x] Renders without errors
+- [x] Shows loading spinner while fetching cards
+- [x] Displays empty state when no cards saved
+- [x] Displays grid of cards when cards exist
+- [x] Edit button loads card into CardForm
+- [x] Delete button removes card with confirmation
+- [x] Calls storage.getSavedCards() on mount
+- [x] Calls storage.deleteCard() on delete
+- [x] Handles API/storage errors gracefully
+- [x] Refreshes gallery after delete
+- [x] Refreshes gallery after save
+- [x] "Create New" button resets form and navigates
 
-### Subtask 12.14: Test Documentation
-- [ ] Document test setup and how to run tests
-- [ ] Document mocking strategy for external services
-- [ ] Create test data fixtures
-- [ ] Document expected test coverage targets
-- [ ] Create README with testing best practices
+#### CardCreator Component Tests
+- [x] Renders CardForm on left and CardPreview on right
+- [x] Save button triggers card save
+- [x] Load/Gallery button navigates to gallery
+- [x] Print button triggers print
+- [x] Shows success notification after save
+- [x] Shows error notification on save failure
+- [x] Layout responsive on mobile
 
-### Subtask 12.15: E2E Tests - Font Customization Journey (Playwright)
-**Files affected:** `tests/e2e/font-customization.spec.ts` (new)
+#### CardContext Tests
+- [x] useCard() hook returns current card state
+- [x] useCard() hook provides updateCard function
+- [x] updateCard updates specific card fields
+- [x] State updates propagate to all consumers
+- [x] Context initialization with default values
+- [x] Card ID is generated on creation
+- [x] Multiple consumers receive updated state
+
+#### App Component Tests
+- [x] Renders main layout without errors
+- [x] CardProvider wrapper is applied
+- [x] ThemeProvider wrapper is applied
+- [x] Navigation between views works (CardCreator ↔ CardGallery)
+- [x] Page title displays correctly
+- [x] Responsive layout on mobile
+
+#### API Service Tests
+- [x] Mock axios correctly
+- [x] getClubs() returns clubs array
+- [x] getNationalities() returns nations array
+- [x] getLeagues() returns leagues array
+- [x] getPositions() returns positions array
+- [x] Error handling returns meaningful errors
+- [x] API base URL is configured
+
+#### Storage Service Tests
+- [x] saveCard() stores card data correctly
+- [x] getSavedCards() retrieves all saved cards
+- [x] updateCard() updates existing card
+- [x] deleteCard() removes card
+- [x] generateCardId() creates unique IDs
+- [x] Cards persist in localStorage
+- [x] Error handling for quota exceeded
+- [x] Graceful handling of corrupted data
+
+**Coverage Target**: Minimum 80% for all components, 90% for critical paths
+
+**Success Criteria**:
+- [ ] All subtasks above are complete
+- [ ] Coverage report shows 80%+ overall
+- [ ] No console errors/warnings during tests
+- [ ] Tests run in < 30 seconds total
+- [ ] Tests are deterministic (no flaky tests)
+- [ ] All test files follow patterns in `ui-testing.instructions.md`
+
+---
+
+### Subtask 12.9: E2E Tests - Framework Already In Place ✅
+
+**Status**: Framework infrastructure COMPLETE (per `e2e-test-framework-plan.md`)
+
+The E2E testing framework has already been established with:
+
+✅ **Playwright Configuration** (DONE)
+- `playwright.config.ts` configured with Chromium, Firefox, WebKit
+- Base URL: `http://localhost:3000`
+- Video recording & screenshots on failure enabled
+- Parallel execution (2 workers)
+- HTML reporter configured
+
+✅ **Base Test Infrastructure** (DONE)
+- `football-cards-ui/tests/e2e/base/test-base.ts` - base test class
+- Page Object Models: `CardCreatorPage.ts`, `CardGalleryPage.ts`, `CardPreviewPage.ts`, `NavigationPage.ts`
+- Fixtures: `test-data.ts`, `api-mock-data.ts`
+- Helpers: `test-helpers.ts`, `cleanup-helpers.ts`
+
+✅ **Test Data Management** (DONE)
+- Sample card data fixtures created
+- Test data builders for variations
+- Cleanup utilities available
+
+✅ **Environment Configuration** (DONE)
+- `.env.test` configured
+- Backend API URL configured for localhost:8000
+
+✅ **Test Utilities** (DONE)
+- `waitForAppReady()` - app initialization
+- `clearBrowserStorage()` - test isolation
+- `generateRandomCardData()` - test data generation
+- Screenshots/videos on failure
+
+**What Remains**: Write actual E2E test scenarios (Subtasks 12.10-12.13, 12.16)
+
+---
+
+### Subtask 12.10: E2E Tests - Full Card Creation Journey (Playwright)
+
+**⚠️ Requires: Backend running at localhost:8000 + Framework already in place**
+
+**File**: `football-cards-ui/tests/e2e/card-creation.spec.ts` (Status: Check if existing tests need enhancement)
+
+Use the established framework:
+- **Page Object**: `CardCreatorPage` (already implemented)
+- **Fixtures**: `SAMPLE_PLAYERS` from `test-data.ts`
+- **Helpers**: `clearBrowserStorage()`, `gotoApp()`
+- **Base**: Extend `test` from `./base/test-base`
+
+**Scenario 1: Create Card with Valid Data**
+- [ ] Navigate to app (use `testBase.gotoApp()`)
+- [ ] Fill form using `cardCreator.fillCardForm()` method
+- [ ] Randomize stats via `cardCreator.randomizeStats()`
+- [ ] Select background via `cardCreator.selectBackground()`
+- [ ] Save card via `cardCreator.saveCard()`
+- [ ] Verify success message displayed
+- [ ] **Verify card persists in REAL localStorage** (navigate away and back to verify)
+
+**Key Assertions**:
+- Stats are in 0-100 range
+- Success message contains "Card saved successfully"
+- Card data is stored in browser localStorage (REAL, not mocked)
+
+---
+
+### Subtask 12.11: E2E Tests - Card Gallery & Loading (Playwright)
+
+**⚠️ Requires: Backend running at localhost:8000 + Subtask 12.10 tests passing**
+
+**File**: `football-cards-ui/tests/e2e/card-gallery.spec.ts` (new or enhance existing)
+
+Use established framework:
+- **Page Objects**: `CardGalleryPage`, `CardCreatorPage`, `NavigationPage`
+- **Helpers**: `clearBrowserStorage()`, data persistence helpers
+- **Base**: Extend `test` from `./base/test-base`
+
+**Scenario 1: View & Load Saved Card**
+- [ ] Create and save a test card (reuse logic from 12.10 or use fixture)
+- [ ] Navigate to gallery via navigation component
+- [ ] Verify card displays in gallery grid
+- [ ] Verify card shows: name, stats, preview thumbnail
+- [ ] Click "Edit" button on card
+- [ ] Verify card data loads back into CardForm correctly
+- [ ] Modify one field (e.g., player name)
+- [ ] Save modified card
+- [ ] **Verify changes persisted in REAL localStorage**
+- [ ] Navigate away and return to gallery
+- [ ] Verify modified card still shows updates
+
+**Scenario 2: Delete Card from Gallery**
+- [ ] Create and save a test card
+- [ ] Navigate to gallery
+- [ ] Click "Delete" button on card
+- [ ] Confirm deletion (if modal present)
+- [ ] Verify card removed from gallery
+- [ ] **Verify deletion persisted in REAL localStorage**
+
+**Key Assertions**:
+- Gallery displays saved cards
+- Edit flow maintains data integrity
+- Delete removes card permanently
+- All persistence is in REAL browser storage
+
+---
+
+### Subtask 12.12: E2E Tests - Print Functionality (Playwright)
+
+**⚠️ Requires: Backend running at localhost:8000 + Subtask 12.10 tests passing**
+
+**File**: `football-cards-ui/tests/e2e/print-functionality.spec.ts` (new or enhance existing)
+
+Use established framework:
+- **Page Objects**: `CardCreatorPage`, `PrintableCard` interactions
+- **Helpers**: Print dialog interception utilities
+- **Base**: Extend `test` from `./base/test-base`
+
+**Scenario: Print a Card**
+- [ ] Create and save a test card (reuse from 12.10 setup)
+- [ ] Navigate to card creator or gallery
+- [ ] Click "Print" button
+- [ ] Intercept print dialog (use Playwright's page.on('popup'))
+- [ ] Verify card content is visible in print preview
+- [ ] Verify card dimensions appear correct
+- [ ] Verify form/navigation elements are hidden in print
+- [ ] Close print dialog
+- [ ] Verify app returns to normal state
+
+**Alternative**: If print dialog can't be intercepted reliably:
+- [ ] Trigger print action
+- [ ] Take screenshot via `screenshot_page` helper
+- [ ] Manually verify card layout in screenshot
+
+**Key Assertions**:
+- Print dialog opens without error
+- Only card content visible (no form/nav)
+- Card layout preserved in print context
+
+---
+
+### Subtask 12.13: E2E Tests - Critical Paths & Integration (Playwright)
+
+**⚠️ Requires: Backend running at localhost:8000**
+
+**Purpose**: Test critical user journeys and integration points (not edge cases - those are tested in UI tests with mocks)
+
+**File**: `football-cards-ui/tests/e2e/critical-paths.spec.ts` (new or enhance existing)
+
+Use established framework:
+- **Page Objects**: All established POMs
+- **Fixtures**: Test data from `test-data.ts`, `api-mock-data.ts`
+- **Helpers**: All established helpers
+- **Base**: Extend `test` from `./base/test-base`
+
+**Scenario 1: Happy Path - Create, Save, View, Edit**
+- [ ] User creates new card with real data
+- [ ] User saves card to REAL localStorage
+- [ ] User navigates to gallery
+- [ ] User edits the card
+- [ ] User saves edited version
+- [ ] User verifies changes persisted
+- [ ] Verify no console errors throughout
+
+**Scenario 2: Real API Data Flow**
+- [ ] App fetches clubs from REAL backend API
+- [ ] App fetches nations from REAL backend API
+- [ ] App fetches leagues from REAL backend API
+- [ ] Dropdowns populate with real API data
+- [ ] User can select from real data
+- [ ] Card saves with selected real data
+
+**Scenario 3: Page Refresh Persistence**
+- [ ] User creates and saves card
+- [ ] User refreshes page (F5)
+- [ ] App re-initializes
+- [ ] Card still appears in gallery
+- [ ] Card data fully intact
+- [ ] User can edit refreshed card
+
+**Key Points**:
+- Focus on INTEGRATION between frontend and real backend
+- Verify data flows correctly through full app
+- Test REAL localStorage persistence across page reloads
+- NOT about edge cases (those are UI tests with mocks)
+- Keep test count minimal (~3-5 critical paths)
+
+
+---
+
+### Subtask 12.14: Performance & Accessibility Testing
+
+**UI Tests** (with React Testing Library):
+- [ ] Verify no unnecessary re-renders using React DevTools Profiler
+- [ ] Test keyboard navigation through all form fields (Tab key)
+- [ ] Test logical tab order through form
+- [ ] Add `aria-label` to all form inputs
+- [ ] Add `aria-label` to all buttons
+- [ ] Add `alt` text to all images
+- [ ] Test with screen reader (e.g., browser's built-in reader)
+- [ ] Verify color contrast meets WCAG AA standards (4.5:1 for text)
+
+**E2E Tests** (Playwright, requires backend):
+- [ ] Test application on throttled network (Playwright: 3G)
+- [ ] Verify API calls still work on slow network
+- [ ] Test with slow rendering (Playwright CPU throttling)
+- [ ] Performance baseline: Full card creation < 5 seconds
+- [ ] Verify no console errors during critical paths
+
+---
+
+### Subtask 12.15: Test Documentation
+
+- [ ] Create `football-cards-ui/tests/README.md` with:
+  - [ ] How to run UI tests: `npm run test:ui`
+  - [ ] How to run E2E tests: `npm run test:e2e`
+  - [ ] Backend startup requirement for E2E
+  - [ ] Mocking strategy documentation
+- [ ] Document test data fixtures location
+- [ ] Document expected coverage targets (80%+ UI, critical paths E2E)
+- [ ] Create troubleshooting guide for common test failures
+- [ ] Link to `ui-testing.instructions.md` in instructions folder
+
+---
+
+### Subtask 12.16: E2E Tests - Font Customization Journey (Playwright)
+
+**⚠️ Requires: Backend running at localhost:8000**
 - [ ] **Scenario 1: Apply Different Fonts**
   - [ ] Navigate to CREATE CARD
   - [ ] Enter player name "John Smith"
