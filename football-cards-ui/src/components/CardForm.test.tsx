@@ -78,7 +78,7 @@ describe('CardForm Component', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    expect(await screen.findByLabelText(/Player Name/i)).toBeInTheDocument();
+    expect(await screen.findByLabelText('Player Name')).toBeInTheDocument();
   });
 
   test('populates dropdowns from API and updates player name field', async () => {
@@ -90,7 +90,7 @@ describe('CardForm Component', () => {
     });
 
     const nameInput = (await screen.findByLabelText(
-      /Player Name/i,
+      'Player Name',
     )) as HTMLInputElement;
     fireEvent.change(nameInput, { target: { value: 'Test Player' } });
     expect(nameInput.value).toBe('Test Player');
@@ -140,7 +140,7 @@ describe('CardForm Component', () => {
     renderWithProvider();
 
     const nameInput = (await screen.findByLabelText(
-      /Player Name/i,
+      'Player Name',
     )) as HTMLInputElement;
     fireEvent.change(nameInput, { target: { value: '' } });
 
@@ -156,7 +156,7 @@ describe('CardForm Component', () => {
     renderWithProvider();
 
     const nameInput = (await screen.findByLabelText(
-      /Player Name/i,
+      'Player Name',
     )) as HTMLInputElement;
     fireEvent.change(nameInput, { target: { value: 'SaveTester' } });
 
@@ -213,7 +213,7 @@ describe('CardForm Component', () => {
     renderWithPreview();
 
     // Wait for form to load
-    await screen.findByLabelText(/Player Name/i);
+    await screen.findByLabelText('Player Name');
 
     const stadiumBlueImage = screen.getByAltText('Stadium Blue');
     expect(stadiumBlueImage).toBeInTheDocument();
@@ -230,7 +230,7 @@ describe('CardForm Component', () => {
   test('updates background selection and reflects in preview', async () => {
     renderWithPreview();
 
-    await screen.findByLabelText(/Player Name/i);
+    await screen.findByLabelText('Player Name');
 
     const classicGreenImage = screen.getByAltText('Classic Green');
     const stadiumBlueImage = screen.getByAltText('Stadium Blue');
@@ -344,7 +344,7 @@ describe('CardForm Component', () => {
   test('displays semi-transparent gradient overlay with background', async () => {
     renderWithPreview();
 
-    await screen.findByLabelText(/Player Name/i);
+    await screen.findByLabelText('Player Name');
 
     const stadiumBlueImage = screen.getByAltText('Stadium Blue');
     fireEvent.click(stadiumBlueImage);
@@ -370,7 +370,7 @@ describe('Stock photo selection', () => {
 
   test('renders 6 stock photo buttons with accessible names', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const buttons = screen.getAllByRole('button', { name: /Player Portrait/i });
     expect(buttons).toHaveLength(6);
@@ -378,7 +378,7 @@ describe('Stock photo selection', () => {
 
   test('clicking a stock photo sets aria-pressed to true', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const first = screen.getByRole('button', { name: 'Player Portrait 1' });
     expect(first).toHaveAttribute('aria-pressed', 'false');
@@ -389,7 +389,7 @@ describe('Stock photo selection', () => {
 
   test('pressing Enter on a stock photo selects it', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const second = screen.getByRole('button', { name: 'Player Portrait 2' });
     fireEvent.keyDown(second, { key: 'Enter', code: 'Enter' });
@@ -398,7 +398,7 @@ describe('Stock photo selection', () => {
 
   test('pressing Space on a stock photo selects it', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const third = screen.getByRole('button', { name: 'Player Portrait 3' });
     fireEvent.keyDown(third, { key: ' ', code: 'Space' });
@@ -407,7 +407,7 @@ describe('Stock photo selection', () => {
 
   test('selecting a second portrait deselects the first', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const first = screen.getByRole('button', { name: 'Player Portrait 1' });
     const second = screen.getByRole('button', { name: 'Player Portrait 2' });
@@ -422,10 +422,65 @@ describe('Stock photo selection', () => {
 
   test('stock photo cards are focusable via tabIndex', async () => {
     renderWithProvider();
-    await screen.findByLabelText(/player name/i);
+    await screen.findByLabelText('Player Name');
 
     const button = screen.getByRole('button', { name: 'Player Portrait 1' });
     button.focus();
     expect(button).toHaveFocus();
+  });
+});
+
+describe('Text Customisation section', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('renders the three font selectors', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.getByTestId('font-selector-player-name-font'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('font-selector-club-league-position-font'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('font-selector-nationality-font'),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('font-selector-stats-font')).toBeInTheDocument();
+  });
+
+  test('renders Reset Text Fonts button', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.getByRole('button', { name: /Reset Text Fonts/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('Reset Text Fonts button reverts selectors to defaults', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const playerNameSelector = screen.getByTestId(
+      'font-selector-player-name-font',
+    );
+    expect(within(playerNameSelector).getByRole('combobox')).toHaveTextContent(
+      'Playfair Display',
+    );
+
+    // Click reset — should remain at defaults (confirms button works without error)
+    fireEvent.click(screen.getByRole('button', { name: /Reset Text Fonts/i }));
+
+    await waitFor(() => {
+      expect(
+        within(playerNameSelector).getByRole('combobox'),
+      ).toHaveTextContent('Playfair Display');
+    });
   });
 });

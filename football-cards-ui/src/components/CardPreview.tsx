@@ -17,6 +17,7 @@ const CardPreview: React.FC = () => {
     rating,
     playerPhoto,
     cardBackground,
+    textFonts,
   } = card;
 
   useEffect(() => {
@@ -75,7 +76,9 @@ const CardPreview: React.FC = () => {
           gutterBottom
           variant="h5"
           component="div"
+          data-testid="player-name-text"
           sx={{
+            fontFamily: textFonts.playerName,
             textAlign: 'center',
             fontWeight: 'bold',
             textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
@@ -88,22 +91,48 @@ const CardPreview: React.FC = () => {
         {/* Player Details */}
         <Box sx={{ mb: 2 }}>
           {club && (
-            <Typography variant="body2" sx={{ textAlign: 'center', mb: 0.5 }}>
+            <Typography
+              variant="body2"
+              data-testid="club-text"
+              sx={{
+                fontFamily: textFonts.clubText,
+                textAlign: 'center',
+                mb: 0.5,
+              }}
+            >
               {club}
             </Typography>
           )}
           {nationality && (
-            <Typography variant="body2" sx={{ textAlign: 'center', mb: 0.5 }}>
+            <Typography
+              variant="body2"
+              data-testid="nationality-text"
+              sx={{
+                fontFamily: textFonts.countryText,
+                textAlign: 'center',
+                mb: 0.5,
+              }}
+            >
               {nationality}
             </Typography>
           )}
           {league && (
-            <Typography variant="body2" sx={{ textAlign: 'center', mb: 0.5 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontFamily: textFonts.clubText,
+                textAlign: 'center',
+                mb: 0.5,
+              }}
+            >
               {league}
             </Typography>
           )}
           {(position || preferredFoot) && (
-            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: textFonts.clubText, textAlign: 'center' }}
+            >
               {position} {preferredFoot && `(${preferredFoot})`}
             </Typography>
           )}
@@ -120,22 +149,52 @@ const CardPreview: React.FC = () => {
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 2 }}>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              <Typography
+                variant="h6"
+                data-testid="stat-value-defence"
+                sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
+              >
                 {defence}
               </Typography>
-              <Typography variant="caption">DEF</Typography>
+              <Typography
+                variant="caption"
+                data-testid="stat-label-def"
+                sx={{ fontFamily: textFonts.statsText }}
+              >
+                DEF
+              </Typography>
             </Box>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              <Typography
+                variant="h6"
+                data-testid="stat-value-control"
+                sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
+              >
                 {control}
               </Typography>
-              <Typography variant="caption">CTRL</Typography>
+              <Typography
+                variant="caption"
+                data-testid="stat-label-ctrl"
+                sx={{ fontFamily: textFonts.statsText }}
+              >
+                CTRL
+              </Typography>
             </Box>
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              <Typography
+                variant="h6"
+                data-testid="stat-value-attack"
+                sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
+              >
                 {attack}
               </Typography>
-              <Typography variant="caption">ATT</Typography>
+              <Typography
+                variant="caption"
+                data-testid="stat-label-att"
+                sx={{ fontFamily: textFonts.statsText }}
+              >
+                ATT
+              </Typography>
             </Box>
           </Box>
 
@@ -144,7 +203,9 @@ const CardPreview: React.FC = () => {
             <Typography
               variant="h4"
               component="div"
+              data-testid="stat-value-rating"
               sx={{
+                fontFamily: textFonts.statsText,
                 fontWeight: 'bold',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                 border: '2px solid white',

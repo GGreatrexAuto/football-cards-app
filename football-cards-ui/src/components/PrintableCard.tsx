@@ -16,6 +16,7 @@ const PrintableCard: React.FC = () => {
     rating,
     playerPhoto,
     cardBackground,
+    textFonts,
   } = card;
 
   const cardStyle = {
@@ -66,6 +67,7 @@ const PrintableCard: React.FC = () => {
           variant="h6"
           component="div"
           sx={{
+            fontFamily: textFonts.playerName,
             textAlign: 'center',
             fontWeight: 'bold',
             fontSize: '0.9rem',
@@ -81,7 +83,12 @@ const PrintableCard: React.FC = () => {
           {club && (
             <Typography
               variant="body2"
-              sx={{ textAlign: 'center', fontSize: '0.7rem', mb: 0.2 }}
+              sx={{
+                fontFamily: textFonts.clubText,
+                textAlign: 'center',
+                fontSize: '0.7rem',
+                mb: 0.2,
+              }}
             >
               {club}
             </Typography>
@@ -89,7 +96,12 @@ const PrintableCard: React.FC = () => {
           {nationality && (
             <Typography
               variant="body2"
-              sx={{ textAlign: 'center', fontSize: '0.7rem', mb: 0.2 }}
+              sx={{
+                fontFamily: textFonts.countryText,
+                textAlign: 'center',
+                fontSize: '0.7rem',
+                mb: 0.2,
+              }}
             >
               {nationality}
             </Typography>
@@ -97,7 +109,11 @@ const PrintableCard: React.FC = () => {
           {(position || preferredFoot) && (
             <Typography
               variant="body2"
-              sx={{ textAlign: 'center', fontSize: '0.7rem' }}
+              sx={{
+                fontFamily: textFonts.clubText,
+                textAlign: 'center',
+                fontSize: '0.7rem',
+              }}
             >
               {position} {preferredFoot && `(${preferredFoot})`}
             </Typography>
@@ -119,33 +135,54 @@ const PrintableCard: React.FC = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                }}
               >
                 {defence}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem' }}>
+              <Typography
+                variant="caption"
+                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+              >
                 DEF
               </Typography>
             </Box>
             <Box sx={{ textAlign: 'center' }}>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                }}
               >
                 {control}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem' }}>
+              <Typography
+                variant="caption"
+                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+              >
                 CTRL
               </Typography>
             </Box>
             <Box sx={{ textAlign: 'center' }}>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 'bold', fontSize: '0.9rem' }}
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                }}
               >
                 {attack}
               </Typography>
-              <Typography variant="caption" sx={{ fontSize: '0.6rem' }}>
+              <Typography
+                variant="caption"
+                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+              >
                 ATT
               </Typography>
             </Box>
@@ -157,6 +194,7 @@ const PrintableCard: React.FC = () => {
               variant="h4"
               component="div"
               sx={{
+                fontFamily: textFonts.statsText,
                 fontWeight: 'bold',
                 fontSize: '1.5rem',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.5)',

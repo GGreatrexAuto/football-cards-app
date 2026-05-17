@@ -15,6 +15,8 @@ import {
   Alert,
 } from '@mui/material';
 import { useCard } from '../context/CardContext';
+import { DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import FontSelector from './FontSelector';
 import {
   getClubs,
   getNationalities,
@@ -537,6 +539,58 @@ const CardForm: React.FC = () => {
               </Card>
             </Box>
           ))}
+        </Box>
+      </Box>
+
+      {/* Text Customisation Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Text Customisation
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <FontSelector
+            label="Player Name Font"
+            value={card.textFonts.playerName}
+            onChange={(font) =>
+              updateCard({ textFonts: { ...card.textFonts, playerName: font } })
+            }
+            previewText={card.playerName || 'Player Name'}
+          />
+          <FontSelector
+            label="Club / League / Position Font"
+            value={card.textFonts.clubText}
+            onChange={(font) =>
+              updateCard({ textFonts: { ...card.textFonts, clubText: font } })
+            }
+            previewText={card.club || 'Club Name'}
+          />
+          <FontSelector
+            label="Nationality Font"
+            value={card.textFonts.countryText}
+            onChange={(font) =>
+              updateCard({
+                textFonts: { ...card.textFonts, countryText: font },
+              })
+            }
+            previewText={card.nationality || 'Nationality'}
+          />
+          <FontSelector
+            label="Stats Font"
+            value={card.textFonts.statsText}
+            onChange={(font) =>
+              updateCard({ textFonts: { ...card.textFonts, statsText: font } })
+            }
+            previewText="80 DEF  75 CTRL  90 ATT"
+          />
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => updateCard({ textFonts: { ...DEFAULT_TEXT_FONTS } })}
+            data-testid="reset-text-fonts"
+            aria-label="Reset Text Fonts"
+          >
+            Reset Text Fonts
+          </Button>
         </Box>
       </Box>
 

@@ -1,5 +1,19 @@
 import React, { createContext, useContext, useState } from 'react';
 
+export interface TextFonts {
+  playerName: string;
+  clubText: string;
+  countryText: string;
+  statsText: string;
+}
+
+export const DEFAULT_TEXT_FONTS: TextFonts = {
+  playerName: 'Playfair Display',
+  clubText: 'Roboto',
+  countryText: 'Roboto',
+  statsText: 'Roboto',
+};
+
 export interface CardState {
   playerName: string;
   club: string;
@@ -14,6 +28,7 @@ export interface CardState {
   playerPhoto: string | null;
   cardBackground: string | null;
   cardId: string | null;
+  textFonts: TextFonts;
 }
 
 const initialState: CardState = {
@@ -30,6 +45,7 @@ const initialState: CardState = {
   playerPhoto: null,
   cardBackground: null,
   cardId: null,
+  textFonts: { ...DEFAULT_TEXT_FONTS },
 };
 
 interface CardContextType {

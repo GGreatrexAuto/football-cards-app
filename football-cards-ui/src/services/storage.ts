@@ -1,4 +1,5 @@
 import { CardState } from '../context/CardContext';
+import { DEFAULT_TEXT_FONTS } from '../context/CardContext';
 
 const CARDS_KEY = 'football-cards';
 
@@ -15,7 +16,11 @@ export const saveCard = (cardData: CardState): void => {
 
 export const getSavedCards = (): CardState[] => {
   const savedData = localStorage.getItem(CARDS_KEY);
-  return savedData ? JSON.parse(savedData) : [];
+  if (!savedData) return [];
+  return (JSON.parse(savedData) as CardState[]).map((c) => ({
+    ...c,
+    textFonts: c.textFonts ?? { ...DEFAULT_TEXT_FONTS },
+  }));
 };
 
 export const updateCard = (cardId: string, cardData: CardState): void => {

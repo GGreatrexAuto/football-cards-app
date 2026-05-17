@@ -104,7 +104,7 @@ describe('Accessibility — aria-labels and alt text', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
     );
 
-    expect(screen.getByLabelText(/player name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Player Name')).toBeInTheDocument();
     expect(screen.getByLabelText(/defence/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/control/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/attack/i)).toBeInTheDocument();
@@ -183,7 +183,7 @@ describe('Accessibility — keyboard navigation', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
     );
 
-    const playerNameInput = screen.getByLabelText(/player name/i);
+    const playerNameInput = screen.getByLabelText('Player Name');
     const defenceInput = screen.getByLabelText(/defence/i);
     const controlInput = screen.getByLabelText(/control/i);
     const attackInput = screen.getByLabelText(/attack/i);

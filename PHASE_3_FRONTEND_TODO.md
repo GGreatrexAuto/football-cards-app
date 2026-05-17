@@ -226,7 +226,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Document security approach
 
 ### Subtask 11.14: Enhancements
-- [ ] Ability to change font of text e.g name, club, nationality (see plan D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\font-customization-plan.md)
+- [x] Ability to change font of text e.g name, club, nationality (see plan D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\font-customization-plan.md)
 - [x] Add override to create a unique club e.g mytown united
 - [x] Sort clubs list alphabetically
 - [x] Change player stock photos (currently any image) to those of human faces
@@ -624,10 +624,10 @@ Use established framework:
 > **Test Pyramid Note**: Font state management (selection updates context, reset reverts to defaults, save/load from localStorage) belongs at component level. E2E tests cover only what a real browser must prove: actual CSS font rendering and persistence across real navigation.
 
 **Component Tests** (extend existing files):
-- [ ] **`CardForm.test.tsx`** — test font selector dropdowns update card context state
-- [ ] **`CardPreview.test.tsx`** — test preview applies correct `font-family` CSS when font context changes
-- [ ] **`CardContext.test.tsx`** — test `resetCard()` reverts font fields to defaults
-- [ ] **`storage.test.ts`** — test font selections are saved and loaded from localStorage correctly
+- [x] **`CardForm.test.tsx`** — test font selector dropdowns update card context state
+- [x] **`CardPreview.test.tsx`** — test preview applies correct `font-family` CSS when font context changes
+- [x] **`CardContext.test.tsx`** — test `resetCard()` reverts font fields to defaults
+- [x] **`storage.test.ts`** — test font selections are saved and loaded from localStorage correctly
 
 **E2E Tests** — `football-cards-ui/tests/e2e/font-customization.spec.ts` (new):
 

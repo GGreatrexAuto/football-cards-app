@@ -3,7 +3,17 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CardPreview from './CardPreview';
-import { CardProvider, useCard } from '../context/CardContext';
+import {
+  CardProvider,
+  useCard,
+  DEFAULT_TEXT_FONTS,
+  TextFonts,
+} from '../context/CardContext';
+
+// Regression guard: this assignment will fail to compile if a new field is added
+// to TextFonts without updating DEFAULT_TEXT_FONTS and all test fixtures.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _textFontsCompletenessCheck: TextFonts = DEFAULT_TEXT_FONTS;
 
 const TestPreviewSetup = () => {
   const { updateCard } = useCard();
@@ -203,5 +213,135 @@ describe('CardPreview Component', () => {
     // Verify only gradient, no URL when cardBackground is null
     expect(backgroundCss).toContain('linear-gradient');
     expect(backgroundImage).toBe('');
+  });
+
+  describe('font customisation', () => {
+    const TestPreviewWithFonts = ({
+      playerNameFont,
+      clubTextFont,
+      countryTextFont,
+      statsTextFont = 'Roboto',
+    }: {
+      playerNameFont: string;
+      clubTextFont: string;
+      countryTextFont: string;
+      statsTextFont?: string;
+    }) => {
+      const { updateCard } = useCard();
+
+      useEffect(() => {
+        updateCard({
+          playerName: 'Font Test',
+          club: 'Font Club',
+          nationality: 'Font Land',
+          textFonts: {
+            playerName: playerNameFont,
+            clubText: clubTextFont,
+            countryText: countryTextFont,
+            statsText: statsTextFont,
+          },
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return <CardPreview />;
+    };
+
+    test('applies playerName font to player name element', async () => {
+      render(
+        <CardProvider>
+          <TestPreviewWithFonts
+            playerNameFont="Poppins"
+            clubTextFont="Roboto"
+            countryTextFont="Roboto"
+          />
+        </CardProvider>,
+      );
+
+      const nameEl = await screen.findByTestId('player-name-text');
+      expect(nameEl).toHaveStyle({ fontFamily: 'Poppins' });
+    });
+
+    test('applies clubText font to club element', async () => {
+      render(
+        <CardProvider>
+          <TestPreviewWithFonts
+            playerNameFont="Roboto"
+            clubTextFont="Montserrat"
+            countryTextFont="Roboto"
+          />
+        </CardProvider>,
+      );
+
+      const clubEl = await screen.findByTestId('club-text');
+      expect(clubEl).toHaveStyle({ fontFamily: 'Montserrat' });
+    });
+
+    test('applies countryText font to nationality element', async () => {
+      render(
+        <CardProvider>
+          <TestPreviewWithFonts
+            playerNameFont="Roboto"
+            clubTextFont="Roboto"
+            countryTextFont="Merriweather"
+          />
+        </CardProvider>,
+      );
+
+      const nationalityEl = await screen.findByTestId('nationality-text');
+      expect(nationalityEl).toHaveStyle({ fontFamily: 'Merriweather' });
+    });
+
+    test('applies statsText font to stat values and labels', async () => {
+      const TestPreviewWithStatFont = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard({
+            playerName: 'Stats Font Test',
+            defence: 80,
+            control: 70,
+            attack: 90,
+            textFonts: {
+              playerName: 'Roboto',
+              clubText: 'Roboto',
+              countryText: 'Roboto',
+              statsText: 'Bebas Neue',
+            },
+          });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+
+      render(
+        <CardProvider>
+          <TestPreviewWithStatFont />
+        </CardProvider>,
+      );
+
+      await screen.findByTestId('stat-value-defence');
+
+      expect(screen.getByTestId('stat-value-defence')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-label-def')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-value-control')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-label-ctrl')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-value-attack')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-label-att')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+      expect(screen.getByTestId('stat-value-rating')).toHaveStyle({
+        fontFamily: 'Bebas Neue',
+      });
+    });
   });
 });

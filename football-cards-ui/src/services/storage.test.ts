@@ -5,7 +5,7 @@ import {
   deleteCard,
   generateCardId,
 } from './storage';
-import { CardState } from '../context/CardContext';
+import { CardState, DEFAULT_TEXT_FONTS } from '../context/CardContext';
 
 const card: CardState = {
   playerName: 'Test Player',
@@ -21,6 +21,12 @@ const card: CardState = {
   playerPhoto: null,
   cardBackground: null,
   cardId: null,
+  textFonts: {
+    playerName: 'Poppins',
+    clubText: 'Inter',
+    countryText: 'Bitter',
+    statsText: 'Montserrat',
+  },
 };
 
 describe('Storage service', () => {
@@ -75,5 +81,41 @@ describe('Storage service', () => {
 
     deleteCard(cardId);
     expect(getSavedCards()).toEqual([]);
+  });
+
+  test('saveCard and getSavedCards preserve textFonts', () => {
+    saveCard(card);
+    const stored = getSavedCards();
+
+    expect(stored[0].textFonts).toEqual({
+      playerName: 'Poppins',
+      clubText: 'Inter',
+      countryText: 'Bitter',
+      statsText: 'Montserrat',
+    });
+  });
+
+  test('getSavedCards fills in default textFonts for legacy cards missing the field', () => {
+    const legacyCard = {
+      playerName: 'Legacy Player',
+      club: 'Old Club',
+      nationality: 'Oldland',
+      league: 'Old League',
+      position: 'GK',
+      preferredFoot: 'Left',
+      defence: 70,
+      control: 60,
+      attack: 50,
+      rating: 60,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'card_legacy_1',
+      // no textFonts — simulates a card saved before this field existed
+    };
+    localStorage.setItem('football-cards', JSON.stringify([legacyCard]));
+
+    const stored = getSavedCards();
+
+    expect(stored[0].textFonts).toEqual(DEFAULT_TEXT_FONTS);
   });
 });

@@ -59,9 +59,9 @@ describe('CardCreator integration flow', () => {
   test('fills out form, updates background/photo, saves card, and displays it in gallery', async () => {
     render(<App />);
 
-    await screen.findByLabelText(/Player Name/i);
+    await screen.findByLabelText('Player Name');
 
-    userEvent.type(screen.getByLabelText(/Player Name/i), 'Champion Player');
+    userEvent.type(screen.getByLabelText('Player Name'), 'Champion Player');
 
     await openSelectAndChoose(0, 'FC Test');
     await openSelectAndChoose(1, 'Testland');
@@ -121,7 +121,7 @@ describe('CardCreator integration flow', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Edit/i }));
 
-    expect(await screen.findByLabelText(/Player Name/i)).toHaveValue(
+    expect(await screen.findByLabelText('Player Name')).toHaveValue(
       'Saved Hero',
     );
   });

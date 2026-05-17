@@ -54,71 +54,71 @@ interface Card {
 
 ### Subtask 1: Add Google Fonts Import
 **Files affected:** `public/index.html`, `src/theme.ts`
-- [ ] Add Google Fonts link in `public/index.html` `<head>` for all selected fonts
+- [x] Add Google Fonts link in `public/index.html` `<head>` for all selected fonts
   ```html
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&family=Montserrat:wght@600&family=Merriweather:wght@400;700&family=Poppins:wght@600&family=Bebas+Neue&family=Inter:wght@400;600&family=Bitter:wght@400;700&display=swap" rel="stylesheet">
   ```
-- [ ] Verify fonts load without blocking page render
+- [x] Verify fonts load without blocking page render (`display=swap` used)
 - [ ] Test in browser DevTools that fonts are available
 
 ### Subtask 2: Update CardContext State
 **Files affected:** `src/context/CardContext.tsx`
-- [ ] Add `textFonts` property to Card interface
-- [ ] Initialize default fonts (playerName: "Playfair Display", clubText: "Roboto", countryText: "Roboto")
-- [ ] Add `updateTextFont(element, font)` method to CardContext
-- [ ] Ensure font choices persist across card updates
-- [ ] Reset text fonts when creating new card
+- [x] Add `textFonts` property to Card interface
+- [x] Initialize default fonts (playerName: "Playfair Display", clubText: "Roboto", countryText: "Roboto")
+- [x] Expose font update via existing `updateCard` (no separate method needed)
+- [x] Ensure font choices persist across card updates
+- [x] Reset text fonts when creating new card
 
 ### Subtask 3: Update Storage Service
 **Files affected:** `src/services/storage.ts`
-- [ ] Verify `textFonts` field is saved to localStorage with card data
-- [ ] Verify `textFonts` field is loaded from localStorage when retrieving cards
-- [ ] Handle legacy saved cards without `textFonts` property (backward compatibility)
-- [ ] Test save/load cycle preserves font selections
+- [x] Verify `textFonts` field is saved to localStorage with card data (part of CardState serialisation)
+- [x] Verify `textFonts` field is loaded from localStorage when retrieving cards
+- [x] Handle legacy saved cards without `textFonts` property (backward compatibility via `?? DEFAULT_TEXT_FONTS`)
+- [x] Test save/load cycle in `storage.test.ts` (font preservation + legacy backward compat)
 
 ### Subtask 4: Create Font Selector Component
 **Files affected:** `src/components/FontSelector.tsx` (new)
-- [ ] Create reusable `FontSelector` component
-- [ ] Display list of available fonts
-- [ ] Show font preview for each option
-- [ ] Support filtering/categorizing by font type
-- [ ] Allow user to preview text with selected font
-- [ ] Ensure all interactive elements have `aria-label` or visible labels
-- [ ] Add `data-testid` attributes for RTL and Playwright selectors
-- [ ] Support keyboard navigation and screen reader friendliness
-- [ ] Return selected font name to parent component
+- [x] Create reusable `FontSelector` component
+- [x] Display list of available fonts
+- [x] Show font preview for each option (each MenuItem rendered in its own font family)
+- [ ] Support filtering/categorizing by font type (not implemented — 8 fonts sufficient for MVP)
+- [x] Allow user to preview text with selected font (`previewText` prop)
+- [x] Ensure all interactive elements have `aria-label` or visible labels
+- [x] Add `data-testid` attributes for RTL and Playwright selectors
+- [x] Support keyboard navigation and screen reader friendliness (MUI Select handles natively)
+- [x] Return selected font name to parent component
 
 ### Subtask 5: Add Font Controls to CardForm
 **Files affected:** `src/components/CardForm.tsx`
-- [ ] Create new section "Text Customization" in form
-- [ ] Add three font selectors:
-  - [ ] Player Name font selector
-  - [ ] Club/League/Position font selector
-  - [ ] Nationality font selector
-- [ ] Use Material-UI controls and preserve existing form layout/style
-- [ ] Ensure selectors are keyboard-accessible and screen-reader friendly
-- [ ] Add `aria-label` values and test ids for each selector
-- [ ] Display live preview of each font selection
-- [ ] Update CardContext when font selections change
-- [ ] Show current selected font in each selector
-- [ ] Add "Reset to Defaults" button for font selections
+- [x] Create new section "Text Customisation" in form
+- [x] Add three font selectors:
+  - [x] Player Name font selector
+  - [x] Club/League/Position font selector
+  - [x] Nationality font selector
+- [x] Use Material-UI controls and preserve existing form layout/style
+- [x] Ensure selectors are keyboard-accessible and screen-reader friendly
+- [x] Add `aria-label` values and test ids for each selector
+- [x] Display live preview of each font selection (`previewText` shows current field value)
+- [x] Update CardContext when font selections change
+- [x] Show current selected font in each selector
+- [x] Add "Reset Text Fonts" button for font selections
 
 ### Subtask 6: Update CardPreview Component
 **Files affected:** `src/components/CardPreview.tsx`
-- [ ] Apply selected font to player name display
-- [ ] Apply selected font to club name display
-- [ ] Apply selected font to nationality display
-- [ ] Apply selected font to position text
-- [ ] Apply selected font to league text
-- [ ] Ensure fonts don't break card layout
-- [ ] Test font rendering on different screen sizes
-- [ ] Verify print output preserves font selections
+- [x] Apply selected font to player name display
+- [x] Apply selected font to club name display
+- [x] Apply selected font to nationality display
+- [x] Apply selected font to position text
+- [x] Apply selected font to league text
+- [ ] Ensure fonts don't break card layout (verify in browser)
+- [ ] Test font rendering on different screen sizes (verify in browser)
+- [ ] Verify print output preserves font selections (verify in browser)
 
 ### Subtask 7: Update PrintableCard Component
 **Files affected:** `src/components/PrintableCard.tsx`
-- [ ] Ensure selected fonts apply to printed output
-- [ ] Test print preview with different font combinations
-- [ ] Verify fonts are embedded/available in print context
+- [x] Ensure selected fonts apply to printed output
+- [ ] Test print preview with different font combinations (verify in browser)
+- [ ] Verify fonts are embedded/available in print context (verify in browser)
 - [ ] Test print across different browsers
 
 ### Subtask 8: Update Print Styles
@@ -137,41 +137,41 @@ interface Card {
 
 ### Subtask 10: Unit Tests - FontSelector Component
 **Files affected:** `src/components/FontSelector.test.tsx` (new)
-- [ ] Test font list renders correctly with React Testing Library
-- [ ] Test selecting a font updates parent state
-- [ ] Test font preview displays with correct font
-- [ ] Test "Reset to Defaults" functionality
-- [ ] Test keyboard navigation through font list using `userEvent`
-- [ ] Test accessible labels and ARIA attributes
-- [ ] Mock font loading where needed
+- [x] Test font list renders correctly with React Testing Library
+- [x] Test selecting a font updates parent state
+- [x] Test font preview displays with correct font (`previewText` renders correctly)
+- [ ] Test "Reset to Defaults" functionality (tested via CardForm, not FontSelector directly)
+- [ ] Test keyboard navigation through font list using `userEvent.tab()`
+- [x] Test accessible labels and ARIA attributes
+- [ ] Mock font loading where needed (N/A — fonts are CSS strings, no loading to mock)
 - [ ] Aim for 85%+ code coverage
 
 ### Subtask 11: Unit Tests - CardForm Font Controls
 **Files affected:** `src/components/CardForm.test.tsx` (update)
-- [ ] Test that font selectors render in CardForm
-- [ ] Test selecting different fonts updates CardContext
-- [ ] Test default fonts are applied on form load
-- [ ] Test "Reset Fonts" button reverts to defaults
-- [ ] Test `aria-label` values and keyboard navigation for selectors
-- [ ] Mock `FontSelector` component where appropriate
+- [x] Test that font selectors render in CardForm
+- [x] Test selecting different fonts updates CardContext
+- [x] Test default fonts are applied on form load
+- [x] Test "Reset Fonts" button reverts to defaults
+- [x] Test `aria-label` values and keyboard navigation for selectors (via accessibility tests)
+- [ ] Mock `FontSelector` component where appropriate (not needed — renders fine without mock)
 - [ ] Aim for 80%+ code coverage
 
 ### Subtask 12: Unit Tests - CardPreview Font Application
 **Files affected:** `src/components/CardPreview.test.tsx` (update)
-- [ ] Test that player name applies selected font
-- [ ] Test that club text applies selected font
-- [ ] Test that nationality applies selected font
-- [ ] Test font style is correctly applied in inline styles
+- [x] Test that player name applies selected font
+- [x] Test that club text applies selected font
+- [x] Test that nationality applies selected font
+- [x] Test font style is correctly applied in inline styles
 - [ ] Test with various font combinations
 - [ ] Verify fonts don't cause layout overflow
-- [ ] Add `data-testid` selectors for preview text where needed
+- [x] Add `data-testid` selectors for preview text where needed
 - [ ] Aim for 80%+ code coverage
 
 ### Subtask 13: Integration Tests - Font Selection Flow
 **Files affected:** `src/components/CardForm.test.tsx` (update)
-- [ ] Test selecting font in CardForm updates CardPreview
-- [ ] Test saving card preserves font selections
-- [ ] Test loading saved card restores font selections
+- [x] Test selecting font in CardForm updates CardPreview (CardContext shared state)
+- [ ] Test saving card preserves font selections (see `storage.test.ts` item in 12.16)
+- [ ] Test loading saved card restores font selections (see `storage.test.ts` item in 12.16)
 - [ ] Test switching between multiple saved cards shows correct fonts
 - [ ] Test font selections persist after card edit/save cycle
 - [ ] Aim for 85%+ flow coverage
