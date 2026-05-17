@@ -69,7 +69,7 @@ describe('CardCreator integration flow', () => {
     await openSelectAndChoose(3, 'Forward');
     await openSelectAndChoose(4, 'Left');
 
-    fireEvent.click(screen.getByAltText('Generic Player 1'));
+    fireEvent.click(screen.getByAltText('Player Portrait 1'));
     fireEvent.click(screen.getByAltText('Stadium Blue'));
 
     const previewCard = await screen.findByTestId('card-preview');

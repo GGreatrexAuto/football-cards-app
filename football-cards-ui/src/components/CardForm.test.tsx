@@ -359,3 +359,73 @@ describe('CardForm Component', () => {
     expect(backgroundImage).toContain('picsum.photos/300/200?random=2');
   });
 });
+
+describe('Stock photo selection', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('renders 6 stock photo buttons with accessible names', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const buttons = screen.getAllByRole('button', { name: /Player Portrait/i });
+    expect(buttons).toHaveLength(6);
+  });
+
+  test('clicking a stock photo sets aria-pressed to true', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
+    expect(first).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(first);
+    expect(first).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('pressing Enter on a stock photo selects it', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+    fireEvent.keyDown(second, { key: 'Enter', code: 'Enter' });
+    expect(second).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('pressing Space on a stock photo selects it', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const third = screen.getByRole('button', { name: 'Player Portrait 3' });
+    fireEvent.keyDown(third, { key: ' ', code: 'Space' });
+    expect(third).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('selecting a second portrait deselects the first', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
+    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+
+    fireEvent.click(first);
+    expect(first).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(second);
+    expect(first).toHaveAttribute('aria-pressed', 'false');
+    expect(second).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('stock photo cards are focusable via tabIndex', async () => {
+    renderWithProvider();
+    await screen.findByLabelText(/player name/i);
+
+    const button = screen.getByRole('button', { name: 'Player Portrait 1' });
+    button.focus();
+    expect(button).toHaveFocus();
+  });
+});

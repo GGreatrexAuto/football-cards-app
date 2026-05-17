@@ -69,9 +69,7 @@ export class CardCreatorPage extends TestBase {
     this.photoUpload = this.page.locator(
       '[data-testid="photo-upload"], input[type="file"]',
     );
-    this.stockPhotos = this.page.locator(
-      '[data-testid="stock-photos"], .stock-photo, .MuiCard-root',
-    );
+    this.stockPhotos = this.page.locator('[data-testid^="stock-photo-stock"]');
     this.backgroundSelect = this.page.locator(
       '[data-testid="background-select"]',
     );

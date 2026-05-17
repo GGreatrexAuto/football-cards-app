@@ -229,7 +229,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [ ] Ability to change font of text e.g name, club, nationality (see plan D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\font-customization-plan.md)
 - [x] Add override to create a unique club e.g mytown united
 - [x] Sort clubs list alphabetically
-- [ ] Change player stock photos (currently any image) to those of human faces
+- [x] Change player stock photos (currently any image) to those of human faces
+- [ ] Add player image frame type + crop focus controls (face/head & shoulders/full-body × top/centre/bottom)
 - [ ] Add option to choose alternative card layouts e.g all stats at bottom, all at top, bigger photo frame etc
 - [ ] Add ability to edit shape of cards e.g shield
 - [ ] Update create card form, section headings reordering of fields
@@ -829,6 +830,78 @@ Firefox E2E tests are currently excluded from the pre-commit hook because they t
 - [ ] Investigate the `networkidle` timeout in `critical-paths.spec.ts:61` — replace `waitForLoadState('networkidle')` with a more deterministic wait (e.g. wait for a visible element after reload)
 - [ ] Re-enable Firefox in the pre-commit hook (`--project=chromium --project=webkit --project=firefox`) once all tests pass
 - [ ] Confirm all 21 E2E tests pass across Chromium, Firefox, and WebKit before closing this task
+
+### Task 16: Player Image Frame Type & Crop Focus
+
+Allow the user to control how the player photo is framed on the card via two independent selectors:
+- **Frame type** — shape and aspect ratio (Face, Head & Shoulders, Full Body)
+- **Crop focus** — where the image is anchored within that frame (Top, Centre, Bottom)
+
+This combination handles any uploaded photo regardless of its content (e.g. full-body photo + Face frame + Top focus shows just the player's head).
+
+#### Subtask 16.1: Implementation
+
+- [ ] Extend the `Card` interface in `src/types/` with:
+  - `imageFrameType: 'face' | 'headAndShoulders' | 'fullBody'` (default `'face'`)
+  - `imageCropFocus: 'top' | 'centre' | 'bottom'` (default `'top'`)
+- [ ] Add both fields (with defaults) to `CardContext` initial state and `updateCard()` in `src/context/CardContext.tsx`
+- [ ] Add both fields to the `saveCard` / `updateCard` / `getSavedCards` round-trip in `src/services/storage.ts`; missing fields in legacy saved cards should default gracefully
+- [ ] Add a **Frame type** selector to `src/components/CardForm.tsx`:
+  - MUI `ToggleButtonGroup` (single-select) with options: Face, Head & Shoulders, Full Body
+  - `aria-label="Player image frame type"` on the group; each button has a descriptive label
+  - `data-testid="image-frame-type-selector"`
+- [ ] Add a **Crop focus** selector to `src/components/CardForm.tsx`:
+  - MUI `ToggleButtonGroup` (single-select) with options: Top, Centre, Bottom
+  - `aria-label="Image crop focus"` on the group
+  - `data-testid="image-crop-focus-selector"`
+- [ ] Update `src/components/CardPreview.tsx` image styles per frame type:
+  - `face` → `aspect-ratio: 1/1`, `border-radius: 50%`, `object-fit: cover`
+  - `headAndShoulders` → `aspect-ratio: 3/4`, `border-radius: 8px`, `object-fit: cover`
+  - `fullBody` → `aspect-ratio: 2/3`, `border-radius: 8px`, `object-fit: cover`
+- [ ] Map `imageCropFocus` to CSS `object-position` in `CardPreview.tsx`:
+  - `top` → `object-position: top`
+  - `centre` → `object-position: center`
+  - `bottom` → `object-position: bottom`
+- [ ] Update the `alt` attribute on the preview image to describe the active combination (e.g. "Player face photo, cropped from top")
+
+#### Subtask 16.2: Tests & Accessibility
+
+**Component / unit tests** (extend existing test files):
+
+- [ ] `CardContext.test.tsx`:
+  - `imageFrameType` defaults to `'face'` and `imageCropFocus` defaults to `'top'`
+  - `updateCard({ imageFrameType: 'fullBody' })` propagates to consumers
+  - `updateCard({ imageCropFocus: 'bottom' })` propagates to consumers
+- [ ] `CardForm.test.tsx`:
+  - Frame type selector renders with three options (Face, Head & Shoulders, Full Body)
+  - Crop focus selector renders with three options (Top, Centre, Bottom)
+  - Selecting each frame type calls `updateCard` with the correct `imageFrameType` value
+  - Selecting each crop focus calls `updateCard` with the correct `imageCropFocus` value
+  - Both selectors have correct `aria-label` and are keyboard-navigable (Tab + Space/Enter)
+- [ ] `CardPreview.test.tsx`:
+  - Renders `border-radius: 50%` when `imageFrameType` is `'face'`
+  - Does not render `border-radius: 50%` for `'headAndShoulders'` or `'fullBody'`
+  - Applies `object-position: top` / `center` / `bottom` per `imageCropFocus` value
+  - `alt` text reflects the active frame type + crop focus combination
+- [ ] `storage.test.ts`:
+  - Both fields are saved and restored correctly
+  - Cards saved without these fields (legacy data) default to `'face'` / `'top'` on load
+- [ ] `accessibility.test.tsx` (extend existing):
+  - `CardForm` with both selectors passes `toHaveNoViolations()`
+  - All toggle button options have accessible names
+  - Tab order passes through both selector groups in logical document order
+
+**E2E tests** — `football-cards-ui/tests/e2e/image-frame-type.spec.ts` (new):
+
+> Test pyramid note: state management and CSS value logic are covered in component tests above. E2E tests focus only on what a real browser must prove: that CSS is actually applied and that selections persist in real localStorage.
+
+- [ ] **Scenario 1: Frame type CSS renders in real browser**
+  - Select "Full Body" frame type + "Top" crop focus on CREATE CARD
+  - Verify preview image has `aspect-ratio` containing `2/3` and `object-position: top` (via `page.evaluate`)
+  - Take screenshot for visual verification
+- [ ] **Scenario 2: Selections persist across navigation**
+  - Choose "Head & Shoulders" + "Bottom", save card, navigate to MY CARDS, click Edit
+  - Verify frame type shows "Head & Shoulders" and crop focus shows "Bottom" (real localStorage)
 
 ---
 

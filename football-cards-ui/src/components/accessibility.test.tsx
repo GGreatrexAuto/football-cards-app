@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
 import CardForm from './CardForm';
@@ -132,7 +132,7 @@ describe('Accessibility — aria-labels and alt text', () => {
     ).toBeInTheDocument();
   });
 
-  test('CardForm: stock photo images have alt text', async () => {
+  test('CardForm: stock photo buttons have role, aria-label, aria-pressed, tabIndex, and alt text', async () => {
     render(
       <CardProvider>
         <CardForm />
@@ -143,10 +143,20 @@ describe('Accessibility — aria-labels and alt text', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
     );
 
-    const photoImages = screen.queryAllByRole('img');
-    photoImages.forEach((img) => {
-      expect(img).toHaveAttribute('alt');
+    const photoButtons = screen.getAllByRole('button', {
+      name: /Player Portrait/i,
     });
+    expect(photoButtons.length).toBeGreaterThanOrEqual(6);
+
+    photoButtons.forEach((btn) => {
+      expect(btn).toHaveAttribute('aria-label');
+      expect(btn).toHaveAttribute('aria-pressed');
+      expect(btn).toHaveAttribute('tabIndex', '0');
+    });
+
+    within(screen.getByTestId('stock-photos'))
+      .getAllByRole('img')
+      .forEach((img) => expect(img).toHaveAttribute('alt'));
   });
 
   test('CardGallery: Edit and Delete buttons have accessible names', () => {
@@ -191,5 +201,23 @@ describe('Accessibility — keyboard navigation', () => {
 
     attackInput.focus();
     expect(attackInput).toHaveFocus();
+  });
+
+  test('CardForm: stock photo buttons are keyboard-focusable', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const firstButton = screen.getAllByRole('button', {
+      name: /Player Portrait/i,
+    })[0];
+    firstButton.focus();
+    expect(firstButton).toHaveFocus();
   });
 });

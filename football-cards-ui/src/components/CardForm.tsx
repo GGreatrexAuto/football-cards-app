@@ -61,22 +61,37 @@ const CardForm: React.FC = () => {
     },
   ];
 
-  // Default stock photos
+  // Default stock photos — human face portraits from randomuser.me
   const stockPhotos = [
     {
       id: 'stock1',
-      url: 'https://picsum.photos/100/100?random=4',
-      name: 'Generic Player 1',
+      url: 'https://randomuser.me/api/portraits/men/32.jpg',
+      name: 'Player Portrait 1',
     },
     {
       id: 'stock2',
-      url: 'https://picsum.photos/100/100?random=5',
-      name: 'Generic Player 2',
+      url: 'https://randomuser.me/api/portraits/women/44.jpg',
+      name: 'Player Portrait 2',
     },
     {
       id: 'stock3',
-      url: 'https://picsum.photos/100/100?random=6',
-      name: 'Generic Player 3',
+      url: 'https://randomuser.me/api/portraits/men/67.jpg',
+      name: 'Player Portrait 3',
+    },
+    {
+      id: 'stock4',
+      url: 'https://randomuser.me/api/portraits/women/19.jpg',
+      name: 'Player Portrait 4',
+    },
+    {
+      id: 'stock5',
+      url: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Player Portrait 5',
+    },
+    {
+      id: 'stock6',
+      url: 'https://randomuser.me/api/portraits/women/58.jpg',
+      name: 'Player Portrait 6',
     },
   ];
 
@@ -447,16 +462,22 @@ const CardForm: React.FC = () => {
             Set URL
           </Button>
         </Box>
-        <Typography variant="subtitle2" gutterBottom>
-          Or select a stock photo:
+        <Typography variant="subtitle2" gutterBottom id="stock-photos-label">
+          Or select a player portrait:
         </Typography>
         <Box
           data-testid="stock-photos"
+          role="group"
+          aria-labelledby="stock-photos-label"
           sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}
         >
           {stockPhotos.map((photo) => (
             <Box key={photo.id} sx={{ flex: '0 0 30%', minWidth: '80px' }}>
               <Card
+                role="button"
+                tabIndex={0}
+                aria-label={photo.name}
+                aria-pressed={card.playerPhoto === photo.url}
                 sx={{
                   cursor: 'pointer',
                   border:
@@ -465,6 +486,12 @@ const CardForm: React.FC = () => {
                       : '1px solid #ccc',
                 }}
                 onClick={() => updateCard({ playerPhoto: photo.url })}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    updateCard({ playerPhoto: photo.url });
+                  }
+                }}
                 data-testid={`stock-photo-${photo.id}`}
               >
                 <CardMedia
