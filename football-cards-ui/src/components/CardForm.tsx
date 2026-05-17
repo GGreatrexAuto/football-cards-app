@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   TextField,
   Button,
@@ -38,6 +38,9 @@ const CardForm: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [useCustomClub, setUseCustomClub] = useState(false);
+  const [customClubName, setCustomClubName] = useState('');
+  const initialClub = useRef(card.club);
 
   // Predefined background options
   const backgroundOptions = [
@@ -88,7 +91,17 @@ const CardForm: React.FC = () => {
             getLeagues(),
             getPositions(),
           ]);
-        setClubs(clubsData);
+        const sortedClubs = [...clubsData].sort((a, b) =>
+          a.name.localeCompare(b.name),
+        );
+        setClubs(sortedClubs);
+        if (
+          initialClub.current &&
+          !sortedClubs.find((c) => c.name === initialClub.current)
+        ) {
+          setUseCustomClub(true);
+          setCustomClubName(initialClub.current);
+        }
         setNationalities(nationalitiesData);
         setLeagues(leaguesData);
         setPositions(positionsData);
@@ -213,8 +226,17 @@ const CardForm: React.FC = () => {
               id="club-select"
               data-testid="club-select"
               aria-label="Club"
-              value={card.club}
-              onChange={(e) => updateCard({ club: e.target.value })}
+              value={useCustomClub ? '__custom__' : card.club}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom__') {
+                  setUseCustomClub(true);
+                  updateCard({ club: customClubName });
+                } else {
+                  setUseCustomClub(false);
+                  updateCard({ club: val });
+                }
+              }}
               label="Club"
             >
               {clubs?.map((club) => (
@@ -222,8 +244,25 @@ const CardForm: React.FC = () => {
                   {club.name}
                 </MenuItem>
               ))}
+              <MenuItem value="__custom__">Other — enter club name...</MenuItem>
             </Select>
           </FormControl>
+          {useCustomClub && (
+            <TextField
+              label="Custom Club Name"
+              fullWidth
+              value={customClubName}
+              onChange={(e) => {
+                setCustomClubName(e.target.value);
+                updateCard({ club: e.target.value });
+              }}
+              inputProps={{
+                'data-testid': 'custom-club-input',
+                'aria-label': 'Custom Club Name',
+              }}
+              sx={{ mt: 1 }}
+            />
+          )}
         </Box>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>

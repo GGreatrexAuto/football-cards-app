@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CardForm from './CardForm';
 import CardPreview from './CardPreview';
@@ -22,8 +28,9 @@ jest.mock('../services/api');
 jest.mock('../services/storage');
 
 const mockedClubs = [
-  { id: 1, name: 'FC Test' },
-  { id: 2, name: 'Unit United' },
+  { id: 1, name: 'Unit United' },
+  { id: 2, name: 'Arsenal FC' },
+  { id: 3, name: 'FC Test' },
 ];
 const mockedNations = [
   { id: 1, name: 'Testland' },
@@ -239,6 +246,99 @@ describe('CardForm Component', () => {
     previewCard = await screen.findByTestId('card-preview');
     backgroundImage = previewCard.dataset.backgroundImage || '';
     expect(backgroundImage).toContain('picsum.photos/300/200?random=2');
+  });
+
+  test('clubs dropdown displays options in alphabetical order', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    const clubSelect = screen.getByTestId('club-select');
+    const combobox = within(clubSelect).getByRole('combobox');
+    fireEvent.mouseDown(combobox);
+
+    const options = await screen.findAllByRole('option');
+    const clubOptionTexts = options
+      .map((o) => o.textContent ?? '')
+      .filter((t) => mockedClubs.some((c) => c.name === t));
+
+    expect(clubOptionTexts).toEqual(['Arsenal FC', 'FC Test', 'Unit United']);
+  });
+
+  test('selecting "Other" option reveals custom club name input', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId('custom-club-input')).not.toBeInTheDocument();
+
+    const clubSelect = screen.getByTestId('club-select');
+    const combobox = within(clubSelect).getByRole('combobox');
+    fireEvent.mouseDown(combobox);
+
+    const otherOption = await screen.findByRole('option', {
+      name: /Other.*enter club name/i,
+    });
+    fireEvent.click(otherOption);
+
+    expect(await screen.findByTestId('custom-club-input')).toBeInTheDocument();
+  });
+
+  test('typing in custom club input updates the card club', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    const clubSelect = screen.getByTestId('club-select');
+    const combobox = within(clubSelect).getByRole('combobox');
+    fireEvent.mouseDown(combobox);
+
+    const otherOption = await screen.findByRole('option', {
+      name: /Other.*enter club name/i,
+    });
+    fireEvent.click(otherOption);
+
+    const customInput = (await screen.findByTestId(
+      'custom-club-input',
+    )) as HTMLInputElement;
+    fireEvent.change(customInput, { target: { value: 'Mytown United' } });
+
+    expect(customInput.value).toBe('Mytown United');
+  });
+
+  test('custom club input is hidden when a real club is re-selected', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Switch to custom
+    const clubSelect = screen.getByTestId('club-select');
+    const combobox = within(clubSelect).getByRole('combobox');
+    fireEvent.mouseDown(combobox);
+    const otherOption = await screen.findByRole('option', {
+      name: /Other.*enter club name/i,
+    });
+    fireEvent.click(otherOption);
+    expect(await screen.findByTestId('custom-club-input')).toBeInTheDocument();
+
+    // Switch back to a real club
+    fireEvent.mouseDown(combobox);
+    const arsenalOption = await screen.findByRole('option', {
+      name: 'Arsenal FC',
+    });
+    fireEvent.click(arsenalOption);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('custom-club-input')).not.toBeInTheDocument();
+    });
   });
 
   test('displays semi-transparent gradient overlay with background', async () => {

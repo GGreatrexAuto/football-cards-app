@@ -18,7 +18,9 @@ Enable users to select different fonts for player name, club, and nationality te
 ### Font Strategy
 - **Primary fonts**: Use Google Fonts for consistent cross-browser support
 - **Font categories**: Serif, Sans-serif, Display/Script
-- **Fallback strategy**: Include generic font-family fallbacks (serif, sans-serif)
+- **Fallback strategy**: Include generic font-family fallbacks (serif, sans-serif, system-ui)
+- **Accessibility-first**: Prioritize readable fonts for player name/club/nationality and avoid overly decorative fonts for essential information
+- **Contrast & legibility**: Ensure selected fonts remain legible over card backgrounds and in print; provide a readable fallback if the selected font fails to load
 - **Implementation**: CSS-in-JS via Material-UI `sx` prop and `@emotion/styled`
 
 ### Suggested Fonts to Include
@@ -81,6 +83,9 @@ interface Card {
 - [ ] Show font preview for each option
 - [ ] Support filtering/categorizing by font type
 - [ ] Allow user to preview text with selected font
+- [ ] Ensure all interactive elements have `aria-label` or visible labels
+- [ ] Add `data-testid` attributes for RTL and Playwright selectors
+- [ ] Support keyboard navigation and screen reader friendliness
 - [ ] Return selected font name to parent component
 
 ### Subtask 5: Add Font Controls to CardForm
@@ -90,6 +95,9 @@ interface Card {
   - [ ] Player Name font selector
   - [ ] Club/League/Position font selector
   - [ ] Nationality font selector
+- [ ] Use Material-UI controls and preserve existing form layout/style
+- [ ] Ensure selectors are keyboard-accessible and screen-reader friendly
+- [ ] Add `aria-label` values and test ids for each selector
 - [ ] Display live preview of each font selection
 - [ ] Update CardContext when font selections change
 - [ ] Show current selected font in each selector
@@ -129,12 +137,13 @@ interface Card {
 
 ### Subtask 10: Unit Tests - FontSelector Component
 **Files affected:** `src/components/FontSelector.test.tsx` (new)
-- [ ] Test font list renders correctly
+- [ ] Test font list renders correctly with React Testing Library
 - [ ] Test selecting a font updates parent state
 - [ ] Test font preview displays with correct font
 - [ ] Test "Reset to Defaults" functionality
-- [ ] Test keyboard navigation through font list
-- [ ] Mock font loading
+- [ ] Test keyboard navigation through font list using `userEvent`
+- [ ] Test accessible labels and ARIA attributes
+- [ ] Mock font loading where needed
 - [ ] Aim for 85%+ code coverage
 
 ### Subtask 11: Unit Tests - CardForm Font Controls
@@ -143,7 +152,8 @@ interface Card {
 - [ ] Test selecting different fonts updates CardContext
 - [ ] Test default fonts are applied on form load
 - [ ] Test "Reset Fonts" button reverts to defaults
-- [ ] Mock FontSelector component
+- [ ] Test `aria-label` values and keyboard navigation for selectors
+- [ ] Mock `FontSelector` component where appropriate
 - [ ] Aim for 80%+ code coverage
 
 ### Subtask 12: Unit Tests - CardPreview Font Application
@@ -154,6 +164,7 @@ interface Card {
 - [ ] Test font style is correctly applied in inline styles
 - [ ] Test with various font combinations
 - [ ] Verify fonts don't cause layout overflow
+- [ ] Add `data-testid` selectors for preview text where needed
 - [ ] Aim for 80%+ code coverage
 
 ### Subtask 13: Integration Tests - Font Selection Flow
@@ -179,9 +190,11 @@ interface Card {
 - [ ] Test font loading on slow network
 - [ ] Add ARIA labels to font selector options
 - [ ] Ensure font names are descriptive for screen readers
-- [ ] Verify color contrast with all font selections
-- [ ] Test tab order through font selectors
+- [ ] Verify color contrast with all font selections for WCAG AA
+- [ ] Test tab order through font selectors and controls with `userEvent.tab()`
 - [ ] Verify fonts scale properly on different viewport sizes
+- [ ] Add or update `src/components/accessibility.test.tsx` to cover the new selectors and print preview if needed
+- [ ] Ensure print styles preserve readability and do not rely on decorative fonts alone
 
 ---
 
@@ -218,11 +231,13 @@ interface Card {
 - [x] Font choices restore when loading saved cards
 - [x] All fonts render correctly across browsers (Chrome, Firefox, Safari, Edge)
 - [x] Font selections don't break card layout
-- [x] Fonts print correctly
+- [x] Fonts print correctly and remain readable
 - [x] Mobile UI is responsive and usable
-- [x] Accessibility guidelines met (WCAG AA)
+- [x] Accessibility guidelines met for WCAG AA and keyboard navigation
+- [x] Interactive controls include `aria-label` or visible label text
 - [x] Unit test coverage ≥ 80%
-- [x] E2E tests cover main user flows
+- [x] Component accessibility tests include axe-core or equivalent checks
+- [x] E2E tests cover main font selection and preview flows
 
 ---
 

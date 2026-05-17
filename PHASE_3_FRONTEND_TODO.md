@@ -227,8 +227,9 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 
 ### Subtask 11.14: Enhancements
 - [ ] Ability to change font of text e.g name, club, nationality (see plan D:\Gareth's Docs\Gareths Code\Python\football-cards\docs\plans\font-customization-plan.md)
-- [ ] Add override to create a unique club e.g mytown united
-- [ ] Change player stock photos to those of human players
+- [x] Add override to create a unique club e.g mytown united
+- [x] Sort clubs list alphabetically
+- [ ] Change player stock photos (currently any image) to those of human faces
 - [ ] Add option to choose alternative card layouts e.g all stats at bottom, all at top, bigger photo frame etc
 - [ ] Add ability to edit shape of cards e.g shield
 - [ ] Update create card form, section headings reordering of fields
