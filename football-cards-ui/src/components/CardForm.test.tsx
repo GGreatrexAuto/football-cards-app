@@ -483,4 +483,27 @@ describe('Text Customisation section', () => {
       ).toHaveTextContent('Playfair Display');
     });
   });
+
+  test('selecting a different Player Name Font updates the displayed value', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const playerNameSelector = screen.getByTestId(
+      'font-selector-player-name-font',
+    );
+    fireEvent.mouseDown(within(playerNameSelector).getByRole('combobox'));
+
+    const montserratOption = await screen.findByTestId(
+      'font-option-montserrat',
+    );
+    fireEvent.click(montserratOption);
+
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('font-selector-player-name-font')).getByRole(
+          'combobox',
+        ),
+      ).toHaveTextContent('Montserrat');
+    });
+  });
 });

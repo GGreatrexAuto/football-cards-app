@@ -167,3 +167,130 @@ describe('CardCreator integration flow', () => {
     });
   });
 });
+
+describe('Font persistence', () => {
+  const baseCardFields = {
+    club: 'FC Test',
+    nationality: 'Testland',
+    league: 'Test League',
+    position: 'FWD',
+    preferredFoot: 'Right',
+    defence: 80,
+    control: 70,
+    attack: 90,
+    rating: 80,
+    playerPhoto: null,
+    cardBackground: null,
+  };
+
+  beforeEach(() => {
+    localStorage.clear();
+    jest.resetAllMocks();
+    (getClubs as jest.Mock).mockResolvedValue(mockedClubs);
+    (getNationalities as jest.Mock).mockResolvedValue(mockedNations);
+    (getLeagues as jest.Mock).mockResolvedValue(mockedLeagues);
+    (getPositions as jest.Mock).mockResolvedValue([
+      { code: 'GK', name: 'Goalkeeper' },
+      { code: 'DEF', name: 'Defender' },
+      { code: 'MID', name: 'Midfielder' },
+      { code: 'FWD', name: 'Forward' },
+    ]);
+  });
+
+  test('loading a saved card with custom fonts shows those fonts in the selectors', async () => {
+    localStorage.setItem(
+      'football-cards',
+      JSON.stringify([
+        {
+          ...baseCardFields,
+          playerName: 'Font Hero',
+          cardId: 'card_font_1',
+          textFonts: {
+            playerName: 'Poppins',
+            clubText: 'Montserrat',
+            countryText: 'Bitter',
+            statsText: 'Inter',
+          },
+        },
+      ]),
+    );
+
+    render(<App />);
+
+    const myCardsTab = screen.getByRole('tab', { name: /My Cards/i });
+    userEvent.click(myCardsTab);
+
+    expect(await screen.findByText(/Font Hero/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Edit/i }));
+
+    await screen.findByLabelText('Player Name');
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('font-selector-player-name-font')).getByRole(
+          'combobox',
+        ),
+      ).toHaveTextContent('Poppins');
+    });
+  });
+
+  test("switching between saved cards shows each card's fonts", async () => {
+    localStorage.setItem(
+      'football-cards',
+      JSON.stringify([
+        {
+          ...baseCardFields,
+          playerName: 'Card Alpha',
+          cardId: 'card_font_alpha',
+          textFonts: {
+            playerName: 'Bebas Neue',
+            clubText: 'Roboto',
+            countryText: 'Roboto',
+            statsText: 'Roboto',
+          },
+        },
+        {
+          ...baseCardFields,
+          playerName: 'Card Beta',
+          cardId: 'card_font_beta',
+          textFonts: {
+            playerName: 'Merriweather',
+            clubText: 'Roboto',
+            countryText: 'Roboto',
+            statsText: 'Roboto',
+          },
+        },
+      ]),
+    );
+
+    render(<App />);
+    const myCardsTab = screen.getByRole('tab', { name: /My Cards/i });
+    userEvent.click(myCardsTab);
+
+    // Edit first card and verify its font
+    const editButtons = await screen.findAllByRole('button', { name: /Edit/i });
+    fireEvent.click(editButtons[0]);
+    await screen.findByLabelText('Player Name');
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('font-selector-player-name-font')).getByRole(
+          'combobox',
+        ),
+      ).toHaveTextContent('Bebas Neue');
+    });
+
+    // Return to gallery and edit second card
+    userEvent.click(screen.getByRole('tab', { name: /My Cards/i }));
+    const editButtons2 = await screen.findAllByRole('button', {
+      name: /Edit/i,
+    });
+    fireEvent.click(editButtons2[1]);
+    await screen.findByLabelText('Player Name');
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('font-selector-player-name-font')).getByRole(
+          'combobox',
+        ),
+      ).toHaveTextContent('Merriweather');
+    });
+  });
+});

@@ -90,6 +90,18 @@ describe('Accessibility — WCAG violations (axe)', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+
+  test('CardForm font selectors have no axe violations', async () => {
+    const { container } = render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('font-selector-player-name-font');
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
 });
 
 describe('Accessibility — aria-labels and alt text', () => {
@@ -219,5 +231,20 @@ describe('Accessibility — keyboard navigation', () => {
     })[0];
     firstButton.focus();
     expect(firstButton).toHaveFocus();
+  });
+
+  test('CardForm: font selector comboboxes are keyboard-focusable', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('font-selector-player-name-font');
+    const combobox = within(
+      screen.getByTestId('font-selector-player-name-font'),
+    ).getByRole('combobox');
+    combobox.focus();
+    expect(combobox).toHaveFocus();
   });
 });

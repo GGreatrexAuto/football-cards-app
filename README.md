@@ -133,10 +133,11 @@ football-cards/
 ### Key Features
 
 1. **Card Creation**: Form-based UI to create player cards with stats
-2. **State Management**: React Context API for card state
-3. **Data Persistence**: Browser Local Storage (no database for MVP)
-4. **Print Support**: Browser print-to-PDF functionality
-5. **Responsive Design**: Mobile-friendly UI with Material-UI
+2. **Font Customization**: Per-field font selection for player name, club, nationality, and stats (8 Google Fonts)
+3. **State Management**: React Context API for card state
+4. **Data Persistence**: Browser Local Storage (no database for MVP)
+5. **Print Support**: Browser print-to-PDF functionality with selected fonts applied
+6. **Responsive Design**: Mobile-friendly UI with Material-UI
 
 ---
 
@@ -210,29 +211,33 @@ See [football-cards-ui/src/services/api.ts](football-cards-ui/src/services/api.t
 
 ## 💾 Local Storage Schema
 
-Saved cards are stored in browser Local Storage under key `saved_cards`:
+Saved cards are stored in browser Local Storage under key `football-cards`:
 
 ```typescript
 interface Card {
-  id: string;                    // UUID
+  cardId: string;                // UUID
   playerName: string;
   club: string;
   nationality: string;
   league: string;
   position: string;
   preferredFoot: "Left" | "Right" | "Both";
-  stats: {
-    defence: number;             // 0-100
-    control: number;             // 0-100
-    attack: number;              // 0-100
-    rating: number;              // Average of above (read-only)
+  defence: number;               // 0-100
+  control: number;               // 0-100
+  attack: number;                // 0-100
+  rating: number;                // Average of defence/control/attack (read-only)
+  playerPhoto: string | null;    // Data URL or image URL
+  cardBackground: string | null; // Selected background URL
+  textFonts: {
+    playerName: string;          // Font for player name (default: "Playfair Display")
+    clubText: string;            // Font for club/league/position (default: "Roboto")
+    countryText: string;         // Font for nationality (default: "Roboto")
+    statsText: string;           // Font for stat values and labels (default: "Roboto")
   };
-  photo: string;                 // Data URL or image URL
-  background: string;            // Selected background ID
-  createdAt: string;             // ISO timestamp
-  updatedAt: string;             // ISO timestamp
 }
 ```
+
+Cards without `textFonts` (saved before font customization was introduced) are transparently upgraded to use the defaults on load.
 
 ---
 
@@ -355,4 +360,4 @@ For issues, questions, or contributions, refer to the project documentation or c
 
 ---
 
-**Last Updated**: May 15, 2026
+**Last Updated**: May 18, 2026

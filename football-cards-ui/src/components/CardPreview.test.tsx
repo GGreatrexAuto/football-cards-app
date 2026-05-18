@@ -343,5 +343,49 @@ describe('CardPreview Component', () => {
         fontFamily: 'Bebas Neue',
       });
     });
+
+    test('all four font fields are applied independently when set to different fonts', async () => {
+      const TestPreviewAllFonts = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard({
+            playerName: 'Combo Test',
+            club: 'Combo FC',
+            nationality: 'Comboland',
+            defence: 70,
+            control: 75,
+            attack: 80,
+            textFonts: {
+              playerName: 'Bebas Neue',
+              clubText: 'Playfair Display',
+              countryText: 'Inter',
+              statsText: 'Merriweather',
+            },
+          });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+
+      render(
+        <CardProvider>
+          <TestPreviewAllFonts />
+        </CardProvider>,
+      );
+
+      const nameEl = await screen.findByTestId('player-name-text');
+      expect(nameEl).toHaveStyle({ fontFamily: 'Bebas Neue' });
+
+      const clubEl = await screen.findByTestId('club-text');
+      expect(clubEl).toHaveStyle({ fontFamily: 'Playfair Display' });
+
+      const nationalityEl = await screen.findByTestId('nationality-text');
+      expect(nationalityEl).toHaveStyle({ fontFamily: 'Inter' });
+
+      await screen.findByTestId('stat-value-defence');
+      expect(screen.getByTestId('stat-value-defence')).toHaveStyle({
+        fontFamily: 'Merriweather',
+      });
+    });
   });
 });

@@ -239,6 +239,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [ ] Add 2 buttons reset Card Background & Player photo to revert to original values
 - [ ] Add reset all changes button
 - [ ] Ability to choose either club or national team card
+- [ ] Nationality should optionally provide flag image
 - [ ] Card style 2.0
 ---
 
@@ -629,23 +630,21 @@ Use established framework:
 - [x] **`CardContext.test.tsx`** — test `resetCard()` reverts font fields to defaults
 - [x] **`storage.test.ts`** — test font selections are saved and loaded from localStorage correctly
 
-**E2E Tests** — `football-cards-ui/tests/e2e/font-customization.spec.ts` (new):
+**E2E Tests** — `football-cards-ui/tests/e2e/font-customization.spec.ts` ✅ created:
 
 **⚠️ Requires: Backend running at localhost:8000 + Font customization feature (11.14) implemented**
 
-- [ ] **Scenario 1: Fonts render visually in the browser**
-  - [ ] Navigate to CREATE CARD, enter player name
-  - [ ] Select "Playfair Display" for player name font
-  - [ ] Select "Montserrat" for club text font
-  - [ ] Verify preview element has correct `font-family` CSS applied (via `evaluate`)
-  - [ ] Take screenshot for visual verification
+- [x] **Scenario 1: @smoke — Font renders visually in the browser**
+  - [x] Navigate to CREATE CARD
+  - [x] Select "Montserrat" for player name font
+  - [x] Verify preview element has correct `font-family` CSS applied (via `toHaveCSS`)
 
-- [ ] **Scenario 2: Custom fonts persist across navigation**
-  - [ ] Create card with custom fonts and save
-  - [ ] Navigate to MY CARDS gallery
-  - [ ] Click Edit on the saved card
-  - [ ] Verify font selectors show the previously selected fonts (real localStorage)
-  - [ ] Verify preview renders with correct fonts
+- [x] **Scenario 2: Custom fonts persist across navigation**
+  - [x] Select "Poppins" for player name font, fill form fields and save
+  - [x] Navigate to MY CARDS gallery
+  - [x] Click Edit on the saved card
+  - [x] Verify font selector shows the previously selected font (real localStorage)
+  - [ ] Verify preview CSS re-applies the font on reload
 
 - [ ] **Scenario 3: Print with custom fonts**
   - [ ] Create card with "Playfair Display" player name font

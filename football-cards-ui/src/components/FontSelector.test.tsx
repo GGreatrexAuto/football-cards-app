@@ -71,4 +71,22 @@ describe('FontSelector Component', () => {
     const robotoOption = await screen.findByTestId('font-option-roboto');
     expect(robotoOption).toHaveTextContent('Roboto — John Smith');
   });
+
+  test('combobox is reachable via Tab and keyboard-focusable', async () => {
+    renderSelector();
+    const combobox = screen.getByRole('combobox');
+    await userEvent.tab();
+    expect(combobox).toHaveFocus();
+  });
+
+  test('each font option is rendered in its own font family for preview', async () => {
+    renderSelector();
+    await userEvent.click(screen.getByRole('combobox'));
+
+    for (const font of AVAILABLE_FONTS) {
+      const testId = `font-option-${font.toLowerCase().replace(/ /g, '-')}`;
+      const option = await screen.findByTestId(testId);
+      expect(option).toHaveStyle({ fontFamily: font });
+    }
+  });
 });
