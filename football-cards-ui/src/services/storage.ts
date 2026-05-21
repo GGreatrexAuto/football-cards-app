@@ -1,5 +1,9 @@
-import { CardState } from '../context/CardContext';
-import { DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import {
+  CardState,
+  DEFAULT_TEXT_FONTS,
+  DEFAULT_IMAGE_FRAME_TYPE,
+  DEFAULT_IMAGE_CROP_FOCUS,
+} from '../context/CardContext';
 
 const CARDS_KEY = 'football-cards';
 
@@ -20,6 +24,8 @@ export const getSavedCards = (): CardState[] => {
   return (JSON.parse(savedData) as CardState[]).map((c) => ({
     ...c,
     textFonts: c.textFonts ?? { ...DEFAULT_TEXT_FONTS },
+    imageFrameType: c.imageFrameType ?? DEFAULT_IMAGE_FRAME_TYPE,
+    imageCropFocus: c.imageCropFocus ?? DEFAULT_IMAGE_CROP_FOCUS,
   }));
 };
 

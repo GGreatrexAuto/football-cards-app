@@ -1,7 +1,13 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CardProvider, useCard, DEFAULT_TEXT_FONTS } from './CardContext';
+import {
+  CardProvider,
+  useCard,
+  DEFAULT_TEXT_FONTS,
+  DEFAULT_IMAGE_FRAME_TYPE,
+  DEFAULT_IMAGE_CROP_FOCUS,
+} from './CardContext';
 
 const TestComponent = () => {
   const { card, updateCard, resetCard } = useCard();
@@ -16,6 +22,8 @@ const TestComponent = () => {
         {card.textFonts.countryText}
       </div>
       <div data-testid="textFonts-statsText">{card.textFonts.statsText}</div>
+      <div data-testid="imageFrameType">{card.imageFrameType}</div>
+      <div data-testid="imageCropFocus">{card.imageCropFocus}</div>
       <button onClick={() => updateCard({ playerName: 'Star Player' })}>
         update
       </button>
@@ -32,6 +40,12 @@ const TestComponent = () => {
         }
       >
         update fonts
+      </button>
+      <button onClick={() => updateCard({ imageFrameType: 'fullBody' })}>
+        update frame type
+      </button>
+      <button onClick={() => updateCard({ imageCropFocus: 'bottom' })}>
+        update crop focus
       </button>
       <button onClick={() => resetCard()}>reset</button>
     </div>
@@ -146,6 +160,73 @@ describe('CardContext', () => {
     );
     expect(screen.getByTestId('textFonts-statsText')).toHaveTextContent(
       DEFAULT_TEXT_FONTS.statsText,
+    );
+  });
+
+  test('imageFrameType defaults to face', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    expect(screen.getByTestId('imageFrameType')).toHaveTextContent(
+      DEFAULT_IMAGE_FRAME_TYPE,
+    );
+  });
+
+  test('imageCropFocus defaults to top', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    expect(screen.getByTestId('imageCropFocus')).toHaveTextContent(
+      DEFAULT_IMAGE_CROP_FOCUS,
+    );
+  });
+
+  test('updateCard propagates imageFrameType to consumers', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    fireEvent.click(screen.getByText('update frame type'));
+    expect(screen.getByTestId('imageFrameType')).toHaveTextContent('fullBody');
+  });
+
+  test('updateCard propagates imageCropFocus to consumers', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    fireEvent.click(screen.getByText('update crop focus'));
+    expect(screen.getByTestId('imageCropFocus')).toHaveTextContent('bottom');
+  });
+
+  test('resetCard restores imageFrameType and imageCropFocus to defaults', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    fireEvent.click(screen.getByText('update frame type'));
+    fireEvent.click(screen.getByText('update crop focus'));
+    expect(screen.getByTestId('imageFrameType')).toHaveTextContent('fullBody');
+    expect(screen.getByTestId('imageCropFocus')).toHaveTextContent('bottom');
+
+    fireEvent.click(screen.getByText('reset'));
+    expect(screen.getByTestId('imageFrameType')).toHaveTextContent(
+      DEFAULT_IMAGE_FRAME_TYPE,
+    );
+    expect(screen.getByTestId('imageCropFocus')).toHaveTextContent(
+      DEFAULT_IMAGE_CROP_FOCUS,
     );
   });
 });

@@ -5,7 +5,12 @@ import {
   deleteCard,
   generateCardId,
 } from './storage';
-import { CardState, DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import {
+  CardState,
+  DEFAULT_TEXT_FONTS,
+  DEFAULT_IMAGE_FRAME_TYPE,
+  DEFAULT_IMAGE_CROP_FOCUS,
+} from '../context/CardContext';
 
 const card: CardState = {
   playerName: 'Test Player',
@@ -27,6 +32,8 @@ const card: CardState = {
     countryText: 'Bitter',
     statsText: 'Montserrat',
   },
+  imageFrameType: 'headAndShoulders',
+  imageCropFocus: 'bottom',
 };
 
 describe('Storage service', () => {
@@ -117,5 +124,39 @@ describe('Storage service', () => {
     const stored = getSavedCards();
 
     expect(stored[0].textFonts).toEqual(DEFAULT_TEXT_FONTS);
+  });
+
+  test('saveCard and getSavedCards preserve imageFrameType and imageCropFocus', () => {
+    saveCard(card);
+    const stored = getSavedCards();
+
+    expect(stored[0].imageFrameType).toBe('headAndShoulders');
+    expect(stored[0].imageCropFocus).toBe('bottom');
+  });
+
+  test('getSavedCards fills in default imageFrameType and imageCropFocus for legacy cards missing those fields', () => {
+    const legacyCard = {
+      playerName: 'Old Player',
+      club: 'Old Club',
+      nationality: 'Oldland',
+      league: 'Old League',
+      position: 'GK',
+      preferredFoot: 'Left',
+      defence: 70,
+      control: 60,
+      attack: 50,
+      rating: 60,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'card_legacy_2',
+      textFonts: { ...DEFAULT_TEXT_FONTS },
+      // no imageFrameType or imageCropFocus
+    };
+    localStorage.setItem('football-cards', JSON.stringify([legacyCard]));
+
+    const stored = getSavedCards();
+
+    expect(stored[0].imageFrameType).toBe(DEFAULT_IMAGE_FRAME_TYPE);
+    expect(stored[0].imageCropFocus).toBe(DEFAULT_IMAGE_CROP_FOCUS);
   });
 });

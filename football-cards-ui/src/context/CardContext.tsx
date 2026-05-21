@@ -14,6 +14,11 @@ export const DEFAULT_TEXT_FONTS: TextFonts = {
   statsText: 'Roboto',
 };
 
+export type ImageFrameType = 'face' | 'headAndShoulders' | 'fullBody';
+export type ImageCropFocus = 'top' | 'centre' | 'bottom';
+export const DEFAULT_IMAGE_FRAME_TYPE: ImageFrameType = 'face';
+export const DEFAULT_IMAGE_CROP_FOCUS: ImageCropFocus = 'top';
+
 export interface CardState {
   playerName: string;
   club: string;
@@ -29,6 +34,8 @@ export interface CardState {
   cardBackground: string | null;
   cardId: string | null;
   textFonts: TextFonts;
+  imageFrameType: ImageFrameType;
+  imageCropFocus: ImageCropFocus;
 }
 
 const initialState: CardState = {
@@ -46,6 +53,8 @@ const initialState: CardState = {
   cardBackground: null,
   cardId: null,
   textFonts: { ...DEFAULT_TEXT_FONTS },
+  imageFrameType: DEFAULT_IMAGE_FRAME_TYPE,
+  imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
 };
 
 interface CardContextType {

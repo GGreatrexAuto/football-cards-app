@@ -251,3 +251,4 @@ dist/
 .gemini/
 gemini.log
 .gemini.lock
+football-cards-ui/tests/e2e/screenshots/

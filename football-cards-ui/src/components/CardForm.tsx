@@ -13,9 +13,11 @@ import {
   CardMedia,
   Snackbar,
   Alert,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
-import { useCard } from '../context/CardContext';
-import { DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import { useCard, DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
 import FontSelector from './FontSelector';
 import {
   getClubs,
@@ -505,6 +507,59 @@ const CardForm: React.FC = () => {
               </Card>
             </Box>
           ))}
+        </Box>
+        <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Typography variant="subtitle2" id="image-frame-type-label">
+            Frame type:
+          </Typography>
+          <ToggleButtonGroup
+            value={card.imageFrameType}
+            exclusive
+            onChange={(_, value: ImageFrameType | null) => {
+              if (value) updateCard({ imageFrameType: value });
+            }}
+            aria-label="Player image frame type"
+            data-testid="image-frame-type-selector"
+            size="small"
+            fullWidth
+          >
+            <ToggleButton value="face" aria-label="Face">
+              Face
+            </ToggleButton>
+            <ToggleButton
+              value="headAndShoulders"
+              aria-label="Head & Shoulders"
+            >
+              Head &amp; Shoulders
+            </ToggleButton>
+            <ToggleButton value="fullBody" aria-label="Full Body">
+              Full Body
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Typography variant="subtitle2" id="image-crop-focus-label">
+            Crop focus:
+          </Typography>
+          <ToggleButtonGroup
+            value={card.imageCropFocus}
+            exclusive
+            onChange={(_, value: ImageCropFocus | null) => {
+              if (value) updateCard({ imageCropFocus: value });
+            }}
+            aria-label="Image crop focus"
+            data-testid="image-crop-focus-selector"
+            size="small"
+            fullWidth
+          >
+            <ToggleButton value="top" aria-label="Top">
+              Top
+            </ToggleButton>
+            <ToggleButton value="centre" aria-label="Centre">
+              Centre
+            </ToggleButton>
+            <ToggleButton value="bottom" aria-label="Bottom">
+              Bottom
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Box>
       </Box>
 

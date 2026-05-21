@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CardPreview from './CardPreview';
@@ -125,8 +125,7 @@ describe('CardPreview Component', () => {
 
     const previewCard = await screen.findByTestId('card-preview');
     const backgroundImage = previewCard.dataset.backgroundImage || '';
-    const avatar = await screen.findByTestId('player-photo');
-    const photo = within(avatar).getByRole('img');
+    const photo = await screen.findByTestId('player-photo');
 
     // Verify the background URL is present and the player photo is rendered
     expect(backgroundImage).toBe('https://example.com/background.png');
@@ -140,9 +139,7 @@ describe('CardPreview Component', () => {
       </CardProvider>,
     );
 
-    const avatar = await screen.findByTestId('player-photo');
-    const photo = within(avatar).getByRole('img');
-
+    const photo = await screen.findByTestId('player-photo');
     expect(photo).toHaveAttribute('src', 'https://example.com/photo.jpg');
   });
 
@@ -386,6 +383,98 @@ describe('CardPreview Component', () => {
       expect(screen.getByTestId('stat-value-defence')).toHaveStyle({
         fontFamily: 'Merriweather',
       });
+    });
+  });
+
+  describe('image frame type and crop focus', () => {
+    const renderWithFrame = (
+      imageFrameType: 'face' | 'headAndShoulders' | 'fullBody',
+      imageCropFocus: 'top' | 'centre' | 'bottom' = 'top',
+    ) => {
+      const Setup = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard({
+            playerPhoto: 'https://example.com/photo.jpg',
+            imageFrameType,
+            imageCropFocus,
+          });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+      return render(
+        <CardProvider>
+          <Setup />
+        </CardProvider>,
+      );
+    };
+
+    test('face frame applies border-radius 50%', async () => {
+      renderWithFrame('face');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).toHaveStyle({ borderRadius: '50%' });
+    });
+
+    test('headAndShoulders frame does not apply border-radius 50%', async () => {
+      renderWithFrame('headAndShoulders');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).not.toHaveStyle({ borderRadius: '50%' });
+      expect(photo).toHaveStyle({ borderRadius: '8px' });
+    });
+
+    test('fullBody frame does not apply border-radius 50%', async () => {
+      renderWithFrame('fullBody');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).not.toHaveStyle({ borderRadius: '50%' });
+      expect(photo).toHaveStyle({ borderRadius: '8px' });
+    });
+
+    test('top crop focus applies object-position top', async () => {
+      renderWithFrame('face', 'top');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).toHaveStyle({ objectPosition: 'top' });
+    });
+
+    test('centre crop focus applies object-position center', async () => {
+      renderWithFrame('face', 'centre');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).toHaveStyle({ objectPosition: 'center' });
+    });
+
+    test('bottom crop focus applies object-position bottom', async () => {
+      renderWithFrame('face', 'bottom');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).toHaveStyle({ objectPosition: 'bottom' });
+    });
+
+    test('alt text reflects active frame type and crop focus', async () => {
+      renderWithFrame('headAndShoulders', 'bottom');
+      const photo = await screen.findByTestId('player-photo');
+      expect(photo).toHaveAttribute(
+        'alt',
+        'Player headAndShoulders photo, cropped from bottom',
+      );
+    });
+
+    test('renders Avatar fallback when no photo is set', async () => {
+      const NoPhotoSetup = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard({ playerName: 'Fallback', playerPhoto: null });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+      render(
+        <CardProvider>
+          <NoPhotoSetup />
+        </CardProvider>,
+      );
+
+      const fallback = await screen.findByTestId('player-photo');
+      expect(fallback.tagName).not.toBe('IMG');
+      expect(screen.getByText('F')).toBeInTheDocument();
     });
   });
 });

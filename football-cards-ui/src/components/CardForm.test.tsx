@@ -430,6 +430,158 @@ describe('Stock photo selection', () => {
   });
 });
 
+describe('Image frame type selector', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('renders three frame type buttons', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-frame-type-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'Face' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Head & Shoulders' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Full Body' }),
+    ).toBeInTheDocument();
+  });
+
+  test('Frame is "face" by default (aria-pressed=true on Face button)', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-frame-type-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'Face' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      within(selector).getByRole('button', { name: 'Full Body' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('clicking Head & Shoulders sets it as selected', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-frame-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Head & Shoulders' }),
+    );
+
+    expect(
+      within(selector).getByRole('button', { name: 'Head & Shoulders' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      within(selector).getByRole('button', { name: 'Face' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('clicking Full Body sets it as selected', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-frame-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Full Body' }),
+    );
+
+    expect(
+      within(selector).getByRole('button', { name: 'Full Body' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('frame type selector group has correct aria-label', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.getByRole('group', { name: 'Player image frame type' }),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('Image crop focus selector', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('renders three crop focus buttons', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-crop-focus-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'Top' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Centre' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Bottom' }),
+    ).toBeInTheDocument();
+  });
+
+  test('crop focus is "top" by default (aria-pressed=true on Top button)', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-crop-focus-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'Top' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      within(selector).getByRole('button', { name: 'Bottom' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('clicking Centre sets it as selected', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-crop-focus-selector');
+    fireEvent.click(within(selector).getByRole('button', { name: 'Centre' }));
+
+    expect(
+      within(selector).getByRole('button', { name: 'Centre' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      within(selector).getByRole('button', { name: 'Top' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('clicking Bottom sets it as selected', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('image-crop-focus-selector');
+    fireEvent.click(within(selector).getByRole('button', { name: 'Bottom' }));
+
+    expect(
+      within(selector).getByRole('button', { name: 'Bottom' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('crop focus selector group has correct aria-label', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.getByRole('group', { name: 'Image crop focus' }),
+    ).toBeInTheDocument();
+  });
+});
+
 describe('Text Customisation section', () => {
   const renderWithProvider = () =>
     render(

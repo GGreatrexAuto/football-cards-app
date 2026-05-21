@@ -102,6 +102,18 @@ describe('Accessibility — WCAG violations (axe)', () => {
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
+
+  test('CardForm image frame type and crop focus selectors have no axe violations', async () => {
+    const { container } = render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-frame-type-selector');
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
 });
 
 describe('Accessibility — aria-labels and alt text', () => {
@@ -246,5 +258,48 @@ describe('Accessibility — keyboard navigation', () => {
     ).getByRole('combobox');
     combobox.focus();
     expect(combobox).toHaveFocus();
+  });
+
+  test('CardForm: image frame type toggle buttons are keyboard-focusable', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-frame-type-selector');
+    const selector = screen.getByTestId('image-frame-type-selector');
+    const faceButton = within(selector).getByRole('button', { name: 'Face' });
+    faceButton.focus();
+    expect(faceButton).toHaveFocus();
+  });
+
+  test('CardForm: image crop focus toggle buttons are keyboard-focusable', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-crop-focus-selector');
+    const selector = screen.getByTestId('image-crop-focus-selector');
+    const topButton = within(selector).getByRole('button', { name: 'Top' });
+    topButton.focus();
+    expect(topButton).toHaveFocus();
+  });
+
+  test('CardForm: all image frame type toggle buttons have accessible names', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-frame-type-selector');
+    const selector = screen.getByTestId('image-frame-type-selector');
+    const buttons = within(selector).getAllByRole('button');
+    buttons.forEach((btn) => {
+      expect(btn).toHaveAccessibleName();
+    });
   });
 });

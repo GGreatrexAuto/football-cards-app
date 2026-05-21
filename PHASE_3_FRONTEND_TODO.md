@@ -840,52 +840,52 @@ This combination handles any uploaded photo regardless of its content (e.g. full
 
 #### Subtask 16.1: Implementation
 
-- [ ] Extend the `Card` interface in `src/types/` with:
+- [x] Extend the `Card` interface in `src/types/` with:
   - `imageFrameType: 'face' | 'headAndShoulders' | 'fullBody'` (default `'face'`)
   - `imageCropFocus: 'top' | 'centre' | 'bottom'` (default `'top'`)
-- [ ] Add both fields (with defaults) to `CardContext` initial state and `updateCard()` in `src/context/CardContext.tsx`
-- [ ] Add both fields to the `saveCard` / `updateCard` / `getSavedCards` round-trip in `src/services/storage.ts`; missing fields in legacy saved cards should default gracefully
-- [ ] Add a **Frame type** selector to `src/components/CardForm.tsx`:
+- [x] Add both fields (with defaults) to `CardContext` initial state and `updateCard()` in `src/context/CardContext.tsx`
+- [x] Add both fields to the `saveCard` / `updateCard` / `getSavedCards` round-trip in `src/services/storage.ts`; missing fields in legacy saved cards should default gracefully
+- [x] Add a **Frame type** selector to `src/components/CardForm.tsx`:
   - MUI `ToggleButtonGroup` (single-select) with options: Face, Head & Shoulders, Full Body
   - `aria-label="Player image frame type"` on the group; each button has a descriptive label
   - `data-testid="image-frame-type-selector"`
-- [ ] Add a **Crop focus** selector to `src/components/CardForm.tsx`:
+- [x] Add a **Crop focus** selector to `src/components/CardForm.tsx`:
   - MUI `ToggleButtonGroup` (single-select) with options: Top, Centre, Bottom
   - `aria-label="Image crop focus"` on the group
   - `data-testid="image-crop-focus-selector"`
-- [ ] Update `src/components/CardPreview.tsx` image styles per frame type:
+- [x] Update `src/components/CardPreview.tsx` image styles per frame type:
   - `face` → `aspect-ratio: 1/1`, `border-radius: 50%`, `object-fit: cover`
   - `headAndShoulders` → `aspect-ratio: 3/4`, `border-radius: 8px`, `object-fit: cover`
   - `fullBody` → `aspect-ratio: 2/3`, `border-radius: 8px`, `object-fit: cover`
-- [ ] Map `imageCropFocus` to CSS `object-position` in `CardPreview.tsx`:
+- [x] Map `imageCropFocus` to CSS `object-position` in `CardPreview.tsx`:
   - `top` → `object-position: top`
   - `centre` → `object-position: center`
   - `bottom` → `object-position: bottom`
-- [ ] Update the `alt` attribute on the preview image to describe the active combination (e.g. "Player face photo, cropped from top")
+- [x] Update the `alt` attribute on the preview image to describe the active combination (e.g. "Player face photo, cropped from top")
 
 #### Subtask 16.2: Tests & Accessibility
 
 **Component / unit tests** (extend existing test files):
 
-- [ ] `CardContext.test.tsx`:
+- [x] `CardContext.test.tsx`:
   - `imageFrameType` defaults to `'face'` and `imageCropFocus` defaults to `'top'`
   - `updateCard({ imageFrameType: 'fullBody' })` propagates to consumers
   - `updateCard({ imageCropFocus: 'bottom' })` propagates to consumers
-- [ ] `CardForm.test.tsx`:
+- [x] `CardForm.test.tsx`:
   - Frame type selector renders with three options (Face, Head & Shoulders, Full Body)
   - Crop focus selector renders with three options (Top, Centre, Bottom)
   - Selecting each frame type calls `updateCard` with the correct `imageFrameType` value
   - Selecting each crop focus calls `updateCard` with the correct `imageCropFocus` value
   - Both selectors have correct `aria-label` and are keyboard-navigable (Tab + Space/Enter)
-- [ ] `CardPreview.test.tsx`:
+- [x] `CardPreview.test.tsx`:
   - Renders `border-radius: 50%` when `imageFrameType` is `'face'`
   - Does not render `border-radius: 50%` for `'headAndShoulders'` or `'fullBody'`
   - Applies `object-position: top` / `center` / `bottom` per `imageCropFocus` value
   - `alt` text reflects the active frame type + crop focus combination
-- [ ] `storage.test.ts`:
+- [x] `storage.test.ts`:
   - Both fields are saved and restored correctly
   - Cards saved without these fields (legacy data) default to `'face'` / `'top'` on load
-- [ ] `accessibility.test.tsx` (extend existing):
+- [x] `accessibility.test.tsx` (extend existing):
   - `CardForm` with both selectors passes `toHaveNoViolations()`
   - All toggle button options have accessible names
   - Tab order passes through both selector groups in logical document order
@@ -894,11 +894,11 @@ This combination handles any uploaded photo regardless of its content (e.g. full
 
 > Test pyramid note: state management and CSS value logic are covered in component tests above. E2E tests focus only on what a real browser must prove: that CSS is actually applied and that selections persist in real localStorage.
 
-- [ ] **Scenario 1: Frame type CSS renders in real browser**
+- [x] **Scenario 1: Frame type CSS renders in real browser**
   - Select "Full Body" frame type + "Top" crop focus on CREATE CARD
   - Verify preview image has `aspect-ratio` containing `2/3` and `object-position: top` (via `page.evaluate`)
   - Take screenshot for visual verification
-- [ ] **Scenario 2: Selections persist across navigation**
+- [x] **Scenario 2: Selections persist across navigation**
   - Choose "Head & Shoulders" + "Bottom", save card, navigate to MY CARDS, click Edit
   - Verify frame type shows "Head & Shoulders" and crop focus shows "Bottom" (real localStorage)
 

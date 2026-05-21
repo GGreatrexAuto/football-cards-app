@@ -1,6 +1,22 @@
 import React, { useEffect } from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
+import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
+
+const FRAME_STYLES: Record<
+  ImageFrameType,
+  { aspectRatio: string; borderRadius: string }
+> = {
+  face: { aspectRatio: '1 / 1', borderRadius: '50%' },
+  headAndShoulders: { aspectRatio: '3 / 4', borderRadius: '8px' },
+  fullBody: { aspectRatio: '2 / 3', borderRadius: '8px' },
+};
+
+const CROP_POSITION_MAP: Record<ImageCropFocus, string> = {
+  top: 'top',
+  centre: 'center',
+  bottom: 'bottom',
+};
 
 const CardPreview: React.FC = () => {
   const { card, updateCard } = useCard();
@@ -18,6 +34,8 @@ const CardPreview: React.FC = () => {
     playerPhoto,
     cardBackground,
     textFonts,
+    imageFrameType,
+    imageCropFocus,
   } = card;
 
   useEffect(() => {
@@ -53,22 +71,37 @@ const CardPreview: React.FC = () => {
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Player Photo */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-          <Avatar
-            data-testid="player-photo"
-            src={playerPhoto || undefined}
-            sx={{
-              width: 80,
-              height: 80,
-              bgcolor: playerPhoto ? 'transparent' : '#fff',
-              border: '3px solid white',
-            }}
-          >
-            {!playerPhoto && (
+          {playerPhoto ? (
+            <img
+              data-testid="player-photo"
+              src={playerPhoto}
+              alt={`Player ${imageFrameType} photo, cropped from ${imageCropFocus}`}
+              style={{
+                aspectRatio: FRAME_STYLES[imageFrameType].aspectRatio,
+                borderRadius: FRAME_STYLES[imageFrameType].borderRadius,
+                objectFit: 'cover',
+                objectPosition: CROP_POSITION_MAP[imageCropFocus],
+                width: '100%',
+                maxWidth: 120,
+                border: '3px solid white',
+                display: 'block',
+              }}
+            />
+          ) : (
+            <Avatar
+              data-testid="player-photo"
+              sx={{
+                width: 80,
+                height: 80,
+                bgcolor: '#fff',
+                border: '3px solid white',
+              }}
+            >
               <Typography variant="h6" sx={{ color: '#1976D2' }}>
                 {playerName ? playerName.charAt(0).toUpperCase() : '?'}
               </Typography>
-            )}
-          </Avatar>
+            </Avatar>
+          )}
         </Box>
 
         {/* Player Name */}
