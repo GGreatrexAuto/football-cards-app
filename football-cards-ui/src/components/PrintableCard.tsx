@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
+import { getFlagUrl } from '../utils/flags';
 
 const PrintableCard: React.FC = () => {
   const { card } = useCard();
@@ -8,6 +9,8 @@ const PrintableCard: React.FC = () => {
     playerName,
     club,
     nationality,
+    nationalityCode,
+    nationalityDisplay,
     position,
     preferredFoot,
     defence,
@@ -18,6 +21,8 @@ const PrintableCard: React.FC = () => {
     cardBackground,
     textFonts,
   } = card;
+
+  const flagUrl = getFlagUrl(nationalityCode);
 
   const cardStyle = {
     width: '3.5in',
@@ -94,17 +99,40 @@ const PrintableCard: React.FC = () => {
             </Typography>
           )}
           {nationality && (
-            <Typography
-              variant="body2"
+            <Box
               sx={{
-                fontFamily: textFonts.countryText,
-                textAlign: 'center',
-                fontSize: '0.7rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 0.5,
                 mb: 0.2,
               }}
             >
-              {nationality}
-            </Typography>
+              {(nationalityDisplay === 'flag' ||
+                nationalityDisplay === 'both') &&
+                flagUrl && (
+                  <img
+                    src={flagUrl}
+                    alt={`${nationality} flag`}
+                    data-testid="nationality-flag"
+                    style={{ width: 18, height: 'auto' }}
+                  />
+                )}
+              {(nationalityDisplay === 'text' ||
+                nationalityDisplay === 'both' ||
+                !flagUrl) && (
+                <Typography
+                  variant="body2"
+                  data-testid="nationality-text"
+                  sx={{
+                    fontFamily: textFonts.countryText,
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  {nationality}
+                </Typography>
+              )}
+            </Box>
           )}
           {(position || preferredFoot) && (
             <Typography

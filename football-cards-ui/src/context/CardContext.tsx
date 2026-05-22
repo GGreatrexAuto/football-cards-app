@@ -16,6 +16,7 @@ export const DEFAULT_TEXT_FONTS: TextFonts = {
 
 export type ImageFrameType = 'face' | 'headAndShoulders' | 'fullBody';
 export type ImageCropFocus = 'top' | 'centre' | 'bottom';
+export type NationalityDisplay = 'text' | 'flag' | 'both';
 export const DEFAULT_IMAGE_FRAME_TYPE: ImageFrameType = 'face';
 export const DEFAULT_IMAGE_CROP_FOCUS: ImageCropFocus = 'top';
 
@@ -23,6 +24,8 @@ export interface CardState {
   playerName: string;
   club: string;
   nationality: string;
+  nationalityCode: string;
+  nationalityDisplay: NationalityDisplay;
   league: string;
   position: string;
   preferredFoot: string;
@@ -42,6 +45,8 @@ const initialState: CardState = {
   playerName: '',
   club: '',
   nationality: '',
+  nationalityCode: '',
+  nationalityDisplay: 'text',
   league: '',
   position: '',
   preferredFoot: '',

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { axe } from 'jest-axe';
 import CardPreview from './CardPreview';
 import {
   CardProvider,
@@ -9,6 +10,7 @@ import {
   DEFAULT_TEXT_FONTS,
   TextFonts,
 } from '../context/CardContext';
+import type { NationalityDisplay } from '../context/CardContext';
 
 // Regression guard: this assignment will fail to compile if a new field is added
 // to TextFonts without updating DEFAULT_TEXT_FONTS and all test fixtures.
@@ -475,6 +477,98 @@ describe('CardPreview Component', () => {
       const fallback = await screen.findByTestId('player-photo');
       expect(fallback.tagName).not.toBe('IMG');
       expect(screen.getByText('F')).toBeInTheDocument();
+    });
+  });
+
+  describe('nationality flag display', () => {
+    const renderWithNationality = (opts: {
+      nationality: string;
+      nationalityCode: string;
+      nationalityDisplay: NationalityDisplay;
+    }) => {
+      const Setup = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard(opts);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+      return render(
+        <CardProvider>
+          <Setup />
+        </CardProvider>,
+      );
+    };
+
+    test('shows only text when nationalityDisplay is text', async () => {
+      renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'text',
+      });
+      expect(await screen.findByTestId('nationality-text')).toBeInTheDocument();
+      expect(screen.queryByTestId('nationality-flag')).not.toBeInTheDocument();
+    });
+
+    test('shows only flag when nationalityDisplay is flag', async () => {
+      renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'flag',
+      });
+      expect(await screen.findByTestId('nationality-flag')).toBeInTheDocument();
+      expect(screen.queryByTestId('nationality-text')).not.toBeInTheDocument();
+    });
+
+    test('shows both flag and text when nationalityDisplay is both', async () => {
+      renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'both',
+      });
+      expect(await screen.findByTestId('nationality-flag')).toBeInTheDocument();
+      expect(await screen.findByTestId('nationality-text')).toBeInTheDocument();
+    });
+
+    test('flag image has descriptive alt text', async () => {
+      renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'flag',
+      });
+      const flagImg = await screen.findByTestId('nationality-flag');
+      expect(flagImg).toHaveAttribute('alt', 'England flag');
+    });
+
+    test('falls back to text when nationalityCode is unknown and display is flag', async () => {
+      renderWithNationality({
+        nationality: 'Testland',
+        nationalityCode: 'XYZ',
+        nationalityDisplay: 'flag',
+      });
+      expect(await screen.findByTestId('nationality-text')).toBeInTheDocument();
+      expect(screen.queryByTestId('nationality-flag')).not.toBeInTheDocument();
+    });
+
+    test('has no accessibility violations in flag-only mode', async () => {
+      const { container } = renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'flag',
+      });
+      await screen.findByTestId('nationality-flag');
+      expect(await axe(container)).toHaveNoViolations();
+    });
+
+    test('has no accessibility violations in both mode', async () => {
+      const { container } = renderWithNationality({
+        nationality: 'England',
+        nationalityCode: 'ENG',
+        nationalityDisplay: 'both',
+      });
+      await screen.findByTestId('nationality-flag');
+      expect(await axe(container)).toHaveNoViolations();
     });
   });
 });

@@ -14,6 +14,7 @@ export interface Club {
 export interface Nationality {
   id: number;
   name: string;
+  country_code?: string;
 }
 
 export interface League {

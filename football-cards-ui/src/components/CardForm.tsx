@@ -17,7 +17,12 @@ import {
   ToggleButtonGroup,
 } from '@mui/material';
 import { useCard, DEFAULT_TEXT_FONTS } from '../context/CardContext';
-import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
+import type {
+  ImageFrameType,
+  ImageCropFocus,
+  NationalityDisplay,
+} from '../context/CardContext';
+import { getFlagUrl } from '../utils/flags';
 import FontSelector from './FontSelector';
 import {
   getClubs,
@@ -319,7 +324,22 @@ const CardForm: React.FC = () => {
               data-testid="nationality-select"
               aria-label="Nationality"
               value={card.nationality}
-              onChange={(e) => updateCard({ nationality: e.target.value })}
+              onChange={(e) => {
+                const name = e.target.value;
+                const selected = nationalities.find((n) => n.name === name);
+                const code = selected?.country_code ?? '';
+                const hasFlagUrl = Boolean(getFlagUrl(code));
+                const currentDisplay = card.nationalityDisplay;
+                const nextDisplay: NationalityDisplay =
+                  !hasFlagUrl && currentDisplay !== 'text'
+                    ? 'text'
+                    : currentDisplay;
+                updateCard({
+                  nationality: name,
+                  nationalityCode: code,
+                  nationalityDisplay: nextDisplay,
+                });
+              }}
               label="Nationality"
             >
               {nationalities?.map((nationality) => (
@@ -329,6 +349,58 @@ const CardForm: React.FC = () => {
               ))}
             </Select>
           </FormControl>
+          {card.nationality && (
+            <fieldset style={{ border: 'none', margin: '8px 0 0', padding: 0 }}>
+              <legend
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'rgba(0,0,0,0.6)',
+                  marginBottom: 4,
+                }}
+              >
+                Nationality display
+              </legend>
+              <ToggleButtonGroup
+                value={card.nationalityDisplay}
+                exclusive
+                onChange={(_, value: NationalityDisplay | null) => {
+                  if (value) updateCard({ nationalityDisplay: value });
+                }}
+                aria-label="Nationality display mode"
+                data-testid="nationality-display-selector"
+                size="small"
+                fullWidth
+              >
+                <ToggleButton value="text" aria-label="Show text only">
+                  Text
+                </ToggleButton>
+                <ToggleButton
+                  value="flag"
+                  aria-label="Show flag only"
+                  disabled={!getFlagUrl(card.nationalityCode)}
+                  title={
+                    !getFlagUrl(card.nationalityCode)
+                      ? 'Flag not available for this nationality'
+                      : undefined
+                  }
+                >
+                  Flag
+                </ToggleButton>
+                <ToggleButton
+                  value="both"
+                  aria-label="Show flag and text"
+                  disabled={!getFlagUrl(card.nationalityCode)}
+                  title={
+                    !getFlagUrl(card.nationalityCode)
+                      ? 'Flag not available for this nationality'
+                      : undefined
+                  }
+                >
+                  Both
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </fieldset>
+          )}
         </Box>
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>

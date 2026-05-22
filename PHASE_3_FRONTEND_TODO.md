@@ -52,6 +52,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Create `src/styles/` directory
 - [x] Create `src/types/` directory for TypeScript type definitions
 - [x] Create `src/hooks/` directory for custom React hooks
+- [x] Create `src/utils/` directory for shared utilities (e.g. `flags.ts`)
 - [x] Create `public/assets/` directory for images and backgrounds
 
 ---
@@ -76,6 +77,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
   - [x] Player name
   - [x] Club (dropdown)
   - [x] Nationality (dropdown)
+  - [x] Nationality code (Football-Data.org code, e.g. "ENG" — used to derive flag URL)
+  - [x] Nationality display mode (`'text' | 'flag' | 'both'`)
   - [x] League (dropdown)
   - [x] Position (dropdown)
   - [x] Preferred foot (dropdown)
@@ -86,6 +89,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
   - [x] Player photo
   - [x] Card background
   - [x] Card ID (for saved cards)
+  - [x] Image frame type (`'face' | 'headAndShoulders' | 'fullBody'`)
+  - [x] Image crop focus (`'top' | 'centre' | 'bottom'`)
 
 ### Subtask 11.3: Create API Service
 - [x] Create `src/services/api.ts` module
@@ -239,7 +244,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [ ] Add 2 buttons reset Card Background & Player photo to revert to original values
 - [ ] Add reset all changes button
 - [ ] Ability to choose either club or national team card
-- [ ] Nationality should optionally provide flag image, instead of or in addition to text
+- [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - [ ] Card style 2.0
 ---
 
@@ -1003,6 +1008,62 @@ This combination handles any uploaded photo regardless of its content (e.g. full
 - [x] **Scenario 2: Selections persist across navigation**
   - Choose "Head & Shoulders" + "Bottom", save card, navigate to MY CARDS, click Edit
   - Verify frame type shows "Head & Shoulders" and crop focus shows "Bottom" (real localStorage)
+
+---
+
+### Task 18: Nationality Flag Display
+
+Allow the card to optionally show the player's nationality as a flag image, plain text, or both — chosen per card. The flag is sourced from [flagcdn.com](https://flagcdn.com) and resolved via a lookup table that maps Football-Data.org country codes to their corresponding ISO / subdivision codes.
+
+#### Subtask 18.1: Backend — Expose `country_code`
+
+- [x] Add `country_code: str | None = None` to the `Nation` Pydantic model in `app/api/models.py`
+- [x] Include `country_code` (from Football-Data.org `countryCode` field) in the `/api/v1/nations` response in `app/services/football_api.py`
+- [x] Add `country_code` values (FIFA codes) to mock nations in `app/services/test_data.py`
+- [x] Update `docs/API_CONTRACT.md` nations section to document the new field
+- [x] Update `tests/unit/test_football_api.py` to assert `country_code` is returned
+
+#### Subtask 18.2: Frontend — Flag URL Utility
+
+- [x] Create `src/utils/flags.ts` with `getFlagUrl(countryCode: string | undefined): string | null`
+- [x] Lookup table maps ~80 Football-Data.org codes to `flagcdn.com` path segments
+- [x] UK constituent nations map to subdivision codes: ENG → `gb-eng`, SCO → `gb-sct`, WAL → `gb-wls`, NIR → `gb-nir`
+- [x] Returns `null` for unknown or empty codes (flag silently absent)
+- [x] Flag URL format: `https://flagcdn.com/w40/{code}.png`
+- [x] Create `src/utils/flags.test.ts` with 9 unit tests (known codes, case-insensitive, unknown/undefined → null)
+
+#### Subtask 18.3: Frontend — State & API
+
+- [x] Add `country_code?: string` to `Nationality` interface in `src/services/api.ts` (snake_case, matching backend convention)
+- [x] Export `NationalityDisplay = 'text' | 'flag' | 'both'` type from `src/context/CardContext.tsx`
+- [x] Add `nationalityCode: string` and `nationalityDisplay: NationalityDisplay` to `CardState` (defaults: `''` and `'text'`)
+
+#### Subtask 18.4: Frontend — CardForm
+
+- [x] Nationality `Select` `onChange` now stores both `nationality` (name) and `nationalityCode` (from `country_code`)
+- [x] If a nationality with no known flag is chosen while display mode is `'flag'` or `'both'`, auto-reset `nationalityDisplay` to `'text'`
+- [x] Add a **Text / Flag / Both** `ToggleButtonGroup` below the nationality select; only shown when a nationality is selected
+- [x] Flag and Both buttons are disabled (with tooltip) when the selected nationality has no resolvable flag URL
+- [x] Toggle wrapped in `<fieldset>` / `<legend>` for semantic grouping; each button has a descriptive `aria-label`
+- [x] `data-testid="nationality-display-selector"` on the group
+
+#### Subtask 18.5: Frontend — Card Rendering
+
+- [x] Update `src/components/CardPreview.tsx` to render flag image (`width: 24px`) and/or nationality text based on `nationalityDisplay`
+- [x] Update `src/components/PrintableCard.tsx` with the same logic (`width: 18px` for the smaller print format)
+- [x] Graceful fallback: if `getFlagUrl` returns `null` at render time, always show text regardless of display mode
+- [x] Flag `<img>` has descriptive `alt` text (`"{nationality} flag"`) and `data-testid="nationality-flag"`
+
+#### Subtask 18.6: Tests
+
+- [x] `src/utils/flags.test.ts` — 9 unit tests for the utility
+- [x] `src/components/CardPreview.test.tsx` — 7 new tests in `describe('nationality flag display')`:
+  text-only, flag-only, both, fallback for unknown code, alt text, jest-axe for flag-only and both modes
+- [x] `src/components/CardForm.test.tsx` — 6 new tests in `describe('Nationality flag display mode')`:
+  toggle hidden before selection, toggle appears after selection, correct `aria-label` on each button, Flag mode hides text, Both mode shows both, Flag/Both disabled when no flag available, jest-axe with toggle visible
+- [x] `src/services/storage.test.ts` — fixture updated to include `nationalityCode` and `nationalityDisplay`
+
+> **Note:** The `country_code` field uses snake_case (matching backend convention and the existing `league_id`/`league_name` fields) — the frontend `Nationality` interface must match exactly, not use camelCase `countryCode`.
 
 ---
 

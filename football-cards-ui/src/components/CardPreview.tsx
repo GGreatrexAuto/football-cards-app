@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
 import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
+import { getFlagUrl } from '../utils/flags';
 
 const FRAME_STYLES: Record<
   ImageFrameType,
@@ -24,6 +25,8 @@ const CardPreview: React.FC = () => {
     playerName,
     club,
     nationality,
+    nationalityCode,
+    nationalityDisplay,
     league,
     position,
     preferredFoot,
@@ -37,6 +40,8 @@ const CardPreview: React.FC = () => {
     imageFrameType,
     imageCropFocus,
   } = card;
+
+  const flagUrl = getFlagUrl(nationalityCode);
 
   useEffect(() => {
     const newRating = Math.round((defence + control + attack) / 3);
@@ -137,17 +142,37 @@ const CardPreview: React.FC = () => {
             </Typography>
           )}
           {nationality && (
-            <Typography
-              variant="body2"
-              data-testid="nationality-text"
+            <Box
               sx={{
-                fontFamily: textFonts.countryText,
-                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 0.5,
                 mb: 0.5,
               }}
             >
-              {nationality}
-            </Typography>
+              {(nationalityDisplay === 'flag' ||
+                nationalityDisplay === 'both') &&
+                flagUrl && (
+                  <img
+                    src={flagUrl}
+                    alt={`${nationality} flag`}
+                    data-testid="nationality-flag"
+                    style={{ width: 24, height: 'auto' }}
+                  />
+                )}
+              {(nationalityDisplay === 'text' ||
+                nationalityDisplay === 'both' ||
+                !flagUrl) && (
+                <Typography
+                  variant="body2"
+                  data-testid="nationality-text"
+                  sx={{ fontFamily: textFonts.countryText }}
+                >
+                  {nationality}
+                </Typography>
+              )}
+            </Box>
           )}
           {league && (
             <Typography

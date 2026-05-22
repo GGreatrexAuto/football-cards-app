@@ -120,8 +120,8 @@ async def test_get_nations_filters_to_countries_only():
         result = await get_nations()
 
     assert result == [
-        {"id": 2072, "name": "England"},
-        {"id": 2088, "name": "Germany"},
+        {"id": 2072, "name": "England", "country_code": "ENG"},
+        {"id": 2088, "name": "Germany", "country_code": "DEU"},
     ]
 
 

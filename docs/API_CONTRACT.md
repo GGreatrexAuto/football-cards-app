@@ -64,8 +64,8 @@ Returns a list of countries (areas with a `countryCode` in Football-Data.org).
 **Response `200`** — `Nation[]`
 ```json
 [
-  { "id": 2072, "name": "England" },
-  { "id": 2088, "name": "Germany" }
+  { "id": 2072, "name": "England", "country_code": "ENG" },
+  { "id": 2088, "name": "Germany", "country_code": "DEU" }
 ]
 ```
 
@@ -73,6 +73,7 @@ Returns a list of countries (areas with a `countryCode` in Football-Data.org).
 |---|---|---|
 | `id` | `int` | Football-Data.org area ID |
 | `name` | `str` | Country name |
+| `country_code` | `str \| null` | Football-Data.org 3-letter country code (e.g. `"ENG"`, `"FRA"`). Used by the frontend to resolve a flag image. |
 
 **Response `503`** — same as `/clubs`.
 

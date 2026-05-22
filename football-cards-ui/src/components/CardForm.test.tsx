@@ -7,6 +7,7 @@ import {
   within,
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { axe } from 'jest-axe';
 import CardForm from './CardForm';
 import CardPreview from './CardPreview';
 import { CardProvider } from '../context/CardContext';
@@ -824,5 +825,131 @@ describe('Text Customisation section', () => {
         ),
       ).toHaveTextContent('Montserrat');
     });
+  });
+});
+
+describe('Nationality flag display mode', () => {
+  const mockedNationsWithCodes = [
+    { id: 1, name: 'England', country_code: 'ENG' },
+    { id: 2, name: 'Testland' },
+  ];
+
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  const renderWithPreview = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+        <CardPreview />
+      </CardProvider>,
+    );
+
+  beforeEach(() => {
+    (getClubs as jest.Mock).mockResolvedValue([]);
+    (getNationalities as jest.Mock).mockResolvedValue(mockedNationsWithCodes);
+    (getLeagues as jest.Mock).mockResolvedValue([]);
+    (getPositions as jest.Mock).mockResolvedValue([]);
+    (saveCard as jest.Mock).mockClear();
+  });
+
+  const selectNationality = async (name: string) => {
+    const nationalitySelect = screen.getByTestId('nationality-select');
+    fireEvent.mouseDown(within(nationalitySelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name }));
+  };
+
+  test('display mode toggle is not shown before a nationality is selected', async () => {
+    renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    expect(
+      screen.queryByTestId('nationality-display-selector'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('display mode toggle appears after a nationality is selected', async () => {
+    renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('England');
+    expect(
+      await screen.findByTestId('nationality-display-selector'),
+    ).toBeInTheDocument();
+  });
+
+  test('each toggle button has the correct aria-label', async () => {
+    renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('England');
+    await screen.findByTestId('nationality-display-selector');
+    expect(
+      screen.getByRole('button', { name: 'Show text only' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Show flag only' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Show flag and text' }),
+    ).toBeInTheDocument();
+  });
+
+  test('selecting Flag mode shows flag on preview and hides text', async () => {
+    renderWithPreview();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('England');
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Show flag only' }),
+    );
+    expect(await screen.findByTestId('nationality-flag')).toBeInTheDocument();
+    expect(screen.queryByTestId('nationality-text')).not.toBeInTheDocument();
+  });
+
+  test('selecting Both mode shows flag and text on preview', async () => {
+    renderWithPreview();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('England');
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Show flag and text' }),
+    );
+    expect(await screen.findByTestId('nationality-flag')).toBeInTheDocument();
+    expect(screen.getByTestId('nationality-text')).toBeInTheDocument();
+  });
+
+  test('Flag and Both buttons are disabled for nationality with no flag', async () => {
+    renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('Testland');
+    await screen.findByTestId('nationality-display-selector');
+    expect(
+      screen.getByRole('button', { name: 'Show flag only' }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Show flag and text' }),
+    ).toBeDisabled();
+  });
+
+  test('has no accessibility violations when toggle is visible', async () => {
+    const { container } = renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    await selectNationality('England');
+    await screen.findByTestId('nationality-display-selector');
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

@@ -16,6 +16,8 @@ const card: CardState = {
   playerName: 'Test Player',
   club: 'Test Club',
   nationality: 'Testland',
+  nationalityCode: '',
+  nationalityDisplay: 'text',
   league: 'Test League',
   position: 'MID',
   preferredFoot: 'Right',

@@ -11,6 +11,7 @@ class Club(BaseModel):
 class Nation(BaseModel):
     id: int
     name: str
+    country_code: str | None = None
 
 
 class League(BaseModel):

@@ -75,7 +75,11 @@ async def get_nations() -> list[dict[str, Any]]:
             resp.raise_for_status()
             data = resp.json()
             return [
-                {"id": area["id"], "name": area["name"]}
+                {
+                    "id": area["id"],
+                    "name": area["name"],
+                    "country_code": area.get("countryCode"),
+                }
                 for area in data.get("areas", [])
                 if area.get("countryCode")
             ]

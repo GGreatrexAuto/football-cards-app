@@ -46,16 +46,16 @@ MOCK_CLUBS = [
 ]
 
 MOCK_NATIONS = [
-    {"id": 1, "name": "Spain"},
-    {"id": 2, "name": "Brazil"},
-    {"id": 3, "name": "Argentina"},
-    {"id": 4, "name": "France"},
-    {"id": 5, "name": "Germany"},
-    {"id": 6, "name": "Italy"},
-    {"id": 7, "name": "England"},
-    {"id": 8, "name": "Portugal"},
-    {"id": 9, "name": "Netherlands"},
-    {"id": 10, "name": "Uruguay"},
+    {"id": 1, "name": "Spain", "country_code": "ESP"},
+    {"id": 2, "name": "Brazil", "country_code": "BRA"},
+    {"id": 3, "name": "Argentina", "country_code": "ARG"},
+    {"id": 4, "name": "France", "country_code": "FRA"},
+    {"id": 5, "name": "Germany", "country_code": "DEU"},
+    {"id": 6, "name": "Italy", "country_code": "ITA"},
+    {"id": 7, "name": "England", "country_code": "ENG"},
+    {"id": 8, "name": "Portugal", "country_code": "POR"},
+    {"id": 9, "name": "Netherlands", "country_code": "NED"},
+    {"id": 10, "name": "Uruguay", "country_code": "URU"},
 ]
 
 MOCK_LEAGUES = [
