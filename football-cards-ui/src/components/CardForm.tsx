@@ -232,7 +232,12 @@ const CardForm: React.FC = () => {
       : clubs;
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <CircularProgress
+        data-testid="form-loading"
+        aria-label="Loading form data"
+      />
+    );
   }
 
   if (error) {

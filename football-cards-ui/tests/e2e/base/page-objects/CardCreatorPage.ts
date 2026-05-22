@@ -214,6 +214,21 @@ export class CardCreatorPage extends TestBase {
   }
 
   /**
+   * Wait for the card form's API data to finish loading.
+   * Resolves immediately if the spinner was never rendered (already loaded).
+   */
+  async waitForFormReady(): Promise<void> {
+    await this.page
+      .waitForSelector('[data-testid="form-loading"]', {
+        state: 'hidden',
+        timeout: 15000,
+      })
+      .catch(() => {
+        // Spinner was never present — form was already ready
+      });
+  }
+
+  /**
    * Fill complete card form with data
    */
   async fillCardForm(data: {
@@ -225,6 +240,7 @@ export class CardCreatorPage extends TestBase {
     randomizeStats?: boolean;
     background?: string;
   }): Promise<void> {
+    await this.waitForFormReady();
     await this.fillPlayerName(data.name);
     await this.selectClub(data.club);
     await this.selectNationality(data.nationality);

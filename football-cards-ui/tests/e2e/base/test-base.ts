@@ -27,19 +27,14 @@ export class TestBase {
       timeout: 10000,
     });
 
-    // Wait for any loading indicators to disappear
+    // Wait for the form loading spinner to disappear if present
     await this.page
-      .waitForFunction(
-        () => {
-          const loadingElements = document.querySelectorAll(
-            '[data-testid*="loading"], .loading, .spinner',
-          );
-          return loadingElements.length === 0;
-        },
-        { timeout: 5000 },
-      )
+      .waitForSelector('[data-testid="form-loading"]', {
+        state: 'hidden',
+        timeout: 15000,
+      })
       .catch(() => {
-        // Ignore timeout - loading might not exist
+        // Spinner was never present — form loaded instantly or page has no form
       });
   }
 
