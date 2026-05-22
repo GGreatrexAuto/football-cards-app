@@ -89,6 +89,22 @@ football-cards/
 - **Styling**: Use `sx` prop for component-level styles or emotion/styled
 - **Theme**: Centralized in `src/theme.ts` - customize there, not inline
 
+### Accessibility Standards
+
+Every new UI component or interactive feature must meet these requirements:
+
+| Requirement | Rule |
+|-------------|------|
+| Interactive elements | Every button, input, select, and toggle must have `aria-label` or an associated `<label>` |
+| Required fields | Add `aria-required="true"`; set `aria-invalid="true"` on validation failure; link to error via `aria-describedby` |
+| Error/success alerts | Snackbars and inline alerts must have `role="alert"` or `aria-live="assertive"` |
+| Loading states | Async loading regions must have `role="status"` and `aria-live="polite"` |
+| Grouped inputs | Related inputs (e.g. stats) must be wrapped in `<fieldset>` with `<legend>` |
+| Images | Meaningful images need descriptive `alt` text; decorative images use `alt=""` |
+| Focus management | Dialogs trap focus on open; restore focus to the trigger element on close |
+| Component tests | Every new `*.test.tsx` file must include `expect(await axe(container)).toHaveNoViolations()` (jest-axe) |
+| Keyboard navigation | All interactive flows must be completable with Tab / Enter / Space alone; no mouse required |
+
 ## Backend Code Conventions
 
 ### Python Code Style
@@ -211,9 +227,11 @@ npm run format                     # Prettier
 1. Create `src/components/ComponentName.tsx`
 2. Define `ComponentProps` interface
 3. Implement component with TypeScript types
-4. Create `ComponentName.test.tsx` with tests
-5. Export from component file or index
-6. Use in parent component
+4. Add `aria-label` / `aria-required` / `aria-invalid` to all interactive elements
+5. Use `role="alert"` on error/success messages; `role="status"` on loading regions
+6. Create `ComponentName.test.tsx` with tests including `toHaveNoViolations()` (jest-axe)
+7. Export from component file or index
+8. Use in parent component
 
 ### Adding a New API Endpoint
 1. Define Pydantic model in `app/api/models.py`

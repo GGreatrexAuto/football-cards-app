@@ -21,8 +21,8 @@ jest.setTimeout(20000);
 jest.mock('../services/api');
 
 const mockedClubs = [
-  { id: 1, name: 'FC Test' },
-  { id: 2, name: 'Unit United' },
+  { id: 1, name: 'FC Test', league_id: 1, league_name: 'Test League' },
+  { id: 2, name: 'Unit United', league_id: 2, league_name: 'Mock League' },
 ];
 const mockedNations = [
   { id: 1, name: 'Testland' },
@@ -65,7 +65,12 @@ describe('CardCreator integration flow', () => {
 
     await openSelectAndChoose(0, 'FC Test');
     await openSelectAndChoose(1, 'Testland');
-    await openSelectAndChoose(2, 'Test League');
+    // league is auto-populated when a known club is selected
+    await waitFor(() =>
+      expect(screen.getByTestId('league-select')).toHaveTextContent(
+        'Test League',
+      ),
+    );
     await openSelectAndChoose(3, 'Forward');
     await openSelectAndChoose(4, 'Left');
 

@@ -168,10 +168,10 @@ async def test_get_clubs_no_api_key_returns_mock():
 
 @pytest.mark.asyncio
 async def test_get_clubs_transforms_api_response():
-    """Teams from one competition are transformed with league_id from competition.id."""
+    """Teams from one competition are transformed with league_id and league_name."""
     api_response = _make_response(
         {
-            "competition": {"id": 2021},
+            "competition": {"id": 2021, "name": "Premier League"},
             "teams": [
                 {"id": 57, "name": "Arsenal FC"},
                 {"id": 61, "name": "Chelsea FC"},
@@ -189,23 +189,33 @@ async def test_get_clubs_transforms_api_response():
         result = await get_clubs()
 
     assert result == [
-        {"id": 57, "name": "Arsenal FC", "league_id": 2021},
-        {"id": 61, "name": "Chelsea FC", "league_id": 2021},
+        {
+            "id": 57,
+            "name": "Arsenal FC",
+            "league_id": 2021,
+            "league_name": "Premier League",
+        },
+        {
+            "id": 61,
+            "name": "Chelsea FC",
+            "league_id": 2021,
+            "league_name": "Premier League",
+        },
     ]
 
 
 @pytest.mark.asyncio
 async def test_get_clubs_multiple_competitions():
-    """Teams are aggregated from each competition with correct league_id."""
+    """Teams from multiple competitions include correct league_id and league_name."""
     pl_response = _make_response(
         {
-            "competition": {"id": 2021},
+            "competition": {"id": 2021, "name": "Premier League"},
             "teams": [{"id": 57, "name": "Arsenal FC"}],
         }
     )
     pd_response = _make_response(
         {
-            "competition": {"id": 2014},
+            "competition": {"id": 2014, "name": "La Liga"},
             "teams": [{"id": 86, "name": "Real Madrid CF"}],
         }
     )
@@ -220,8 +230,18 @@ async def test_get_clubs_multiple_competitions():
         result = await get_clubs()
 
     assert result == [
-        {"id": 57, "name": "Arsenal FC", "league_id": 2021},
-        {"id": 86, "name": "Real Madrid CF", "league_id": 2014},
+        {
+            "id": 57,
+            "name": "Arsenal FC",
+            "league_id": 2021,
+            "league_name": "Premier League",
+        },
+        {
+            "id": 86,
+            "name": "Real Madrid CF",
+            "league_id": 2014,
+            "league_name": "La Liga",
+        },
     ]
 
 

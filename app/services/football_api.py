@@ -41,9 +41,15 @@ async def get_clubs() -> list[dict[str, Any]]:
                 resp.raise_for_status()
                 data = resp.json()
                 league_id: int = data["competition"]["id"]
+                league_name: str = data["competition"]["name"]
                 for team in data.get("teams", []):
                     clubs.append(
-                        {"id": team["id"], "name": team["name"], "league_id": league_id}
+                        {
+                            "id": team["id"],
+                            "name": team["name"],
+                            "league_id": league_id,
+                            "league_name": league_name,
+                        }
                     )
         return clubs
     except Exception:  # pylint: disable=broad-exception-caught

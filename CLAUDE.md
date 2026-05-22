@@ -94,6 +94,20 @@ Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`. Keep commi
 - Minimum **80% coverage** globally
 - Add `data-testid` and `aria-label` attributes to interactive elements for Playwright selectors
 
+### Accessibility
+Every new UI feature must satisfy these requirements before merging:
+
+- **Interactive elements**: every button, input, select, and toggle must have an `aria-label` or an associated `<label>` element
+- **Required fields**: add `aria-required="true"`; when validation fails, set `aria-invalid="true"` and link to the error message via `aria-describedby`
+- **Notifications**: error/success Snackbars must have `role="alert"` so screen readers announce them immediately
+- **Loading states**: async loading regions must have `role="status"` and `aria-live="polite"`
+- **Grouped inputs**: related inputs (e.g. stats sliders) must be wrapped in `<fieldset>` with a `<legend>`
+- **Images**: meaningful images need descriptive `alt` text; decorative images use `alt=""`
+- **Component tests**: every new `*.test.tsx` file must include at least one `expect(await axe(container)).toHaveNoViolations()` assertion using jest-axe
+- **Focus management**: dialogs must trap focus on open and restore it to the trigger element on close
+
+See `.github/instructions/ui-testing.instructions.md` for jest-axe patterns and ARIA assertion examples.
+
 ## Key Docs
 - Requirements: [docs/plans/REQUIREMENTS.md](docs/plans/REQUIREMENTS.md)
 - Architecture: [docs/plans/ARCHITECTURAL_PLAN.md](docs/plans/ARCHITECTURAL_PLAN.md)

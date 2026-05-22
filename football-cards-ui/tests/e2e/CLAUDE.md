@@ -105,6 +105,32 @@ npm run test:e2e -- --debug               # Playwright inspector
 npm run test:e2e -- --grep "saves a card" # specific test
 ```
 
+## Accessibility in E2E Tests
+
+E2E tests are the right place to verify accessibility that can only be proven in a real browser: axe violations under real DOM, and keyboard-only user journeys.
+
+**axe-playwright** (`@axe-core/playwright`) is installed as a dev dependency. Call `checkA11y(page)` after major navigation steps:
+
+```typescript
+import { checkA11y } from '@axe-core/playwright';
+
+// After the page has settled, run axe
+await page.waitForSelector('[aria-label="Player Name"]');
+await checkA11y(page);
+```
+
+**Keyboard-only test pattern** — use `page.keyboard` instead of `page.click`/`page.fill` to simulate a mouse-free journey:
+
+```typescript
+await page.keyboard.press('Tab');           // move focus
+await page.keyboard.type('Player Name');    // type into focused input
+await page.keyboard.press('Enter');         // activate focused button/dropdown
+await page.keyboard.press('ArrowDown');     // navigate dropdown options
+await page.keyboard.press('Space');         // toggle a button
+```
+
+---
+
 ## Checklist for New E2E Tests
 
 - [ ] File ends with `.spec.ts`
@@ -113,3 +139,5 @@ npm run test:e2e -- --grep "saves a card" # specific test
 - [ ] Async operations use `await expect(...).toBeVisible()` (not arbitrary sleeps)
 - [ ] Tests are independent — don't rely on order or shared state
 - [ ] Both servers confirmed running before test run
+- [ ] **A11y**: call `checkA11y(page)` after the page settles in critical-path tests
+- [ ] **A11y**: new user journeys — consider a keyboard-only variant or assert `role="alert"` on success/error feedback

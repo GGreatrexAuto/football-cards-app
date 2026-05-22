@@ -424,16 +424,82 @@ describe('CardForm Component', () => {
 
 ---
 
+## ♿ Accessibility Requirements
+
+All new components must satisfy these before merging. MUI provides good defaults — these items cover the gaps.
+
+### ARIA Attributes on Interactive Elements
+
+```typescript
+// Required field — declare it to assistive tech
+<TextField
+  label="Player Name"
+  inputProps={{
+    'aria-required': 'true',
+    'aria-invalid': nameError ? 'true' : 'false',
+    'aria-describedby': nameError ? 'player-name-error' : undefined,
+  }}
+/>
+{nameError && (
+  <FormHelperText id="player-name-error" error>{nameError}</FormHelperText>
+)}
+```
+
+### Live Regions for Async Feedback
+
+```typescript
+// Loading state — screen reader is told the app is busy
+<Box role="status" aria-live="polite" aria-busy={loading}>
+  {loading && <CircularProgress aria-label="Loading form options" />}
+</Box>
+
+// Success/error toast — announced immediately
+<Snackbar>
+  <Alert role="alert" severity="error">Failed to save card</Alert>
+</Snackbar>
+```
+
+### Grouped Inputs
+
+```typescript
+// Wrap related inputs in fieldset + legend
+<Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+  <Box component="legend" sx={{ fontWeight: 'bold', mb: 1 }}>Player Stats</Box>
+  <TextField label="Defence" ... />
+  <TextField label="Control" ... />
+  <TextField label="Attack" ... />
+</Box>
+```
+
+### Focus Management for Dialogs
+
+MUI `<Dialog>` handles focus trapping automatically. Ensure that when the dialog closes, focus explicitly returns to the element that opened it:
+
+```typescript
+const deleteButtonRef = useRef<HTMLButtonElement>(null);
+
+const handleDialogClose = () => {
+  setDialogOpen(false);
+  // Return focus to trigger
+  deleteButtonRef.current?.focus();
+};
+```
+
+---
+
 ## 📋 Quick Checklist
 
 When creating a new component:
 - [ ] Create `ComponentName.tsx` with PascalCase naming
 - [ ] Define `ComponentNameProps` interface
 - [ ] Export as default export
-- [ ] Add JSDoc comments for complex props
-- [ ] Create `ComponentName.test.tsx` with tests
-- [ ] Use MUI components consistently
 - [ ] Handle loading and error states
 - [ ] Use `useCard()` for shared state when needed
+- [ ] **A11y**: Add `aria-label` / `<label>` to every interactive element
+- [ ] **A11y**: Add `aria-required`, `aria-invalid`, `aria-describedby` to form fields with validation
+- [ ] **A11y**: Wrap related inputs in `<fieldset>` + `<legend>`
+- [ ] **A11y**: Use `role="alert"` on error/success messages; `role="status"` on loading regions
+- [ ] **A11y**: Verify meaningful images have descriptive `alt` text
+- [ ] Create `ComponentName.test.tsx` including `toHaveNoViolations()` (jest-axe)
 - [ ] Run tests: `npm test`
 - [ ] No TypeScript errors: `tsc --noEmit`

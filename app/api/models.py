@@ -5,6 +5,7 @@ class Club(BaseModel):
     id: int
     name: str
     league_id: int
+    league_name: str
 
 
 class Nation(BaseModel):

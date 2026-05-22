@@ -7,6 +7,8 @@ export const api = axios.create({
 export interface Club {
   id: number;
   name: string;
+  league_id: number;
+  league_name: string;
 }
 
 export interface Nationality {

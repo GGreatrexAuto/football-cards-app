@@ -533,6 +533,192 @@ test('debug mock calls', () => {
 
 ---
 
+## ♿ Accessibility Testing
+
+Every new component test file must include at least one axe check. Additional ARIA assertions catch gaps that axe misses (correct labelling, state attributes, live regions).
+
+### jest-axe — Axe Violation Check
+
+```typescript
+import { axe, toHaveNoViolations } from 'jest-axe';
+expect.extend(toHaveNoViolations);
+
+test('CardForm has no axe violations', async () => {
+  const { container } = render(
+    <CardProvider><CardForm /></CardProvider>
+  );
+  // Wait for async content (API data, spinners) to settle first
+  await screen.findByRole('combobox', { name: /club/i });
+  expect(await axe(container)).toHaveNoViolations();
+});
+```
+
+> `toHaveNoViolations` is added globally in `setupTests.ts` — no need to repeat `expect.extend` per file.
+
+---
+
+### ARIA Attribute Assertions
+
+#### Required fields and validation state
+
+```typescript
+test('player name input has aria-required', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  const input = await screen.findByLabelText(/player name/i);
+  expect(input).toHaveAttribute('aria-required', 'true');
+});
+
+test('player name sets aria-invalid when empty save attempted', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  fireEvent.click(screen.getByRole('button', { name: /save/i }));
+  const input = await screen.findByLabelText(/player name/i);
+  expect(input).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('player name clears aria-invalid after value is entered', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  fireEvent.click(screen.getByRole('button', { name: /save/i }));
+  const input = await screen.findByLabelText(/player name/i);
+  fireEvent.change(input, { target: { value: 'Test Player' } });
+  expect(input).not.toHaveAttribute('aria-invalid', 'true');
+});
+```
+
+#### aria-describedby — linking errors to inputs
+
+```typescript
+test('error message is linked to input via aria-describedby', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  fireEvent.click(screen.getByRole('button', { name: /save/i }));
+  const input = await screen.findByLabelText(/player name/i);
+  const errorId = input.getAttribute('aria-describedby');
+  expect(errorId).toBeTruthy();
+  // The element with that id should contain the error text
+  expect(document.getElementById(errorId!)).toHaveTextContent(/required/i);
+});
+```
+
+#### Error and success alerts (live regions)
+
+```typescript
+test('success snackbar has role="alert"', async () => {
+  // ... trigger a successful save ...
+  const alert = await screen.findByRole('alert');
+  expect(alert).toHaveTextContent(/saved successfully/i);
+});
+
+test('loading region has aria-live="polite"', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  const status = screen.getByRole('status');
+  expect(status).toHaveAttribute('aria-live', 'polite');
+});
+```
+
+#### Fieldset / legend grouping
+
+```typescript
+test('stats section is wrapped in a fieldset with legend', async () => {
+  render(<CardProvider><CardForm /></CardProvider>);
+  await screen.findByLabelText(/player name/i); // wait for render
+  const fieldset = document.querySelector('fieldset');
+  expect(fieldset).not.toBeNull();
+  expect(fieldset!.querySelector('legend')).toHaveTextContent(/player stats/i);
+});
+```
+
+---
+
+### Keyboard Navigation Tests
+
+Use `userEvent` (not `fireEvent`) for keyboard simulation — it reflects how real browsers handle focus and events.
+
+```typescript
+import userEvent from '@testing-library/user-event';
+
+test('Tab key moves focus through form fields in logical order', async () => {
+  const user = userEvent.setup();
+  render(<CardProvider><CardForm /></CardProvider>);
+
+  const nameInput = await screen.findByLabelText(/player name/i);
+  nameInput.focus();
+
+  // Tab forward and assert each expected element receives focus
+  await user.tab();
+  expect(screen.getByRole('combobox', { name: /club/i })).toHaveFocus();
+
+  await user.tab();
+  expect(screen.getByRole('combobox', { name: /league/i })).toHaveFocus();
+});
+
+test('Space activates a toggle button', async () => {
+  const user = userEvent.setup();
+  render(<CardProvider><CardForm /></CardProvider>);
+
+  const faceButton = await screen.findByRole('button', { name: /^face$/i });
+  faceButton.focus();
+  await user.keyboard(' ');
+  expect(faceButton).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('Escape closes the delete dialog', async () => {
+  const user = userEvent.setup();
+  render(<CardProvider><CardGallery /></CardProvider>);
+
+  fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+  await screen.findByRole('dialog');
+
+  await user.keyboard('{Escape}');
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+});
+```
+
+---
+
+### Focus Management Tests
+
+```typescript
+test('focus moves into delete dialog when opened', async () => {
+  render(<CardProvider><CardGallery /></CardProvider>);
+  fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+  const dialog = await screen.findByRole('dialog');
+  // At least one focusable element inside dialog should hold focus
+  expect(dialog.contains(document.activeElement)).toBe(true);
+});
+
+test('focus returns to trigger after dialog closes', async () => {
+  const user = userEvent.setup();
+  render(<CardProvider><CardGallery /></CardProvider>);
+  const deleteBtn = screen.getByRole('button', { name: /delete/i });
+  fireEvent.click(deleteBtn);
+  await screen.findByRole('dialog');
+  // Cancel the dialog
+  fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+  await waitFor(() => {
+    expect(document.activeElement).toBe(deleteBtn);
+  });
+});
+```
+
+---
+
+### Image Alt Text Assertions
+
+```typescript
+test('player photo has descriptive alt text', () => {
+  render(
+    <CardProvider>
+      <CardPreview />
+    </CardProvider>
+  );
+  const img = screen.getByRole('img', { name: /player photo/i });
+  expect(img).toHaveAttribute('alt');
+  // Should be human-readable, not raw field values like "headAndShoulders"
+  expect(img.getAttribute('alt')).not.toMatch(/headAndShoulders|cropFocus/i);
+});
+```
+
+---
+
 ## ✨ Best Practices
 
 1. **Mock at the top level**: Mock all services before the test suite runs
@@ -554,7 +740,7 @@ test('debug mock calls', () => {
 | Not awaiting async | Tests pass but don't wait for API | Use `await findBy*` or `waitFor` |
 | Mocking too much | Tests don't catch real bugs | Mock only external services |
 | Complex test setup | Hard to maintain | Extract helpers, use factories |
-| Ignoring accessibility | Tests miss real user issues | Use `getByRole` and `aria-label` |
+| Ignoring accessibility | Tests miss real user issues | Use `getByRole`, `aria-label`, and add jest-axe check |
 | Not clearing mocks | State bleeds between tests | Call `jest.clearAllMocks()` in `beforeEach` |
 
 ---

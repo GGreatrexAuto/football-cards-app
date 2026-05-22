@@ -44,7 +44,10 @@ const CardForm: React.FC = () => {
   const [validationError, setValidationError] = useState('');
   const [useCustomClub, setUseCustomClub] = useState(false);
   const [customClubName, setCustomClubName] = useState('');
+  const [useCustomLeague, setUseCustomLeague] = useState(false);
+  const [customLeagueName, setCustomLeagueName] = useState('');
   const initialClub = useRef(card.club);
+  const initialLeague = useRef(card.league);
 
   // Predefined background options
   const backgroundOptions = [
@@ -123,6 +126,13 @@ const CardForm: React.FC = () => {
         }
         setNationalities(nationalitiesData);
         setLeagues(leaguesData);
+        if (
+          initialLeague.current &&
+          !leaguesData.find((l) => l.name === initialLeague.current)
+        ) {
+          setUseCustomLeague(true);
+          setCustomLeagueName(initialLeague.current);
+        }
         setPositions(positionsData);
       } catch (err) {
         const errorMessage =
@@ -216,6 +226,11 @@ const CardForm: React.FC = () => {
     resetCard();
   };
 
+  const filteredClubs =
+    card.league && !useCustomLeague
+      ? clubs.filter((c) => c.league_name === card.league)
+      : clubs;
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -253,12 +268,19 @@ const CardForm: React.FC = () => {
                   updateCard({ club: customClubName });
                 } else {
                   setUseCustomClub(false);
-                  updateCard({ club: val });
+                  const chosenClub = clubs.find((c) => c.name === val);
+                  setUseCustomLeague(false);
+                  updateCard({
+                    club: val,
+                    ...(chosenClub?.league_name
+                      ? { league: chosenClub.league_name }
+                      : {}),
+                  });
                 }
               }}
               label="Club"
             >
-              {clubs?.map((club) => (
+              {filteredClubs.map((club) => (
                 <MenuItem key={club.id} value={club.name}>
                   {club.name}
                 </MenuItem>
@@ -313,8 +335,23 @@ const CardForm: React.FC = () => {
               id="league-select"
               data-testid="league-select"
               aria-label="League"
-              value={card.league}
-              onChange={(e) => updateCard({ league: e.target.value })}
+              value={useCustomLeague ? '__custom_league__' : card.league}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '__custom_league__') {
+                  setUseCustomLeague(true);
+                  updateCard({ league: customLeagueName });
+                } else {
+                  setUseCustomLeague(false);
+                  const currentClub = clubs.find((c) => c.name === card.club);
+                  const clubBelongs =
+                    !val || !currentClub || currentClub.league_name === val;
+                  updateCard({
+                    league: val,
+                    ...(!clubBelongs ? { club: '' } : {}),
+                  });
+                }
+              }}
               label="League"
             >
               {leagues?.map((league) => (
@@ -322,8 +359,29 @@ const CardForm: React.FC = () => {
                   {league.name}
                 </MenuItem>
               ))}
+              {useCustomClub && (
+                <MenuItem value="__custom_league__">
+                  Other — enter league name...
+                </MenuItem>
+              )}
             </Select>
           </FormControl>
+          {useCustomLeague && (
+            <TextField
+              label="Custom League Name"
+              fullWidth
+              value={customLeagueName}
+              onChange={(e) => {
+                setCustomLeagueName(e.target.value);
+                updateCard({ league: e.target.value });
+              }}
+              inputProps={{
+                'data-testid': 'custom-league-input',
+                'aria-label': 'Custom League Name',
+              }}
+              sx={{ mt: 1 }}
+            />
+          )}
         </Box>
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
@@ -668,6 +726,10 @@ const CardForm: React.FC = () => {
           onClick={() => {
             resetCard();
             setPhotoUrl('');
+            setUseCustomClub(false);
+            setCustomClubName('');
+            setUseCustomLeague(false);
+            setCustomLeagueName('');
             setValidationError('');
             setSuccessMessage('');
           }}

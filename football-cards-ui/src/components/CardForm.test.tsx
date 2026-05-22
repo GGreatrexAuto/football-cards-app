@@ -28,9 +28,9 @@ jest.mock('../services/api');
 jest.mock('../services/storage');
 
 const mockedClubs = [
-  { id: 1, name: 'Unit United' },
-  { id: 2, name: 'Arsenal FC' },
-  { id: 3, name: 'FC Test' },
+  { id: 1, name: 'Unit United', league_id: 1, league_name: 'Test League' },
+  { id: 2, name: 'Arsenal FC', league_id: 2, league_name: 'Mock League' },
+  { id: 3, name: 'FC Test', league_id: 1, league_name: 'Test League' },
 ];
 const mockedNations = [
   { id: 1, name: 'Testland' },
@@ -338,6 +338,173 @@ describe('CardForm Component', () => {
 
     await waitFor(() => {
       expect(screen.queryByTestId('custom-club-input')).not.toBeInTheDocument();
+    });
+  });
+
+  test('filters clubs when a league is selected', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Select Test League (id: 1) — only Unit United and FC Test belong to it
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Test League' }));
+
+    // Open club dropdown and inspect available options
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+
+    const options = await screen.findAllByRole('option');
+    const clubNames = options.map((o) => o.textContent ?? '');
+    expect(clubNames).toContain('Unit United');
+    expect(clubNames).toContain('FC Test');
+    expect(clubNames).not.toContain('Arsenal FC');
+  });
+
+  test('auto-populates league when a known club is selected', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Select Arsenal FC (league_id: 2 → Mock League)
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Arsenal FC' }));
+
+    // League should now show Mock League
+    const leagueCombobox = within(
+      screen.getByTestId('league-select'),
+    ).getByRole('combobox');
+    expect(leagueCombobox).toHaveTextContent('Mock League');
+  });
+
+  test('clears club selection when league is changed to an incompatible one', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Select Arsenal FC — auto-populates Mock League
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Arsenal FC' }));
+
+    // Change league to Test League (id: 1) — Arsenal is league_id 2, so it must be cleared
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Test League' }));
+
+    // Club combobox should no longer show Arsenal FC
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('club-select')).getByRole('combobox'),
+      ).not.toHaveTextContent('Arsenal FC');
+    });
+  });
+
+  test('does not show custom league option when no custom club is active', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Open league dropdown with no custom club selected
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+
+    // Custom league sentinel should NOT appear
+    expect(
+      screen.queryByRole('option', { name: /Other.*enter league name/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  test('shows custom league option when custom club is active', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Select custom club first
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /Other.*enter club name/i }),
+    );
+
+    // Open league dropdown — custom league sentinel must now be visible
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+    expect(
+      await screen.findByRole('option', { name: /Other.*enter league name/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('custom league text input updates the card league', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Select custom club
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /Other.*enter club name/i }),
+    );
+
+    // Select custom league
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /Other.*enter league name/i }),
+    );
+
+    // Custom league text input should appear; type a name
+    const customLeagueInput = (await screen.findByTestId(
+      'custom-league-input',
+    )) as HTMLInputElement;
+    fireEvent.change(customLeagueInput, { target: { value: 'Sunday League' } });
+    expect(customLeagueInput.value).toBe('Sunday League');
+  });
+
+  test('reset form clears custom league state', async () => {
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Activate custom club + custom league
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /Other.*enter club name/i }),
+    );
+    const leagueSelect = screen.getByTestId('league-select');
+    fireEvent.mouseDown(within(leagueSelect).getByRole('combobox'));
+    fireEvent.click(
+      await screen.findByRole('option', { name: /Other.*enter league name/i }),
+    );
+    expect(
+      await screen.findByTestId('custom-league-input'),
+    ).toBeInTheDocument();
+
+    // Click Reset
+    fireEvent.click(screen.getByRole('button', { name: /Reset Form/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('custom-league-input'),
+      ).not.toBeInTheDocument();
     });
   });
 

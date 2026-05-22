@@ -436,17 +436,69 @@ npm test -- --grep "Full Card Creation"
 
 ---
 
+## ♿ Accessibility in E2E Tests
+
+### axe-playwright — Run Axe at Key Navigation Points
+
+Install once: `npm install --save-dev @axe-core/playwright`
+
+Use the shared helper in `test-helpers.ts`:
+
+```typescript
+import { checkA11y } from '@axe-core/playwright';
+
+test('no axe violations on CREATE CARD', async ({ page }) => {
+  await page.goto('/');
+  // Wait for async content to settle before running axe
+  await page.waitForSelector('[aria-label="Player Name"]');
+  await checkA11y(page, undefined, {
+    detailedReport: true,
+    detailedReportOptions: { html: true },
+  });
+});
+```
+
+Call `checkA11y(page)` after each major navigation step in critical-paths tests.
+
+### Keyboard-Only Navigation Test
+
+```typescript
+test('card creation flow completes with keyboard only', async ({ page }) => {
+  await page.goto('/');
+  await page.waitForSelector('[aria-label="Player Name"]');
+
+  // Tab to Player Name and type
+  await page.keyboard.press('Tab');
+  await page.keyboard.type('Keyboard Player');
+
+  // Tab to Club dropdown and open with Enter
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+
+  // Tab to Save and activate with Enter
+  await page.locator('button:has-text("Save Card")').focus();
+  await page.keyboard.press('Enter');
+
+  await expect(page.locator('[role="alert"]')).toContainText(/saved/i);
+});
+```
+
+---
+
 ## 📋 Quick Checklist
 
 When writing an E2E test:
 - [ ] Test file ends with `.spec.ts`
-- [ ] Use accessibility selectors (`aria-label`, `role`) when possible
-- [ ] Add custom `data-testid` attributes to critical elements
+- [ ] Use accessibility selectors (`aria-label`, `role`) when possible — not class names
+- [ ] Add custom `data-testid` attributes to critical elements when needed
 - [ ] Test real user workflows (not implementation details)
-- [ ] Handle async operations with `waitFor` or `waitForSelector`
+- [ ] Handle async operations with `await expect(...).toBeVisible()` — not arbitrary sleeps
 - [ ] Verify both UI state and expected outcomes
 - [ ] Add descriptive test names
-- [ ] Test error scenarios and edge cases
 - [ ] Ensure backend and frontend are running
-- [ ] Use `test.beforeEach` for common setup
-- [ ] Keep tests isolated and independent
+- [ ] Use `test.beforeEach` for `page.goto('/')`
+- [ ] Keep tests isolated — don't rely on order or shared state
+- [ ] **A11y**: call `checkA11y(page)` after each major navigation step in critical-path tests
+- [ ] **A11y**: if adding a new user journey, consider a parallel keyboard-only variant

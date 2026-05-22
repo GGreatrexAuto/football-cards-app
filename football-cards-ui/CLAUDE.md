@@ -150,11 +150,27 @@ describe('CardForm', () => {
 - Real localStorage (mock `storage.ts`)
 - Backend business logic (covered by integration tests)
 
+## Accessibility Requirements
+
+Every new component must satisfy these before merging:
+
+- Every interactive element has `aria-label` or an associated `<label>`
+- Required fields declare `aria-required="true"`; invalid fields set `aria-invalid="true"` with `aria-describedby` pointing to the error element
+- Error/success alerts use `role="alert"`; loading regions use `role="status"` and `aria-live="polite"`
+- Related inputs (e.g. stats) are wrapped in `<fieldset>` with `<legend>`
+- Meaningful images have descriptive `alt` text; decorative images use `alt=""`
+- Dialogs trap focus on open and restore it to the trigger element on close
+
+See `.github/instructions/frontend.instructions.md` for code patterns and `.github/instructions/ui-testing.instructions.md` for jest-axe assertion examples.
+
 ## New Component Checklist
 
 - [ ] `ComponentName.tsx` with `ComponentNameProps` interface
 - [ ] Default export for component, named exports for utilities
-- [ ] `ComponentName.test.tsx` with mocked services
 - [ ] Handle loading and error states
+- [ ] **A11y**: ARIA attributes on all interactive elements (`aria-label`, `aria-required`, `aria-invalid`, `aria-describedby`)
+- [ ] **A11y**: `role="alert"` on notifications; `role="status"` on loading regions
+- [ ] **A11y**: `<fieldset>` + `<legend>` for grouped inputs
+- [ ] `ComponentName.test.tsx` with mocked services including `toHaveNoViolations()` (jest-axe)
 - [ ] No TypeScript errors: `tsc --noEmit`
 - [ ] Tests pass: `npm test`

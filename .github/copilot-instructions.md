@@ -98,6 +98,16 @@ All endpoints fall back to built-in mock data when `FOOTBALL_DATA_API_KEY` is no
 - **E2E Testability**: Add `data-testid` and `aria-label` attributes to interactive elements (inputs, buttons, selects) for reliable Playwright selectors
 - **E2E Imports**: Import `{ expect, test }` from `./base/test-base` in E2E spec files for consistent test utilities
 
+### Accessibility Standards
+- **Every new interactive element** (button, input, select, toggle) must have `aria-label` or an associated `<label>`
+- **Required fields**: `aria-required="true"`; on validation failure set `aria-invalid="true"` and `aria-describedby` pointing to the error element
+- **Notifications**: error/success alerts use `role="alert"`; loading regions use `role="status"` and `aria-live="polite"`
+- **Grouped inputs**: wrap related inputs in `<fieldset>` with `<legend>` (e.g. stat sliders)
+- **Images**: descriptive `alt` text on meaningful images; `alt=""` on decorative images
+- **Focus management**: dialogs trap focus on open; restore focus to the trigger element on close
+- **Component tests**: every new `*.test.tsx` must include `expect(await axe(container)).toHaveNoViolations()` (jest-axe)
+- **E2E accessibility**: run `checkA11y(page)` from `@axe-core/playwright` at key navigation points in E2E specs
+
 ---
 
 ## 🚀 Quick Start Commands
@@ -139,4 +149,5 @@ cd football-cards-ui && npm run test:e2e  # E2E tests
 - Run formatters before committing: `black .`, `isort .`, `npm run lint`
 - Add tests alongside new features
 - Keep PRs focused on single features
-- keep PHASE_3_FRONTEND_TODO updated with new tasks and progress
+- Keep PHASE_3_FRONTEND_TODO updated with new tasks and progress
+- New UI components: verify accessibility requirements (ARIA attributes, jest-axe check, keyboard navigability) before marking tasks complete
