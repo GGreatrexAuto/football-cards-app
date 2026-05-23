@@ -1,4 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
+import {
+  type CardBorderShape,
+  DEFAULT_CARD_BORDER_SHAPE,
+  DEFAULT_CARD_BORDER_COLOR,
+} from '../components/CardBorderShapes';
+
+export type { CardBorderShape };
+export { DEFAULT_CARD_BORDER_SHAPE, DEFAULT_CARD_BORDER_COLOR };
 
 export interface TextFonts {
   playerName: string;
@@ -39,6 +47,8 @@ export interface CardState {
   textFonts: TextFonts;
   imageFrameType: ImageFrameType;
   imageCropFocus: ImageCropFocus;
+  cardBorderShape: CardBorderShape;
+  cardBorderColor: string;
 }
 
 const initialState: CardState = {
@@ -60,6 +70,8 @@ const initialState: CardState = {
   textFonts: { ...DEFAULT_TEXT_FONTS },
   imageFrameType: DEFAULT_IMAGE_FRAME_TYPE,
   imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
+  cardBorderShape: DEFAULT_CARD_BORDER_SHAPE,
+  cardBorderColor: DEFAULT_CARD_BORDER_COLOR,
 };
 
 interface CardContextType {

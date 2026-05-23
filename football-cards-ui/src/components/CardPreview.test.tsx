@@ -480,6 +480,86 @@ describe('CardPreview Component', () => {
     });
   });
 
+  describe('card border overlay', () => {
+    const renderWithBorder = (opts: {
+      cardBorderShape:
+        | 'none'
+        | 'shield'
+        | 'rectangle'
+        | 'triangle'
+        | 'explosion';
+      cardBorderColor?: string;
+    }) => {
+      const Setup = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard(opts);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+      return render(
+        <CardProvider>
+          <Setup />
+        </CardProvider>,
+      );
+    };
+
+    test('does not render border overlay when shape is none (default)', async () => {
+      render(
+        <CardProvider>
+          <CardPreview />
+        </CardProvider>,
+      );
+      await screen.findByTestId('card-preview');
+      expect(
+        screen.queryByTestId('card-border-overlay'),
+      ).not.toBeInTheDocument();
+    });
+
+    test('renders SVG overlay when a border shape is set', async () => {
+      renderWithBorder({ cardBorderShape: 'shield' });
+      expect(
+        await screen.findByTestId('card-border-overlay'),
+      ).toBeInTheDocument();
+    });
+
+    test('renders SVG overlay for each non-none shape', async () => {
+      for (const shape of ['rectangle', 'triangle', 'explosion'] as const) {
+        const { unmount } = renderWithBorder({ cardBorderShape: shape });
+        expect(
+          await screen.findByTestId('card-border-overlay'),
+        ).toBeInTheDocument();
+        unmount();
+      }
+    });
+
+    test('SVG overlay has aria-hidden attribute', async () => {
+      renderWithBorder({ cardBorderShape: 'rectangle' });
+      const overlay = await screen.findByTestId('card-border-overlay');
+      expect(overlay).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    test('SVG path stroke matches the chosen border colour', async () => {
+      renderWithBorder({
+        cardBorderShape: 'shield',
+        cardBorderColor: '#ff0000',
+      });
+      await screen.findByTestId('card-border-overlay');
+      const path = await screen.findByTestId('card-border-path');
+      expect(path.getAttribute('stroke')).toBe('#ff0000');
+    });
+
+    test('has no accessibility violations with a border enabled', async () => {
+      const { container } = renderWithBorder({
+        cardBorderShape: 'shield',
+        cardBorderColor: '#ffffff',
+      });
+      await screen.findByTestId('card-border-overlay');
+      expect(await axe(container)).toHaveNoViolations();
+    });
+  });
+
   describe('nationality flag display', () => {
     const renderWithNationality = (opts: {
       nationality: string;

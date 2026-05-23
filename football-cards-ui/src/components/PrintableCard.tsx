@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
+import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
 const PrintableCard: React.FC = () => {
   const { card } = useCard();
@@ -20,6 +21,8 @@ const PrintableCard: React.FC = () => {
     playerPhoto,
     cardBackground,
     textFonts,
+    cardBorderShape,
+    cardBorderColor,
   } = card;
 
   const flagUrl = getFlagUrl(nationalityCode);
@@ -27,6 +30,7 @@ const PrintableCard: React.FC = () => {
   const cardStyle = {
     width: '3.5in',
     height: '2.5in',
+    position: 'relative' as const,
     background: cardBackground
       ? `linear-gradient(135deg, #1976D2 0%, #FFC107 100%), url(${cardBackground})`
       : 'linear-gradient(135deg, #1976D2 0%, #FFC107 100%)',
@@ -42,8 +46,41 @@ const PrintableCard: React.FC = () => {
 
   return (
     <Card className="printable-card" sx={cardStyle}>
+      {cardBorderShape !== 'none' && (
+        <Box
+          component="svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          data-testid="card-border-overlay"
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        >
+          <path
+            d={BORDER_SHAPE_PATHS[cardBorderShape]}
+            fill="none"
+            stroke={cardBorderColor}
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+        </Box>
+      )}
       <CardContent
-        sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 1 }}
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          p: 1,
+          position: 'relative',
+          zIndex: 2,
+        }}
       >
         {/* Player Photo */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>

@@ -21,7 +21,9 @@ import type {
   ImageFrameType,
   ImageCropFocus,
   NationalityDisplay,
+  CardBorderShape,
 } from '../context/CardContext';
+import { BORDER_SHAPE_LABELS } from './CardBorderShapes';
 import { getFlagUrl } from '../utils/flags';
 import FontSelector from './FontSelector';
 import {
@@ -729,6 +731,92 @@ const CardForm: React.FC = () => {
               </Card>
             </Box>
           ))}
+        </Box>
+      </Box>
+
+      {/* Card Border Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Card Border
+        </Typography>
+        <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+          <Box
+            component="legend"
+            sx={{
+              position: 'absolute',
+              width: 1,
+              height: 1,
+              padding: 0,
+              margin: -1,
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
+            Card border options
+          </Box>
+          <Typography variant="subtitle2" gutterBottom>
+            Border Shape
+          </Typography>
+          <ToggleButtonGroup
+            value={card.cardBorderShape}
+            exclusive
+            onChange={(_: React.MouseEvent, value: CardBorderShape | null) => {
+              if (value !== null) updateCard({ cardBorderShape: value });
+            }}
+            aria-label="Card border shape"
+            data-testid="card-border-shape-selector"
+            size="small"
+            fullWidth
+          >
+            {(
+              [
+                'none',
+                'rectangle',
+                'shield',
+                'triangle',
+                'explosion',
+              ] as CardBorderShape[]
+            ).map((shape) => (
+              <ToggleButton
+                key={shape}
+                value={shape}
+                aria-label={`${BORDER_SHAPE_LABELS[shape]} border`}
+              >
+                {BORDER_SHAPE_LABELS[shape]}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+          {card.cardBorderShape !== 'none' && (
+            <Box
+              sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}
+            >
+              <Typography variant="subtitle2" id="border-color-label">
+                Border Colour
+              </Typography>
+              <Box
+                component="input"
+                type="color"
+                id="card-border-color"
+                aria-label="Card border colour"
+                aria-labelledby="border-color-label"
+                value={card.cardBorderColor}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateCard({ cardBorderColor: e.target.value })
+                }
+                data-testid="card-border-color-picker"
+                sx={{
+                  width: 48,
+                  height: 32,
+                  cursor: 'pointer',
+                  border: '1px solid #ccc',
+                  borderRadius: 1,
+                  padding: '2px',
+                }}
+              />
+            </Box>
+          )}
         </Box>
       </Box>
 

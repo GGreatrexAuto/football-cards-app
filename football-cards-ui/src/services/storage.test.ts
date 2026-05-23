@@ -10,6 +10,8 @@ import {
   DEFAULT_TEXT_FONTS,
   DEFAULT_IMAGE_FRAME_TYPE,
   DEFAULT_IMAGE_CROP_FOCUS,
+  DEFAULT_CARD_BORDER_SHAPE,
+  DEFAULT_CARD_BORDER_COLOR,
 } from '../context/CardContext';
 
 const card: CardState = {
@@ -36,6 +38,8 @@ const card: CardState = {
   },
   imageFrameType: 'headAndShoulders',
   imageCropFocus: 'bottom',
+  cardBorderShape: 'shield',
+  cardBorderColor: '#ff0000',
 };
 
 describe('Storage service', () => {
@@ -134,6 +138,42 @@ describe('Storage service', () => {
 
     expect(stored[0].imageFrameType).toBe('headAndShoulders');
     expect(stored[0].imageCropFocus).toBe('bottom');
+  });
+
+  test('saveCard and getSavedCards preserve cardBorderShape and cardBorderColor', () => {
+    saveCard(card);
+    const stored = getSavedCards();
+
+    expect(stored[0].cardBorderShape).toBe('shield');
+    expect(stored[0].cardBorderColor).toBe('#ff0000');
+  });
+
+  test('getSavedCards fills in default cardBorderShape and cardBorderColor for legacy cards missing those fields', () => {
+    const legacyCard = {
+      playerName: 'Old Player',
+      club: 'Old Club',
+      nationality: 'Oldland',
+      league: 'Old League',
+      position: 'GK',
+      preferredFoot: 'Left',
+      defence: 70,
+      control: 60,
+      attack: 50,
+      rating: 60,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'card_legacy_3',
+      textFonts: { ...DEFAULT_TEXT_FONTS },
+      imageFrameType: DEFAULT_IMAGE_FRAME_TYPE,
+      imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
+      // no cardBorderShape or cardBorderColor
+    };
+    localStorage.setItem('football-cards', JSON.stringify([legacyCard]));
+
+    const stored = getSavedCards();
+
+    expect(stored[0].cardBorderShape).toBe(DEFAULT_CARD_BORDER_SHAPE);
+    expect(stored[0].cardBorderColor).toBe(DEFAULT_CARD_BORDER_COLOR);
   });
 
   test('getSavedCards fills in default imageFrameType and imageCropFocus for legacy cards missing those fields', () => {

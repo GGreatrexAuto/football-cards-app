@@ -237,7 +237,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Change player stock photos (currently any image) to those of human faces
 - [x] Add player image frame type + crop focus controls (face/head & shoulders/full-body × top/centre/bottom)
 - [ ] Add option to choose alternative card layouts e.g all stats at bottom, all at top, bigger photo frame etc
-- [ ] Add ability to add and change internal card border e.g cards always rectangular, but could have a border of shield, rectangle etc
+- [x] Add ability to add and change internal card border e.g cards always rectangular, but could have a border of shield, rectangle, triangle, explosion etc within rectangular card
 - [ ] Update create card form, section headings reordering of fields
 - [x] Make Club selection dynamic based on selected league
 - [ ] Add randomise stat button for each stat

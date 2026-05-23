@@ -3,6 +3,8 @@ import {
   DEFAULT_TEXT_FONTS,
   DEFAULT_IMAGE_FRAME_TYPE,
   DEFAULT_IMAGE_CROP_FOCUS,
+  DEFAULT_CARD_BORDER_SHAPE,
+  DEFAULT_CARD_BORDER_COLOR,
 } from '../context/CardContext';
 
 const CARDS_KEY = 'football-cards';
@@ -26,6 +28,8 @@ export const getSavedCards = (): CardState[] => {
     textFonts: c.textFonts ?? { ...DEFAULT_TEXT_FONTS },
     imageFrameType: c.imageFrameType ?? DEFAULT_IMAGE_FRAME_TYPE,
     imageCropFocus: c.imageCropFocus ?? DEFAULT_IMAGE_CROP_FOCUS,
+    cardBorderShape: c.cardBorderShape ?? DEFAULT_CARD_BORDER_SHAPE,
+    cardBorderColor: c.cardBorderColor ?? DEFAULT_CARD_BORDER_COLOR,
   }));
 };
 

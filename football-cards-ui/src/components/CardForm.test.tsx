@@ -953,3 +953,120 @@ describe('Nationality flag display mode', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+describe('Card Border section', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+        <CardPreview />
+      </CardProvider>,
+    );
+
+  test('renders the Card Border shape selector', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.getByTestId('card-border-shape-selector'),
+    ).toBeInTheDocument();
+  });
+
+  test('renders all five shape buttons', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('card-border-shape-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'None border' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Rectangle border' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Shield border' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Triangle border' }),
+    ).toBeInTheDocument();
+    expect(
+      within(selector).getByRole('button', { name: 'Explosion border' }),
+    ).toBeInTheDocument();
+  });
+
+  test('None is selected by default', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('card-border-shape-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'None border' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('colour picker is hidden when shape is None', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(
+      screen.queryByTestId('card-border-color-picker'),
+    ).not.toBeInTheDocument();
+  });
+
+  test('colour picker appears when a non-None shape is selected', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('card-border-shape-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Shield border' }),
+    );
+
+    expect(
+      await screen.findByTestId('card-border-color-picker'),
+    ).toBeInTheDocument();
+  });
+
+  test('selecting Shield renders SVG border overlay on the card preview', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('card-border-shape-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Shield border' }),
+    );
+
+    expect(
+      await screen.findByTestId('card-border-overlay'),
+    ).toBeInTheDocument();
+  });
+
+  test('selecting None after a shape removes the border overlay', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    const selector = screen.getByTestId('card-border-shape-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Triangle border' }),
+    );
+    await screen.findByTestId('card-border-overlay');
+
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'None border' }),
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('card-border-overlay'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test('has no accessibility violations with border section visible', async () => {
+    const { container } = renderWithProvider();
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+    expect(await axe(container)).toHaveNoViolations();
+  });
+});

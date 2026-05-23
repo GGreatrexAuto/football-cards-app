@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
 import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
+import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
 const FRAME_STYLES: Record<
   ImageFrameType,
@@ -39,6 +40,8 @@ const CardPreview: React.FC = () => {
     textFonts,
     imageFrameType,
     imageCropFocus,
+    cardBorderShape,
+    cardBorderColor,
   } = card;
 
   const flagUrl = getFlagUrl(nationalityCode);
@@ -54,6 +57,7 @@ const CardPreview: React.FC = () => {
     maxWidth: 350,
     margin: 'auto',
     mt: 2,
+    position: 'relative' as const,
     backgroundImage: cardBackground
       ? `linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%), url(${cardBackground})`
       : 'linear-gradient(135deg, rgba(25, 118, 210, 0.7) 0%, rgba(255, 193, 7, 0.7) 100%)',
@@ -73,7 +77,42 @@ const CardPreview: React.FC = () => {
       data-background-css={cardStyle.backgroundImage}
       data-background-image={cardBackground || ''}
     >
-      <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {cardBorderShape !== 'none' && (
+        <Box
+          component="svg"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          data-testid="card-border-overlay"
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 1,
+          }}
+        >
+          <path
+            data-testid="card-border-path"
+            d={BORDER_SHAPE_PATHS[cardBorderShape]}
+            fill="none"
+            stroke={cardBorderColor}
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+        </Box>
+      )}
+      <CardContent
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
         {/* Player Photo */}
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
           {playerPhoto ? (
