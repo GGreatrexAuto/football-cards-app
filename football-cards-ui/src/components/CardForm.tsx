@@ -24,6 +24,7 @@ import type {
   CardBorderShape,
 } from '../context/CardContext';
 import { BORDER_SHAPE_LABELS } from './CardBorderShapes';
+import CardBorderShapeIcon from './CardBorderShapeIcon';
 import { getFlagUrl } from '../utils/flags';
 import FontSelector from './FontSelector';
 import {
@@ -744,10 +745,10 @@ const CardForm: React.FC = () => {
             component="legend"
             sx={{
               position: 'absolute',
-              width: 1,
-              height: 1,
+              width: '1px',
+              height: '1px',
               padding: 0,
-              margin: -1,
+              margin: '-1px',
               overflow: 'hidden',
               clip: 'rect(0,0,0,0)',
               whiteSpace: 'nowrap',
@@ -783,8 +784,15 @@ const CardForm: React.FC = () => {
                 key={shape}
                 value={shape}
                 aria-label={`${BORDER_SHAPE_LABELS[shape]} border`}
+                sx={{ flexDirection: 'column', gap: 0.25, py: 0.75 }}
               >
-                {BORDER_SHAPE_LABELS[shape]}
+                <CardBorderShapeIcon shape={shape} size={18} />
+                <Box
+                  component="span"
+                  sx={{ fontSize: '0.6rem', lineHeight: 1 }}
+                >
+                  {BORDER_SHAPE_LABELS[shape]}
+                </Box>
               </ToggleButton>
             ))}
           </ToggleButtonGroup>

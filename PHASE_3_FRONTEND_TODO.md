@@ -91,6 +91,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
   - [x] Card ID (for saved cards)
   - [x] Image frame type (`'face' | 'headAndShoulders' | 'fullBody'`)
   - [x] Image crop focus (`'top' | 'centre' | 'bottom'`)
+  - [x] Card border shape (`'none' | 'shield' | 'rectangle' | 'triangle' | 'explosion'`)
+  - [x] Card border colour (hex string)
 
 ### Subtask 11.3: Create API Service
 - [x] Create `src/services/api.ts` module
@@ -245,6 +247,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [ ] Add reset all changes button
 - [ ] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
+- Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
 - [ ] Card style 2.0
 ---
 
