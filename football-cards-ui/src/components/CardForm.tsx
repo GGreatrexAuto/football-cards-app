@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   TextField,
   Button,
+  IconButton,
   Select,
   MenuItem,
   FormControl,
@@ -15,7 +16,9 @@ import {
   Alert,
   ToggleButton,
   ToggleButtonGroup,
+  Tooltip,
 } from '@mui/material';
+import Casino from '@mui/icons-material/Casino';
 import { useCard, DEFAULT_TEXT_FONTS } from '../context/CardContext';
 import type {
   ImageFrameType,
@@ -156,8 +159,31 @@ const CardForm: React.FC = () => {
     fetchData();
   }, []);
 
+  const randomStat = () => Math.floor(Math.random() * 101);
+
+  const handleResetFields = () => {
+    updateCard({
+      playerName: '',
+      club: '',
+      nationality: '',
+      nationalityCode: '',
+      nationalityDisplay: 'text',
+      league: '',
+      position: '',
+      preferredFoot: '',
+      defence: 50,
+      control: 50,
+      attack: 50,
+      rating: 50,
+    });
+    setUseCustomClub(false);
+    setCustomClubName('');
+    setUseCustomLeague(false);
+    setCustomLeagueName('');
+    setValidationError('');
+  };
+
   const handleRandomizeStats = () => {
-    const randomStat = () => Math.floor(Math.random() * 101);
     updateCard({
       defence: randomStat(),
       control: randomStat(),
@@ -503,50 +529,110 @@ const CardForm: React.FC = () => {
             </Select>
           </FormControl>
         </Box>
-        <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-          <TextField
-            label="Defence"
-            type="number"
-            fullWidth
-            value={card.defence}
-            onChange={(e) => updateCard({ defence: Number(e.target.value) })}
-            inputProps={{
-              min: 0,
-              max: 100,
-              'data-testid': 'defence-input',
-              'aria-label': 'Defence',
-            }}
-          />
+      </Box>
+      <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+        <Box
+          component="legend"
+          sx={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          Player Stats
         </Box>
-        <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-          <TextField
-            label="Control"
-            type="number"
-            fullWidth
-            value={card.control}
-            onChange={(e) => updateCard({ control: Number(e.target.value) })}
-            inputProps={{
-              min: 0,
-              max: 100,
-              'data-testid': 'control-input',
-              'aria-label': 'Control',
-            }}
-          />
-        </Box>
-        <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-          <TextField
-            label="Attack"
-            type="number"
-            fullWidth
-            value={card.attack}
-            onChange={(e) => updateCard({ attack: Number(e.target.value) })}
-            inputProps={{
-              min: 0,
-              max: 100,
-              'data-testid': 'attack-input',
-              'aria-label': 'Attack',
-            }}
-          />
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <TextField
+                label="Defence"
+                type="number"
+                fullWidth
+                value={card.defence}
+                onChange={(e) =>
+                  updateCard({ defence: Number(e.target.value) })
+                }
+                inputProps={{
+                  min: 0,
+                  max: 100,
+                  'data-testid': 'defence-input',
+                  'aria-label': 'Defence',
+                }}
+              />
+              <Tooltip title="Randomise Defence">
+                <IconButton
+                  size="small"
+                  onClick={() => updateCard({ defence: randomStat() })}
+                  data-testid="randomize-defence"
+                  aria-label="Randomise Defence"
+                >
+                  <Casino fontSize="small" aria-hidden="true" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <TextField
+                label="Control"
+                type="number"
+                fullWidth
+                value={card.control}
+                onChange={(e) =>
+                  updateCard({ control: Number(e.target.value) })
+                }
+                inputProps={{
+                  min: 0,
+                  max: 100,
+                  'data-testid': 'control-input',
+                  'aria-label': 'Control',
+                }}
+              />
+              <Tooltip title="Randomise Control">
+                <IconButton
+                  size="small"
+                  onClick={() => updateCard({ control: randomStat() })}
+                  data-testid="randomize-control"
+                  aria-label="Randomise Control"
+                >
+                  <Casino fontSize="small" aria-hidden="true" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <TextField
+                label="Attack"
+                type="number"
+                fullWidth
+                value={card.attack}
+                onChange={(e) => updateCard({ attack: Number(e.target.value) })}
+                inputProps={{
+                  min: 0,
+                  max: 100,
+                  'data-testid': 'attack-input',
+                  'aria-label': 'Attack',
+                }}
+              />
+              <Tooltip title="Randomise Attack">
+                <IconButton
+                  size="small"
+                  onClick={() => updateCard({ attack: randomStat() })}
+                  data-testid="randomize-attack"
+                  aria-label="Randomise Attack"
+                >
+                  <Casino fontSize="small" aria-hidden="true" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
         </Box>
       </Box>
       <Button
@@ -558,6 +644,17 @@ const CardForm: React.FC = () => {
       >
         🎲 Randomize Stats
       </Button>
+      <Tooltip title="Clears player details and stats — keeps photo, background and visual settings">
+        <Button
+          variant="outlined"
+          onClick={handleResetFields}
+          fullWidth
+          data-testid="reset-fields"
+          aria-label="Reset Fields"
+        >
+          Reset Fields
+        </Button>
+      </Tooltip>
 
       {/* Player Photo Section */}
       <Box>
@@ -646,6 +743,18 @@ const CardForm: React.FC = () => {
             </Box>
           ))}
         </Box>
+        <Box sx={{ mt: 2 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => updateCard({ playerPhoto: null })}
+            disabled={card.playerPhoto === null}
+            data-testid="reset-player-photo"
+            aria-label="Reset Player Photo"
+          >
+            Reset Photo
+          </Button>
+        </Box>
         <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           <Typography variant="subtitle2" id="image-frame-type-label">
             Frame type:
@@ -732,6 +841,18 @@ const CardForm: React.FC = () => {
               </Card>
             </Box>
           ))}
+        </Box>
+        <Box sx={{ mt: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => updateCard({ cardBackground: null })}
+            disabled={card.cardBackground === null}
+            data-testid="reset-card-background"
+            aria-label="Reset Card Background"
+          >
+            Reset Background
+          </Button>
         </Box>
       </Box>
 

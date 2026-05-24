@@ -27,6 +27,33 @@ const BACKEND_ARGS = process.env.PLAYWRIGHT_BACKEND_ARGS
       '--reload',
     ];
 
+const FRONTEND_HOST = '127.0.0.1';
+const FRONTEND_PORT = 3000;
+
+function checkFrontendHealth(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const req = httpRequest(
+      {
+        hostname: FRONTEND_HOST,
+        port: FRONTEND_PORT,
+        path: '/',
+        method: 'GET',
+        timeout: 3000,
+      },
+      (res) => {
+        resolve(res.statusCode !== undefined && res.statusCode < 500);
+      },
+    );
+
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.end();
+  });
+}
+
 function checkBackendHealth(): Promise<boolean> {
   return new Promise((resolve) => {
     const req = httpRequest(
@@ -92,8 +119,18 @@ async function startBackendProcess(): Promise<ChildProcessWithoutNullStreams> {
 async function globalSetup(): Promise<GlobalSetupResult> {
   console.log('🚀 Starting E2E test suite...');
 
-  const backendAlreadyRunning = await checkBackendHealth();
-  if (backendAlreadyRunning) {
+  const backendUp = await checkBackendHealth();
+  const frontendUp = await checkFrontendHealth();
+
+  if (!backendUp && !frontendUp) {
+    throw new Error(
+      'Neither server is running. Start both before running E2E:\n' +
+        '  bash scripts/start.sh           (interactive)\n' +
+        '  bash scripts/ensure-servers.sh  (background, used by pre-commit hook)',
+    );
+  }
+
+  if (backendUp) {
     console.log(
       `✅ Backend already running at ${BACKEND_URL}${BACKEND_HEALTH_PATH}`,
     );
@@ -103,7 +140,7 @@ async function globalSetup(): Promise<GlobalSetupResult> {
   console.log('🔧 Starting backend server...');
   const backendProcess = await startBackendProcess();
 
-  await waitForBackendReady();
+  await waitForBackendReady(5, 2000);
   console.log(
     `✅ Backend is available at ${BACKEND_URL}${BACKEND_HEALTH_PATH}`,
   );

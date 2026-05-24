@@ -242,9 +242,10 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Add ability to add and change internal card border e.g cards always rectangular, but could have a border of shield, rectangle, triangle, explosion etc within rectangular card
 - [ ] Update create card form, section headings reordering of fields
 - [x] Make Club selection dynamic based on selected league
-- [ ] Add randomise stat button for each stat
-- [ ] Add 2 buttons reset Card Background & Player photo to revert to original values
-- [ ] Add reset all changes button
+- [x] Add randomise stat button for each stat
+- [x] Add 2 buttons reset Card Background & Player photo to revert to original values
+- [x] Add reset all changes button
+- [x] Add reset fields button (clears player details + stats, keeps photo/background/visual settings)
 - [ ] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up

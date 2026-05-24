@@ -129,9 +129,9 @@ describe('Accessibility — aria-labels and alt text', () => {
     );
 
     expect(screen.getByLabelText('Player Name')).toBeInTheDocument();
-    expect(screen.getByLabelText(/defence/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/control/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/attack/i)).toBeInTheDocument();
+    expect(screen.getByTestId('defence-input')).toBeInTheDocument();
+    expect(screen.getByTestId('control-input')).toBeInTheDocument();
+    expect(screen.getByTestId('attack-input')).toBeInTheDocument();
   });
 
   test('CardForm: action buttons have accessible names', async () => {
@@ -208,9 +208,9 @@ describe('Accessibility — keyboard navigation', () => {
     );
 
     const playerNameInput = screen.getByLabelText('Player Name');
-    const defenceInput = screen.getByLabelText(/defence/i);
-    const controlInput = screen.getByLabelText(/control/i);
-    const attackInput = screen.getByLabelText(/attack/i);
+    const defenceInput = screen.getByTestId('defence-input');
+    const controlInput = screen.getByTestId('control-input');
+    const attackInput = screen.getByTestId('attack-input');
 
     // Verify each key input can receive focus — confirms it is not disabled or
     // removed from the tab sequence. Uses toHaveFocus() (jest-dom) not document.activeElement.

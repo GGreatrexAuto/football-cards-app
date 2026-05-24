@@ -105,11 +105,11 @@ describe('CardForm Component', () => {
   test('randomize button sets stats in 0-100 range', async () => {
     renderWithProvider();
 
-    await screen.findByLabelText(/Defence/i);
+    await screen.findByTestId('defence-input');
 
-    const attack = screen.getByLabelText(/Attack/i) as HTMLInputElement;
-    const control = screen.getByLabelText(/Control/i) as HTMLInputElement;
-    const defence = screen.getByLabelText(/Defence/i) as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
 
     const randomize = screen.getByRole('button', { name: /randomize stats/i });
     fireEvent.click(randomize);
@@ -1068,5 +1068,237 @@ describe('Card Border section', () => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
     expect(await axe(container)).toHaveNoViolations();
+  });
+});
+
+describe('per-stat randomise buttons', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('randomise-defence changes only defence, leaving control and attack unchanged', async () => {
+    const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.75);
+
+    renderWithProvider();
+    await screen.findByTestId('defence-input');
+
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+
+    fireEvent.click(screen.getByTestId('randomize-defence'));
+
+    await waitFor(() => expect(Number(defence.value)).toBe(75));
+    expect(Number(control.value)).toBe(50);
+    expect(Number(attack.value)).toBe(50);
+
+    mockRandom.mockRestore();
+  });
+
+  test('randomise-control changes only control, leaving defence and attack unchanged', async () => {
+    const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.6);
+
+    renderWithProvider();
+    await screen.findByTestId('defence-input');
+
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+
+    fireEvent.click(screen.getByTestId('randomize-control'));
+
+    await waitFor(() => expect(Number(control.value)).toBe(60));
+    expect(Number(defence.value)).toBe(50);
+    expect(Number(attack.value)).toBe(50);
+
+    mockRandom.mockRestore();
+  });
+
+  test('randomise-attack changes only attack, leaving defence and control unchanged', async () => {
+    const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.3);
+
+    renderWithProvider();
+    await screen.findByTestId('defence-input');
+
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+
+    fireEvent.click(screen.getByTestId('randomize-attack'));
+
+    await waitFor(() => expect(Number(attack.value)).toBe(30));
+    expect(Number(defence.value)).toBe(50);
+    expect(Number(control.value)).toBe(50);
+
+    mockRandom.mockRestore();
+  });
+
+  test('per-stat randomise buttons produce values in 0-100 range', async () => {
+    renderWithProvider();
+    await screen.findByTestId('defence-input');
+
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+
+    fireEvent.click(screen.getByTestId('randomize-defence'));
+    fireEvent.click(screen.getByTestId('randomize-control'));
+    fireEvent.click(screen.getByTestId('randomize-attack'));
+
+    await waitFor(() => {
+      expect(Number(defence.value)).toBeGreaterThanOrEqual(0);
+    });
+    expect(Number(defence.value)).toBeLessThanOrEqual(100);
+    expect(Number(control.value)).toBeGreaterThanOrEqual(0);
+    expect(Number(control.value)).toBeLessThanOrEqual(100);
+    expect(Number(attack.value)).toBeGreaterThanOrEqual(0);
+    expect(Number(attack.value)).toBeLessThanOrEqual(100);
+  });
+});
+
+describe('reset player photo button', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('reset-player-photo is disabled initially when no photo is set', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(screen.getByTestId('reset-player-photo')).toBeDisabled();
+  });
+
+  test('reset-player-photo enables after selecting a stock photo and disables again on click', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    fireEvent.click(screen.getByTestId('stock-photo-stock1'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-player-photo')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('reset-player-photo'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-player-photo')).toBeDisabled();
+    });
+  });
+});
+
+describe('reset card background button', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('reset-card-background is disabled initially when no background is set', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    expect(screen.getByTestId('reset-card-background')).toBeDisabled();
+  });
+
+  test('reset-card-background enables after selecting a background and disables again on click', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    fireEvent.click(screen.getByAltText('Stadium Blue'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('reset-card-background'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-card-background')).toBeDisabled();
+    });
+  });
+});
+
+describe('reset fields button', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('reset-fields clears playerName input', async () => {
+    renderWithProvider();
+    const nameInput = (await screen.findByLabelText(
+      'Player Name',
+    )) as HTMLInputElement;
+
+    fireEvent.change(nameInput, { target: { value: 'Test Player' } });
+    expect(nameInput.value).toBe('Test Player');
+
+    fireEvent.click(screen.getByTestId('reset-fields'));
+
+    await waitFor(() => {
+      expect(nameInput.value).toBe('');
+    });
+  });
+
+  test('reset-fields resets all three stats to 50', async () => {
+    renderWithProvider();
+    await screen.findByTestId('defence-input');
+
+    const defence = screen.getByTestId('defence-input') as HTMLInputElement;
+    const control = screen.getByTestId('control-input') as HTMLInputElement;
+    const attack = screen.getByTestId('attack-input') as HTMLInputElement;
+
+    fireEvent.change(defence, { target: { value: '90' } });
+    fireEvent.change(control, { target: { value: '85' } });
+    fireEvent.change(attack, { target: { value: '95' } });
+
+    fireEvent.click(screen.getByTestId('reset-fields'));
+
+    await waitFor(() => {
+      expect(Number(defence.value)).toBe(50);
+    });
+    expect(Number(control.value)).toBe(50);
+    expect(Number(attack.value)).toBe(50);
+  });
+
+  test('reset-fields does not clear player photo', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    fireEvent.click(screen.getByTestId('stock-photo-stock1'));
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-player-photo')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('reset-fields'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-player-photo')).not.toBeDisabled();
+    });
+  });
+
+  test('reset-fields does not clear card background', async () => {
+    renderWithProvider();
+    await screen.findByLabelText('Player Name');
+
+    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
+    });
+
+    fireEvent.click(screen.getByTestId('reset-fields'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
+    });
   });
 });
