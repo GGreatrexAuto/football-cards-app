@@ -171,6 +171,12 @@ describe('CardCreator integration flow', () => {
       expect(screen.getByText(/No saved cards yet/i)).toBeInTheDocument();
     });
   });
+
+  test('renders card preview column with data-testid for sticky layout', async () => {
+    render(<App />);
+    await screen.findByRole('textbox', { name: /player name/i });
+    expect(screen.getByTestId('card-preview-column')).toBeInTheDocument();
+  });
 });
 
 describe('Font persistence', () => {

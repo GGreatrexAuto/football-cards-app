@@ -248,7 +248,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Add reset fields button (clears player details + stats, keeps photo/background/visual settings)
 - [ ] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
-- Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
+- [x]  Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
 - [ ] Card style 2.0
 ---
 

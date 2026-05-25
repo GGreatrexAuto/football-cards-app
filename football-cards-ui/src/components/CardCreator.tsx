@@ -30,10 +30,19 @@ const CardCreator: React.FC<CardCreatorProps> = ({ onNavigateToGallery }) => {
           gap: 4,
         }}
       >
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, order: { xs: 2, md: 1 } }}>
           <CardForm />
         </Box>
-        <Box sx={{ flex: 1 }}>
+        <Box
+          data-testid="card-preview-column"
+          sx={{
+            flex: 1,
+            order: { xs: 1, md: 2 },
+            position: { md: 'sticky' },
+            top: { md: 2 },
+            alignSelf: { md: 'flex-start' },
+          }}
+        >
           <CardPreview />
         </Box>
       </Box>
