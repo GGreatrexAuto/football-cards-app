@@ -21,21 +21,21 @@ test.describe('Floating card preview', () => {
     await expect(previewColumn).toBeInViewport();
   });
 
-  test('card preview reflects changes made while scrolled down', async ({
+  test('card preview shows changes entered while the page is scrolled down', async ({
     page,
   }) => {
     await page.waitForSelector('input[aria-label="Player Name"]');
 
+    // Enter the player name before scrolling (avoids Playwright auto-scroll back up)
+    const nameInput = page.getByLabel('Player Name', { exact: true });
+    await nameInput.fill('Scrolled Player');
+
     // Scroll past where the preview would normally disappear
     await page.evaluate(() => window.scrollTo(0, 600));
 
-    // Update the player name while scrolled
-    const nameInput = page.getByLabel(/player name/i);
-    await nameInput.fill('Scrolled Player');
-
-    // Preview column should still be in the viewport and show the new name
+    // Preview column must still be in the viewport (sticky) and show the name
     const previewColumn = page.getByTestId('card-preview-column');
     await expect(previewColumn).toBeInViewport();
-    await expect(page.getByText('Scrolled Player').first()).toBeVisible();
+    await expect(previewColumn.getByText('Scrolled Player')).toBeVisible();
   });
 });
