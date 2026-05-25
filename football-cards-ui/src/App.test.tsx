@@ -36,3 +36,13 @@ test('renders main title and navigation tabs', async () => {
     expect(screen.getByText(/save card/i)).toBeInTheDocument();
   });
 });
+
+test('inactive tab panels have aria-hidden="true"', () => {
+  render(<App />);
+
+  const panels = screen.getAllByRole('tabpanel', { hidden: true });
+  const inactivePanels = panels.filter(
+    (p) => p.getAttribute('aria-hidden') === 'true',
+  );
+  expect(inactivePanels).toHaveLength(2);
+});

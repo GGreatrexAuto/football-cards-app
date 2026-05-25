@@ -54,6 +54,7 @@ const CardForm: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [playerNameError, setPlayerNameError] = useState(false);
   const [useCustomClub, setUseCustomClub] = useState(false);
   const [customClubName, setCustomClubName] = useState('');
   const [useCustomLeague, setUseCustomLeague] = useState(false);
@@ -232,7 +233,7 @@ const CardForm: React.FC = () => {
 
   const handleSaveCard = () => {
     if (!card.playerName.trim()) {
-      setValidationError('Player name is required.');
+      setPlayerNameError(true);
       return;
     }
 
@@ -248,6 +249,7 @@ const CardForm: React.FC = () => {
       return;
     }
 
+    setPlayerNameError(false);
     setValidationError('');
 
     if (card.cardId) {
@@ -266,12 +268,18 @@ const CardForm: React.FC = () => {
       ? clubs.filter((c) => c.league_name === card.league)
       : clubs;
 
+  const defenceInvalid = card.defence < 0 || card.defence > 100;
+  const controlInvalid = card.control < 0 || card.control > 100;
+  const attackInvalid = card.attack < 0 || card.attack > 100;
+
   if (loading) {
     return (
-      <CircularProgress
-        data-testid="form-loading"
-        aria-label="Loading form data"
-      />
+      <Box role="status" aria-live="polite">
+        <CircularProgress
+          data-testid="form-loading"
+          aria-label="Loading form options"
+        />
+      </Box>
     );
   }
 
@@ -320,10 +328,21 @@ const CardForm: React.FC = () => {
         label="Player Name"
         fullWidth
         value={card.playerName}
-        onChange={(e) => updateCard({ playerName: e.target.value })}
+        onChange={(e) => {
+          updateCard({ playerName: e.target.value });
+          if (playerNameError && e.target.value.trim()) {
+            setPlayerNameError(false);
+          }
+        }}
+        error={playerNameError}
+        helperText={playerNameError ? 'Player name is required.' : undefined}
+        FormHelperTextProps={{ id: 'player-name-error' }}
         inputProps={{
           'data-testid': 'player-name',
           'aria-label': 'Player Name',
+          'aria-required': 'true',
+          'aria-invalid': playerNameError ? 'true' : 'false',
+          'aria-describedby': playerNameError ? 'player-name-error' : undefined,
         }}
       />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
@@ -605,6 +624,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'defence-input',
                   'aria-label': 'Defence',
+                  'aria-invalid': defenceInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Defence">
@@ -634,6 +654,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'control-input',
                   'aria-label': 'Control',
+                  'aria-invalid': controlInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Control">
@@ -661,6 +682,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'attack-input',
                   'aria-label': 'Attack',
+                  'aria-invalid': attackInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Attack">
@@ -1083,6 +1105,8 @@ const CardForm: React.FC = () => {
         onClose={() => setSuccessMessage('')}
       >
         <Alert
+          role="alert"
+          aria-live="assertive"
           severity="success"
           onClose={() => setSuccessMessage('')}
           data-testid="success-message"
@@ -1097,6 +1121,8 @@ const CardForm: React.FC = () => {
         onClose={() => setValidationError('')}
       >
         <Alert
+          role="alert"
+          aria-live="assertive"
           severity="error"
           onClose={() => setValidationError('')}
           data-testid="error-message"

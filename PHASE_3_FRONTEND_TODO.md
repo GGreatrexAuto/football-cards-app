@@ -249,6 +249,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - [x]  Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
+- [ ] Print formatter - UI functionality to add x saved cards to be printed on one page of A4 paper.
+- [ ] Alternate stats styles e.g toppz style (Speed, Tackle, Power, Shoot, Skill, Pass) and set existing stat style as Adrenaline
 - [ ] Card style 2.0
 ---
 
@@ -832,37 +834,37 @@ The gradient (first background) is on top and blocks the image (second backgroun
 
 These are missing ARIA attributes on existing components; tests in 17.2 verify them.
 
-- [ ] Add `aria-required="true"` to Player Name input in `CardForm.tsx` (it is required but this is not declared to assistive tech)
-- [ ] Add `aria-invalid="true"` to Player Name input when validation error is active
-- [ ] Add `aria-describedby` to Player Name input pointing to the error message element; give the error element a stable `id`
-- [ ] Add `aria-invalid` to stat inputs (Defence, Control, Attack) when value is out of range
-- [ ] Wrap the stats section (Defence, Control, Attack) in a `<fieldset>` with `<legend>Player Stats</legend>` for semantic grouping
-- [ ] Ensure the success/error Snackbar has `role="alert"` and `aria-live="assertive"` so screen readers announce it automatically
-- [ ] Add an `aria-live="polite"` status region that announces when form data is loading (e.g. "Loading form options…" while API calls are in progress)
-- [ ] Improve custom-club / custom-league inputs: when the "Other" text field appears, ensure it has an explicit `aria-label` (e.g. `aria-label="Custom club name"`)
+- [x] Add `aria-required="true"` to Player Name input in `CardForm.tsx` (it is required but this is not declared to assistive tech)
+- [x] Add `aria-invalid="true"` to Player Name input when validation error is active
+- [x] Add `aria-describedby` to Player Name input pointing to the error message element; give the error element a stable `id`
+- [x] Add `aria-invalid` to stat inputs (Defence, Control, Attack) when value is out of range
+- [x] Wrap the stats section (Defence, Control, Attack) in a `<fieldset>` with `<legend>Player Stats</legend>` for semantic grouping
+- [x] Ensure the success/error Snackbar has `role="alert"` and `aria-live="assertive"` so screen readers announce it automatically
+- [x] Add an `aria-live="polite"` status region that announces when form data is loading (e.g. "Loading form options…" while API calls are in progress)
+- [x] Improve custom-club / custom-league inputs: when the "Other" text field appears, ensure it has an explicit `aria-label` (e.g. `aria-label="Custom club name"`)
 
 ### Subtask 17.2: Form Semantics — Tests (`CardForm.test.tsx`)
 
-- [ ] Test that Player Name input has `aria-required="true"`
-- [ ] Test that Player Name input has `aria-invalid="true"` when save is attempted without a name
-- [ ] Test that Player Name input has `aria-invalid="false"` (or attribute removed) after the error is cleared
-- [ ] Test that Player Name has `aria-describedby` matching the `id` of the visible error message element
-- [ ] Test that stats inputs show `aria-invalid="true"` when value exceeds 0–100 range
-- [ ] Test that the stats section is wrapped in a `fieldset` with a `<legend>` containing "Player Stats"
-- [ ] Test that error Snackbar has `role="alert"` or `aria-live` attribute
-- [ ] Test that custom club/nationality input has an accessible label when it appears
+- [x] Test that Player Name input has `aria-required="true"`
+- [x] Test that Player Name input has `aria-invalid="true"` when save is attempted without a name
+- [x] Test that Player Name input has `aria-invalid="false"` (or attribute removed) after the error is cleared
+- [x] Test that Player Name has `aria-describedby` matching the `id` of the visible error message element
+- [x] Test that stats inputs show `aria-invalid="true"` when value exceeds 0–100 range
+- [x] Test that the stats section is wrapped in a `fieldset` with a `<legend>` containing "Player Stats"
+- [x] Test that error Snackbar has `role="alert"` or `aria-live` attribute
+- [x] Test that custom club/nationality input has an accessible label when it appears
 
 ### Subtask 17.3: Focus Management — Implementation
 
-- [ ] In the delete confirmation dialog (`CardGallery.tsx`), move focus into the dialog when it opens (MUI Dialog does this by default — verify it is not overridden)
-- [ ] Ensure focus returns to the **Delete button** for the deleted card's row (or to the "Create New" button if the gallery is now empty) after the dialog closes
-- [ ] In `App.tsx` tab navigation, ensure hidden tab panels are excluded from the tab order (`tabIndex={-1}` or `aria-hidden="true"` while not active)
+- [x] In the delete confirmation dialog (`CardGallery.tsx`), move focus into the dialog when it opens (MUI Dialog does this by default — verify it is not overridden)
+- [x] Ensure focus returns to the **Delete button** for the deleted card's row (or to the "Create New" button if the gallery is now empty) after the dialog closes
+- [x] In `App.tsx` tab navigation, ensure hidden tab panels are excluded from the tab order (`tabIndex={-1}` or `aria-hidden="true"` while not active)
 
 ### Subtask 17.4: Focus Management — Tests
 
-- [ ] In `CardGallery.test.tsx`: test that focus moves into the delete confirmation dialog when opened (check `document.activeElement` is inside the dialog)
-- [ ] In `CardGallery.test.tsx`: test that focus returns to a gallery element (or "Create New") after confirming deletion
-- [ ] In `App.test.tsx` or `accessibility.test.tsx`: test that inactive tab panels are not reachable by Tab when hidden
+- [x] In `CardGallery.test.tsx`: test that focus moves into the delete confirmation dialog when opened (check `document.activeElement` is inside the dialog)
+- [x] In `CardGallery.test.tsx`: test that focus returns to a gallery element (or "Create New") after confirming deletion
+- [x] In `App.test.tsx` or `accessibility.test.tsx`: test that inactive tab panels are not reachable by Tab when hidden
 
 ### Subtask 17.5: Tab Order & Keyboard Navigation Tests (`accessibility.test.tsx`)
 

@@ -30,6 +30,6 @@
   /* Ensure no background colors are printed (optional) */
   .printable-card {
     -webkit-print-color-adjust: exact;
-    color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

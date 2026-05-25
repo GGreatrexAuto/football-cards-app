@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -33,10 +33,20 @@ const CardGallery: React.FC<CardGalleryProps> = ({
     open: false,
     cardId: null,
   });
+  const [pendingFocusCreateNew, setPendingFocusCreateNew] = useState(false);
+  const createNewInHeaderRef = useRef<HTMLButtonElement>(null);
+  const createNewInEmptyRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     loadCards();
   }, []);
+
+  useEffect(() => {
+    if (pendingFocusCreateNew && !deleteDialog.open) {
+      (createNewInHeaderRef.current || createNewInEmptyRef.current)?.focus();
+      setPendingFocusCreateNew(false);
+    }
+  }, [pendingFocusCreateNew, deleteDialog.open]);
 
   const loadCards = () => {
     const savedCards = getSavedCards();
@@ -62,6 +72,7 @@ const CardGallery: React.FC<CardGalleryProps> = ({
       loadCards(); // Reload cards after deletion
     }
     setDeleteDialog({ open: false, cardId: null });
+    setPendingFocusCreateNew(true);
   };
 
   const handleDeleteCancel = () => {
@@ -90,7 +101,12 @@ const CardGallery: React.FC<CardGalleryProps> = ({
         <Typography variant="h6" color="text.secondary">
           No saved cards yet. Create your first card!
         </Typography>
-        <Button variant="contained" onClick={handleCreateNew}>
+        <Button
+          variant="contained"
+          onClick={handleCreateNew}
+          ref={createNewInEmptyRef}
+          data-testid="create-new"
+        >
           Create New Card
         </Button>
       </Box>
@@ -108,7 +124,12 @@ const CardGallery: React.FC<CardGalleryProps> = ({
         }}
       >
         <Typography variant="h5">Your Card Gallery</Typography>
-        <Button variant="contained" onClick={handleCreateNew}>
+        <Button
+          variant="contained"
+          onClick={handleCreateNew}
+          ref={createNewInHeaderRef}
+          data-testid="create-new"
+        >
           Create New Card
         </Button>
       </Box>
@@ -167,6 +188,8 @@ const CardGallery: React.FC<CardGalleryProps> = ({
                       variant="outlined"
                       color="error"
                       onClick={() => handleDeleteClick(card.cardId!)}
+                      aria-label={`Delete ${card.playerName || 'Unnamed Player'}`}
+                      data-testid="delete-card"
                     >
                       Delete
                     </Button>
@@ -179,7 +202,11 @@ const CardGallery: React.FC<CardGalleryProps> = ({
       </Box>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialog.open} onClose={handleDeleteCancel}>
+      <Dialog
+        open={deleteDialog.open}
+        onClose={handleDeleteCancel}
+        data-testid="delete-dialog"
+      >
         <DialogTitle>Delete Card</DialogTitle>
         <DialogContent>
           <Typography>
