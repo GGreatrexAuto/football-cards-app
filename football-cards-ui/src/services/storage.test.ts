@@ -40,6 +40,7 @@ const card: CardState = {
   imageCropFocus: 'bottom',
   cardBorderShape: 'shield',
   cardBorderColor: '#ff0000',
+  cardType: 'club',
 };
 
 describe('Storage service', () => {

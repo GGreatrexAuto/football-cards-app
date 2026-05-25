@@ -229,22 +229,40 @@ export class CardCreatorPage extends TestBase {
   }
 
   /**
+   * Select card type (Club or National Team)
+   */
+  async selectCardType(type: 'club' | 'national'): Promise<void> {
+    const label = type === 'club' ? 'Club card' : 'National team card';
+    await this.page.click(`[aria-label="${label}"]`);
+  }
+
+  /**
    * Fill complete card form with data
    */
   async fillCardForm(data: {
     name: string;
-    club: string;
     nationality: string;
-    league: string;
     position: string;
+    cardType?: 'club' | 'national';
+    club?: string;
+    league?: string;
     randomizeStats?: boolean;
     background?: string;
   }): Promise<void> {
     await this.waitForFormReady();
+
+    if (data.cardType) {
+      await this.selectCardType(data.cardType);
+    }
+
     await this.fillPlayerName(data.name);
-    await this.selectClub(data.club);
+
+    if (data.cardType !== 'national') {
+      if (data.club) await this.selectClub(data.club);
+      if (data.league) await this.selectLeague(data.league);
+    }
+
     await this.selectNationality(data.nationality);
-    await this.selectLeague(data.league);
     await this.selectPosition(data.position);
 
     if (data.randomizeStats !== false) {

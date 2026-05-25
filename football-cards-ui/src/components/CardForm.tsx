@@ -25,6 +25,7 @@ import type {
   ImageCropFocus,
   NationalityDisplay,
   CardBorderShape,
+  CardType,
 } from '../context/CardContext';
 import { BORDER_SHAPE_LABELS } from './CardBorderShapes';
 import CardBorderShapeIcon from './CardBorderShapeIcon';
@@ -280,6 +281,41 @@ const CardForm: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+        <Box
+          component="legend"
+          sx={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.6)', mb: 1 }}
+        >
+          Card type
+        </Box>
+        <ToggleButtonGroup
+          value={card.cardType}
+          exclusive
+          onChange={(_, value: CardType | null) => {
+            if (!value) return;
+            updateCard({
+              cardType: value,
+              ...(value === 'national' ? { club: '', league: '' } : {}),
+            });
+            if (value === 'national') {
+              setUseCustomClub(false);
+              setCustomClubName('');
+              setUseCustomLeague(false);
+              setCustomLeagueName('');
+            }
+          }}
+          aria-label="Card type"
+          data-testid="card-type-selector"
+          size="small"
+        >
+          <ToggleButton value="club" aria-label="Club card">
+            Club
+          </ToggleButton>
+          <ToggleButton value="national" aria-label="National team card">
+            National Team
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
       <TextField
         label="Player Name"
         fullWidth
@@ -291,59 +327,63 @@ const CardForm: React.FC = () => {
         }}
       />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="club-label">Club</InputLabel>
-            <Select
-              labelId="club-label"
-              id="club-select"
-              data-testid="club-select"
-              aria-label="Club"
-              value={useCustomClub ? '__custom__' : card.club}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '__custom__') {
-                  setUseCustomClub(true);
-                  updateCard({ club: customClubName });
-                } else {
-                  setUseCustomClub(false);
-                  const chosenClub = clubs.find((c) => c.name === val);
-                  setUseCustomLeague(false);
-                  updateCard({
-                    club: val,
-                    ...(chosenClub?.league_name
-                      ? { league: chosenClub.league_name }
-                      : {}),
-                  });
-                }
-              }}
-              label="Club"
-            >
-              {filteredClubs.map((club) => (
-                <MenuItem key={club.id} value={club.name}>
-                  {club.name}
+        {card.cardType === 'club' && (
+          <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+            <FormControl fullWidth>
+              <InputLabel id="club-label">Club</InputLabel>
+              <Select
+                labelId="club-label"
+                id="club-select"
+                data-testid="club-select"
+                aria-label="Club"
+                value={useCustomClub ? '__custom__' : card.club}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '__custom__') {
+                    setUseCustomClub(true);
+                    updateCard({ club: customClubName });
+                  } else {
+                    setUseCustomClub(false);
+                    const chosenClub = clubs.find((c) => c.name === val);
+                    setUseCustomLeague(false);
+                    updateCard({
+                      club: val,
+                      ...(chosenClub?.league_name
+                        ? { league: chosenClub.league_name }
+                        : {}),
+                    });
+                  }
+                }}
+                label="Club"
+              >
+                {filteredClubs.map((club) => (
+                  <MenuItem key={club.id} value={club.name}>
+                    {club.name}
+                  </MenuItem>
+                ))}
+                <MenuItem value="__custom__">
+                  Other — enter club name...
                 </MenuItem>
-              ))}
-              <MenuItem value="__custom__">Other — enter club name...</MenuItem>
-            </Select>
-          </FormControl>
-          {useCustomClub && (
-            <TextField
-              label="Custom Club Name"
-              fullWidth
-              value={customClubName}
-              onChange={(e) => {
-                setCustomClubName(e.target.value);
-                updateCard({ club: e.target.value });
-              }}
-              inputProps={{
-                'data-testid': 'custom-club-input',
-                'aria-label': 'Custom Club Name',
-              }}
-              sx={{ mt: 1 }}
-            />
-          )}
-        </Box>
+              </Select>
+            </FormControl>
+            {useCustomClub && (
+              <TextField
+                label="Custom Club Name"
+                fullWidth
+                value={customClubName}
+                onChange={(e) => {
+                  setCustomClubName(e.target.value);
+                  updateCard({ club: e.target.value });
+                }}
+                inputProps={{
+                  'data-testid': 'custom-club-input',
+                  'aria-label': 'Custom Club Name',
+                }}
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Box>
+        )}
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
             <InputLabel id="nationality-label">Nationality</InputLabel>
@@ -433,62 +473,64 @@ const CardForm: React.FC = () => {
         </Box>
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="league-label">League</InputLabel>
-            <Select
-              labelId="league-label"
-              id="league-select"
-              data-testid="league-select"
-              aria-label="League"
-              value={useCustomLeague ? '__custom_league__' : card.league}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '__custom_league__') {
-                  setUseCustomLeague(true);
-                  updateCard({ league: customLeagueName });
-                } else {
-                  setUseCustomLeague(false);
-                  const currentClub = clubs.find((c) => c.name === card.club);
-                  const clubBelongs =
-                    !val || !currentClub || currentClub.league_name === val;
-                  updateCard({
-                    league: val,
-                    ...(!clubBelongs ? { club: '' } : {}),
-                  });
-                }
-              }}
-              label="League"
-            >
-              {leagues?.map((league) => (
-                <MenuItem key={league.id} value={league.name}>
-                  {league.name}
-                </MenuItem>
-              ))}
-              {useCustomClub && (
-                <MenuItem value="__custom_league__">
-                  Other — enter league name...
-                </MenuItem>
-              )}
-            </Select>
-          </FormControl>
-          {useCustomLeague && (
-            <TextField
-              label="Custom League Name"
-              fullWidth
-              value={customLeagueName}
-              onChange={(e) => {
-                setCustomLeagueName(e.target.value);
-                updateCard({ league: e.target.value });
-              }}
-              inputProps={{
-                'data-testid': 'custom-league-input',
-                'aria-label': 'Custom League Name',
-              }}
-              sx={{ mt: 1 }}
-            />
-          )}
-        </Box>
+        {card.cardType === 'club' && (
+          <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+            <FormControl fullWidth>
+              <InputLabel id="league-label">League</InputLabel>
+              <Select
+                labelId="league-label"
+                id="league-select"
+                data-testid="league-select"
+                aria-label="League"
+                value={useCustomLeague ? '__custom_league__' : card.league}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '__custom_league__') {
+                    setUseCustomLeague(true);
+                    updateCard({ league: customLeagueName });
+                  } else {
+                    setUseCustomLeague(false);
+                    const currentClub = clubs.find((c) => c.name === card.club);
+                    const clubBelongs =
+                      !val || !currentClub || currentClub.league_name === val;
+                    updateCard({
+                      league: val,
+                      ...(!clubBelongs ? { club: '' } : {}),
+                    });
+                  }
+                }}
+                label="League"
+              >
+                {leagues?.map((league) => (
+                  <MenuItem key={league.id} value={league.name}>
+                    {league.name}
+                  </MenuItem>
+                ))}
+                {useCustomClub && (
+                  <MenuItem value="__custom_league__">
+                    Other — enter league name...
+                  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+            {useCustomLeague && (
+              <TextField
+                label="Custom League Name"
+                fullWidth
+                value={customLeagueName}
+                onChange={(e) => {
+                  setCustomLeagueName(e.target.value);
+                  updateCard({ league: e.target.value });
+                }}
+                inputProps={{
+                  'data-testid': 'custom-league-input',
+                  'aria-label': 'Custom League Name',
+                }}
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Box>
+        )}
         <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
           <FormControl fullWidth>
             <InputLabel id="position-label">Position</InputLabel>

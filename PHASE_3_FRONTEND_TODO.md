@@ -246,7 +246,7 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Add 2 buttons reset Card Background & Player photo to revert to original values
 - [x] Add reset all changes button
 - [x] Add reset fields button (clears player details + stats, keeps photo/background/visual settings)
-- [ ] Ability to choose either club or national team card
+- [x] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - [x]  Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
 - [ ] Card style 2.0
@@ -274,6 +274,9 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Mock API service for dropdown population
 - [x] Test that form displays loading state during API calls
 - [x] Test error handling for failed API calls
+- [x] Test card type toggle shows/hides club and league sections
+- [x] Test switching to national team clears club and league values
+- [x] Test reset fields preserves card type selection
 - [x] Aim for 80%+ code coverage
 
 ### Subtask 12.3: Unit Tests - CardPreview Component
@@ -427,6 +430,12 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Graceful handling of corrupted data
 
 **Coverage Target**: Minimum 80% for all components, 90% for critical paths
+
+#### E2E Tests — National Team Card (`national-team-card.spec.ts`)
+- [x] Switching to National Team hides club and league fields (smoke)
+- [x] Switching back to Club restores club and league fields
+- [x] Saved national team card has `cardType: 'national'` in localStorage
+- [x] Card type toggle buttons have correct ARIA labels (`aria-pressed` state)
 
 **Success Criteria**:
 - [ ] All subtasks above are complete

@@ -1225,6 +1225,153 @@ describe('reset card background button', () => {
   });
 });
 
+describe('Card type toggle', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  const waitForFormReady = async () => {
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+  };
+
+  test('defaults to Club mode with club and league selects visible', async () => {
+    const { container } = renderWithProvider();
+    await waitForFormReady();
+
+    const selector = screen.getByTestId('card-type-selector');
+    expect(
+      within(selector).getByRole('button', { name: 'Club card' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByTestId('club-select')).toBeInTheDocument();
+    expect(screen.getByTestId('league-select')).toBeInTheDocument();
+
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  test('switching to National Team hides Club and League selects', async () => {
+    renderWithProvider();
+    await waitForFormReady();
+
+    const selector = screen.getByTestId('card-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('league-select')).not.toBeInTheDocument();
+  });
+
+  test('switching to National Team keeps Nationality and Position selects visible', async () => {
+    renderWithProvider();
+    await waitForFormReady();
+
+    const selector = screen.getByTestId('card-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+    });
+    expect(screen.getByTestId('nationality-select')).toBeInTheDocument();
+    expect(screen.getByTestId('position-select')).toBeInTheDocument();
+  });
+
+  test('switching back to Club restores Club and League selects', async () => {
+    renderWithProvider();
+    await waitForFormReady();
+
+    const selector = screen.getByTestId('card-type-selector');
+
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Club card' }),
+    );
+    expect(await screen.findByTestId('club-select')).toBeInTheDocument();
+    expect(screen.getByTestId('league-select')).toBeInTheDocument();
+  });
+
+  test('switching to National Team clears any previously selected club and league', async () => {
+    renderWithProvider();
+    await waitForFormReady();
+
+    // Select a real club (Arsenal FC → auto-populates Mock League)
+    const clubSelect = screen.getByTestId('club-select');
+    fireEvent.mouseDown(within(clubSelect).getByRole('combobox'));
+    fireEvent.click(await screen.findByRole('option', { name: 'Arsenal FC' }));
+
+    // Verify league was auto-populated
+    expect(
+      within(screen.getByTestId('league-select')).getByRole('combobox'),
+    ).toHaveTextContent('Mock League');
+
+    // Switch to National Team
+    const selector = screen.getByTestId('card-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    );
+
+    // Club and League sections should be gone
+    await waitFor(() => {
+      expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('league-select')).not.toBeInTheDocument();
+
+    // Switching back to Club should show empty selects (values were cleared)
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'Club card' }),
+    );
+    await screen.findByTestId('club-select');
+    expect(
+      within(screen.getByTestId('club-select')).getByRole('combobox'),
+    ).not.toHaveTextContent('Arsenal FC');
+    expect(
+      within(screen.getByTestId('league-select')).getByRole('combobox'),
+    ).not.toHaveTextContent('Mock League');
+  });
+
+  test('reset fields does not change card type when in National Team mode', async () => {
+    renderWithProvider();
+    await waitForFormReady();
+
+    const selector = screen.getByTestId('card-type-selector');
+    fireEvent.click(
+      within(selector).getByRole('button', { name: 'National team card' }),
+    );
+    await waitFor(() => {
+      expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+    });
+
+    // Reset fields — card type should remain National Team
+    fireEvent.click(screen.getByTestId('reset-fields'));
+
+    await waitFor(() => {
+      expect(
+        within(screen.getByTestId('card-type-selector')).getByRole('button', {
+          name: 'National team card',
+        }),
+      ).toHaveAttribute('aria-pressed', 'true');
+    });
+    expect(screen.queryByTestId('club-select')).not.toBeInTheDocument();
+  });
+});
+
 describe('reset fields button', () => {
   const renderWithProvider = () =>
     render(

@@ -25,6 +25,7 @@ export const DEFAULT_TEXT_FONTS: TextFonts = {
 export type ImageFrameType = 'face' | 'headAndShoulders' | 'fullBody';
 export type ImageCropFocus = 'top' | 'centre' | 'bottom';
 export type NationalityDisplay = 'text' | 'flag' | 'both';
+export type CardType = 'club' | 'national';
 export const DEFAULT_IMAGE_FRAME_TYPE: ImageFrameType = 'face';
 export const DEFAULT_IMAGE_CROP_FOCUS: ImageCropFocus = 'top';
 
@@ -49,6 +50,7 @@ export interface CardState {
   imageCropFocus: ImageCropFocus;
   cardBorderShape: CardBorderShape;
   cardBorderColor: string;
+  cardType: CardType;
 }
 
 const initialState: CardState = {
@@ -72,6 +74,7 @@ const initialState: CardState = {
   imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
   cardBorderShape: DEFAULT_CARD_BORDER_SHAPE,
   cardBorderColor: DEFAULT_CARD_BORDER_COLOR,
+  cardType: 'club',
 };
 
 interface CardContextType {
