@@ -20,6 +20,18 @@ const CROP_POSITION_MAP: Record<ImageCropFocus, string> = {
   bottom: 'bottom',
 };
 
+const FRAME_TYPE_LABEL: Record<ImageFrameType, string> = {
+  face: 'face',
+  headAndShoulders: 'head & shoulders',
+  fullBody: 'full body',
+};
+
+const CROP_FOCUS_LABEL: Record<ImageCropFocus, string> = {
+  top: 'top',
+  centre: 'centre',
+  bottom: 'bottom',
+};
+
 const CardPreview: React.FC = () => {
   const { card, updateCard } = useCard();
   const {
@@ -119,7 +131,7 @@ const CardPreview: React.FC = () => {
             <img
               data-testid="player-photo"
               src={playerPhoto}
-              alt={`Player ${imageFrameType} photo, cropped from ${imageCropFocus}`}
+              alt={`Player photo, ${FRAME_TYPE_LABEL[imageFrameType]}, positioned at ${CROP_FOCUS_LABEL[imageCropFocus]}`}
               style={{
                 aspectRatio: FRAME_STYLES[imageFrameType].aspectRatio,
                 borderRadius: FRAME_STYLES[imageFrameType].borderRadius,

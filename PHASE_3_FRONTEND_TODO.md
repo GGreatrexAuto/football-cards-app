@@ -249,8 +249,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - [x]  Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
-- [ ] Print formatter - UI functionality to add x saved cards to be printed on one page of A4 paper.
-- [ ] Alternate stats styles e.g toppz style (Speed, Tackle, Power, Shoot, Skill, Pass) and set existing stat style as Adrenaline
+- [ ] Print formatter - UI functionality to add upto x saved cards to be printed on one page of A4 paper.
+- [ ] Alternate stats styles e.g Match Atk style (Speed, Tackle, Power, Shoot, Skill, Pass) and set existing stat style as Adrenaline (Total will be common for both)
 - [ ] Card style 2.0
 ---
 
@@ -868,30 +868,30 @@ These are missing ARIA attributes on existing components; tests in 17.2 verify t
 
 ### Subtask 17.5: Tab Order & Keyboard Navigation Tests (`accessibility.test.tsx`)
 
-- [ ] Add explicit Tab-order test for CardForm: Tab through Player Name → Club → League → Nationality → Position → Preferred Foot → Defence → Control → Attack → Randomize → Save; assert each element receives focus in that sequence
-- [ ] Test that Escape key closes the delete confirmation dialog without deleting the card
-- [ ] Test that pressing Space or Enter on a stock photo button triggers selection (assert `aria-pressed` toggles)
-- [ ] Test that pressing Space or Enter on an image frame type / crop focus toggle activates it
-- [ ] Test that arrow keys cycle focus within the ToggleButtonGroup for frame type and crop focus (MUI behaviour — verify it works)
+- [x] Add explicit Tab-order test for CardForm: Tab through Player Name → Club → League → Nationality → Position → Preferred Foot → Defence → Control → Attack → Randomize → Save; assert each element receives focus in that sequence
+- [x] Test that Escape key closes the delete confirmation dialog without deleting the card
+- [x] Test that pressing Space or Enter on a stock photo button triggers selection (assert `aria-pressed` toggles)
+- [x] Test that pressing Space or Enter on an image frame type / crop focus toggle activates it
+- [x] Test that arrow keys cycle focus within the ToggleButtonGroup for frame type and crop focus (MUI behaviour — verify it works)
 
 ### Subtask 17.6: Image & Media Alt Text Improvements — Implementation
 
-- [ ] Improve stock photo `alt` text in `CardForm.tsx` from generic "Player Portrait 1" to descriptive strings (e.g. "Portrait of a male footballer, short dark hair, looking forward")
-- [ ] Improve background option `alt` text to include a brief description of what the image shows (e.g. "Classic Green: green grass football pitch", "Stadium Blue: blue sky over a stadium")
-- [ ] Update the player photo `alt` text format in `CardPreview.tsx` to use human-readable labels instead of internal field values (e.g. "Player photo, head & shoulders, positioned at bottom" not "Player headAndShoulders photo, cropped from bottom")
+- [x] Improve stock photo `alt` text in `CardForm.tsx` from generic "Player Portrait 1" to descriptive strings (e.g. "Portrait of a male footballer, short dark hair, looking forward")
+- [x] Improve background option `alt` text to include a brief description of what the image shows (e.g. "Classic Green: green grass football pitch", "Stadium Blue: blue sky over a stadium")
+- [x] Update the player photo `alt` text format in `CardPreview.tsx` to use human-readable labels instead of internal field values (e.g. "Player photo, head & shoulders, positioned at bottom" not "Player headAndShoulders photo, cropped from bottom")
 - [ ] Mark any purely decorative images (e.g. background textures not selected by the user) with `alt=""`
 
 ### Subtask 17.7: Image & Media Alt Text — Tests
 
-- [ ] In `CardForm.test.tsx`: test each stock photo button has a descriptive `aria-label` / `alt` that does not just say "Portrait 1"
-- [ ] In `CardForm.test.tsx`: test each background option has an `alt` containing a human-readable description
-- [ ] In `CardPreview.test.tsx`: test that player photo `alt` text uses human-readable labels ("head & shoulders") rather than raw field values ("headAndShoulders")
+- [x] In `CardForm.test.tsx`: test each stock photo button has a descriptive `aria-label` / `alt` that does not just say "Portrait 1"
+- [x] In `CardForm.test.tsx`: test each background option has an `alt` containing a human-readable description
+- [x] In `CardPreview.test.tsx`: test that player photo `alt` text uses human-readable labels ("head & shoulders") rather than raw field values ("headAndShoulders")
 
 ### Subtask 17.8: Loading State Accessibility — Tests
 
-- [ ] Test that a `role="status"` or `aria-live="polite"` region exists in CardForm and contains the text "Loading…" (or equivalent) while API calls are in flight
-- [ ] Test that the region is empty (or removed) once data has loaded
-- [ ] Test that when an API error occurs, a region with `role="alert"` announces the error text
+- [x] Test that a `role="status"` or `aria-live="polite"` region exists in CardForm and contains the text "Loading…" (or equivalent) while API calls are in flight
+- [x] Test that the region is empty (or removed) once data has loaded
+- [x] Test that when an API error occurs, a region with `role="alert"` announces the error text
 
 ### Subtask 17.9: Gallery List Semantics — Implementation & Tests
 

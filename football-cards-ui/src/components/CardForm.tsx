@@ -68,16 +68,19 @@ const CardForm: React.FC = () => {
       id: 'bg1',
       url: 'https://picsum.photos/300/200?random=1',
       name: 'Classic Green',
+      description: 'Classic Green: green grass football pitch',
     },
     {
       id: 'bg2',
       url: 'https://picsum.photos/300/200?random=2',
       name: 'Stadium Blue',
+      description: 'Stadium Blue: blue sky over a stadium',
     },
     {
       id: 'bg3',
       url: 'https://picsum.photos/300/200?random=3',
       name: 'Champions Gold',
+      description: 'Champions Gold: golden confetti celebration',
     },
   ];
 
@@ -86,32 +89,32 @@ const CardForm: React.FC = () => {
     {
       id: 'stock1',
       url: 'https://randomuser.me/api/portraits/men/32.jpg',
-      name: 'Player Portrait 1',
+      name: 'Portrait of a male footballer, dark hair, looking forward',
     },
     {
       id: 'stock2',
       url: 'https://randomuser.me/api/portraits/women/44.jpg',
-      name: 'Player Portrait 2',
+      name: 'Portrait of a female footballer, looking forward',
     },
     {
       id: 'stock3',
       url: 'https://randomuser.me/api/portraits/men/67.jpg',
-      name: 'Player Portrait 3',
+      name: 'Portrait of a male footballer, short hair, side profile',
     },
     {
       id: 'stock4',
       url: 'https://randomuser.me/api/portraits/women/19.jpg',
-      name: 'Player Portrait 4',
+      name: 'Portrait of a female footballer, short hair',
     },
     {
       id: 'stock5',
       url: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Player Portrait 5',
+      name: 'Portrait of a male footballer, beard, direct gaze',
     },
     {
       id: 'stock6',
       url: 'https://randomuser.me/api/portraits/women/58.jpg',
-      name: 'Player Portrait 6',
+      name: 'Portrait of a female footballer, ponytail',
     },
   ];
 
@@ -279,12 +282,29 @@ const CardForm: React.FC = () => {
           data-testid="form-loading"
           aria-label="Loading form options"
         />
+        <Box
+          component="span"
+          sx={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Loading form options…
+        </Box>
       </Box>
     );
   }
 
   if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return (
+      <Typography role="alert" color="error">
+        {error}
+      </Typography>
+    );
   }
 
   return (
@@ -897,7 +917,7 @@ const CardForm: React.FC = () => {
                   component="img"
                   height="60"
                   image={bg.url}
-                  alt={bg.name}
+                  alt={bg.description}
                 />
                 <Typography variant="caption" align="center" display="block">
                   {bg.name}

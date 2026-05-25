@@ -216,7 +216,9 @@ describe('CardForm Component', () => {
     // Wait for form to load
     await screen.findByLabelText('Player Name');
 
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
     expect(stadiumBlueImage).toBeInTheDocument();
     fireEvent.click(stadiumBlueImage);
 
@@ -233,8 +235,12 @@ describe('CardForm Component', () => {
 
     await screen.findByLabelText('Player Name');
 
-    const classicGreenImage = screen.getByAltText('Classic Green');
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const classicGreenImage = screen.getByAltText(
+      'Classic Green: green grass football pitch',
+    );
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
 
     fireEvent.click(classicGreenImage);
 
@@ -514,7 +520,9 @@ describe('CardForm Component', () => {
 
     await screen.findByLabelText('Player Name');
 
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
     fireEvent.click(stadiumBlueImage);
 
     const previewCard = await screen.findByTestId('card-preview');
@@ -540,7 +548,7 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const buttons = screen.getAllByRole('button', { name: /Player Portrait/i });
+    const buttons = screen.getAllByRole('button', { name: /Portrait of a/i });
     expect(buttons).toHaveLength(6);
   });
 
@@ -548,7 +556,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
+    const first = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
     expect(first).toHaveAttribute('aria-pressed', 'false');
 
     fireEvent.click(first);
@@ -559,7 +569,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+    const second = screen.getByRole('button', {
+      name: 'Portrait of a female footballer, looking forward',
+    });
     fireEvent.keyDown(second, { key: 'Enter', code: 'Enter' });
     expect(second).toHaveAttribute('aria-pressed', 'true');
   });
@@ -568,7 +580,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const third = screen.getByRole('button', { name: 'Player Portrait 3' });
+    const third = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, short hair, side profile',
+    });
     fireEvent.keyDown(third, { key: ' ', code: 'Space' });
     expect(third).toHaveAttribute('aria-pressed', 'true');
   });
@@ -577,8 +591,12 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
-    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+    const first = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
+    const second = screen.getByRole('button', {
+      name: 'Portrait of a female footballer, looking forward',
+    });
 
     fireEvent.click(first);
     expect(first).toHaveAttribute('aria-pressed', 'true');
@@ -592,7 +610,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const button = screen.getByRole('button', { name: 'Player Portrait 1' });
+    const button = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
     button.focus();
     expect(button).toHaveFocus();
   });
@@ -1211,7 +1231,9 @@ describe('reset card background button', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    fireEvent.click(
+      screen.getByAltText('Stadium Blue: blue sky over a stadium'),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
@@ -1437,7 +1459,9 @@ describe('reset fields button', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    fireEvent.click(
+      screen.getByAltText('Stadium Blue: blue sky over a stadium'),
+    );
     await waitFor(() => {
       expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
     });
@@ -1581,5 +1605,101 @@ describe('Form Semantics — Accessibility', () => {
 
     const customInput = await screen.findByTestId('custom-club-input');
     expect(customInput).toHaveAttribute('aria-label', 'Custom Club Name');
+  });
+});
+
+describe('Image & media alt text — 17.7', () => {
+  const renderForm = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('stock photo images have descriptive alt text (not generic "Player Portrait N")', async () => {
+    renderForm();
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const stockSection = screen.getByTestId('stock-photos');
+    const imgs = within(stockSection).getAllByRole('img');
+
+    imgs.forEach((img) => {
+      const alt = img.getAttribute('alt') ?? '';
+      expect(alt).not.toMatch(/^Player Portrait \d$/i);
+      expect(alt.length).toBeGreaterThan(20);
+    });
+  });
+
+  test('background option images have descriptive alt text', async () => {
+    renderForm();
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const classicGreenCard = screen.getByTestId('background-classic-green');
+    const stadiumBlueCard = screen.getByTestId('background-stadium-blue');
+    const championsGoldCard = screen.getByTestId('background-champions-gold');
+
+    expect(within(classicGreenCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Classic Green: green grass football pitch',
+    );
+    expect(within(stadiumBlueCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Stadium Blue: blue sky over a stadium',
+    );
+    expect(within(championsGoldCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Champions Gold: golden confetti celebration',
+    );
+  });
+});
+
+describe('Loading state accessibility — 17.8', () => {
+  test('role="status" region contains loading text while API calls are in flight', () => {
+    // Keep API calls pending indefinitely
+    (getClubs as jest.Mock).mockReturnValue(new Promise(() => {}));
+
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    const statusRegion = screen.getByRole('status');
+    expect(statusRegion).toBeInTheDocument();
+    expect(statusRegion).toHaveTextContent(/loading form options/i);
+  });
+
+  test('status region is removed once data has loaded', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  test('role="alert" region announces error when API call fails', async () => {
+    (getClubs as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    const alertRegion = await screen.findByRole('alert');
+    expect(alertRegion).toBeInTheDocument();
+    expect(alertRegion).toHaveTextContent(/failed|error/i);
   });
 });
