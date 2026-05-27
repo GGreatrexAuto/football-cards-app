@@ -284,7 +284,7 @@ describe('Font persistence', () => {
 
     render(<App />);
     const myCardsTab = screen.getByRole('tab', { name: /My Cards/i });
-    userEvent.click(myCardsTab);
+    await userEvent.click(myCardsTab);
 
     // Edit first card and verify its font
     const editButtons = await screen.findAllByRole('button', { name: /Edit/i });
@@ -299,7 +299,7 @@ describe('Font persistence', () => {
     });
 
     // Return to gallery and edit second card
-    userEvent.click(screen.getByRole('tab', { name: /My Cards/i }));
+    await userEvent.click(screen.getByRole('tab', { name: /My Cards/i }));
     const editButtons2 = await screen.findAllByRole('button', {
       name: /Edit/i,
     });

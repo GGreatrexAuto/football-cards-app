@@ -40,6 +40,24 @@ const TestPreviewSetup = () => {
   return <CardPreview />;
 };
 
+const TestPreviewWithBg2 = () => {
+  const { updateCard } = useCard();
+  useEffect(() => {
+    updateCard({ cardBackground: 'https://example.com/bg2.png' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <CardPreview />;
+};
+
+const TestPreviewWithBg3 = () => {
+  const { updateCard } = useCard();
+  useEffect(() => {
+    updateCard({ cardBackground: 'https://example.com/bg3.png' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <CardPreview />;
+};
+
 const TestPreviewWithUpdate = () => {
   const { updateCard } = useCard();
 
@@ -132,6 +150,30 @@ describe('CardPreview Component', () => {
     // Verify the background URL is present and the player photo is rendered
     expect(backgroundImage).toBe('https://example.com/background.png');
     expect(photo).toHaveAttribute('src', 'https://example.com/photo.jpg');
+  });
+
+  test('applies second distinct cardBackground URL in background style', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewWithBg2 />
+      </CardProvider>,
+    );
+    const previewCard = await screen.findByTestId('card-preview');
+    expect(previewCard.dataset.backgroundImage).toBe(
+      'https://example.com/bg2.png',
+    );
+  });
+
+  test('applies third distinct cardBackground URL in background style', async () => {
+    render(
+      <CardProvider>
+        <TestPreviewWithBg3 />
+      </CardProvider>,
+    );
+    const previewCard = await screen.findByTestId('card-preview');
+    expect(previewCard.dataset.backgroundImage).toBe(
+      'https://example.com/bg3.png',
+    );
   });
 
   test('renders player photo when provided', async () => {

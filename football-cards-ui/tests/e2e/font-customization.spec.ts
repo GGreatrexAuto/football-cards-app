@@ -63,5 +63,55 @@ test.describe('Font Customisation', () => {
       )
       .textContent();
     expect(fontText).toContain('Poppins');
+
+    // Verify the CardPreview element actually renders with the persisted font-family CSS
+    await expect(page.locator('[data-testid="player-name-text"]')).toHaveCSS(
+      'font-family',
+      /Poppins/,
+    );
+  });
+
+  test('print mode renders card with custom player-name font applied', async ({
+    page,
+  }) => {
+    // Wait for font selector and explicitly choose Playfair Display
+    await page.waitForSelector(
+      '[data-testid="font-selector-player-name-font"]',
+    );
+    await page.click(
+      '[data-testid="font-selector-player-name-font"] [role="combobox"]',
+    );
+    await page.click('[data-testid="font-option-playfair-display"]');
+
+    await cardCreator.fillCardForm({
+      name: 'Print Font Player',
+      club: 'Arsenal',
+      nationality: 'England',
+      league: 'Premier League',
+      position: 'Forward',
+    });
+    await cardCreator.saveCard();
+    expect(await cardCreator.isSuccessMessageVisible()).toBeTruthy();
+
+    // Navigate to Print Preview tab — PrintableCard only renders when this tab is active
+    await page.click('text=Print Preview');
+    await expect(page.locator('[data-testid="printable-card"]')).toBeVisible();
+
+    // Emulate print media
+    await page.emulateMedia({ media: 'print' });
+
+    // Assert the PrintableCard player name element has the correct font-family
+    await expect(
+      page
+        .locator('[data-testid="printable-card"]')
+        .locator('[data-testid="player-name-text"]'),
+    ).toHaveCSS('font-family', /Playfair Display/);
+
+    // Take screenshot of the print layout for visual record
+    await page.screenshot({ path: 'test-results/print-font-playfair.png' });
+
+    // Restore to screen media and verify the card is still visible normally
+    await page.emulateMedia({ media: 'screen' });
+    await expect(page.locator('[data-testid="printable-card"]')).toBeVisible();
   });
 });

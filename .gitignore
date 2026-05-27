@@ -193,8 +193,6 @@ web_modules/
 
 # Playwright output
 football-cards-ui/playwright-report/
-football-cards-ui/test-results.json
-football-cards-ui/test-results.xml
 football-cards-ui/test-results/
 
 # Microbundle cache

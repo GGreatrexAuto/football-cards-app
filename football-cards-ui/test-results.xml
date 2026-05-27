@@ -1,68 +1,62 @@
-<testsuites id="" name="" tests="15" failures="0" skipped="15" errors="0" time="0.2641370000000002">
-<testsuite name="card-creation.spec.ts" timestamp="2026-05-14T14:08:21.633Z" hostname="chromium" tests="5" failures="0" skipped="5" time="0" errors="0">
-<testcase name="Card Creation Journey › @smoke should create a card successfully" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuites id="" name="" tests="9" failures="1" skipped="0" errors="0" time="106.15773599999999">
+<testsuite name="critical-paths.spec.ts" timestamp="2026-05-27T16:34:22.861Z" hostname="chromium" tests="3" failures="0" skipped="0" time="60.404" errors="0">
+<testcase name="Critical Paths — Real Browser + Real Backend › real backend API data populates all dropdowns" classname="critical-paths.spec.ts" time="16.859">
 </testcase>
-<testcase name="Card Creation Journey › should handle form validation errors" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › saved card survives a full page reload" classname="critical-paths.spec.ts" time="27.881">
 </testcase>
-<testcase name="Card Creation Journey › should randomize stats correctly" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should create card with predefined player data" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should clear form on reset" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › no console errors during the full create-and-view journey" classname="critical-paths.spec.ts" time="15.664">
 </testcase>
 </testsuite>
-<testsuite name="card-creation.spec.ts" timestamp="2026-05-14T14:08:21.633Z" hostname="firefox" tests="5" failures="0" skipped="5" time="0" errors="0">
-<testcase name="Card Creation Journey › @smoke should create a card successfully" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="critical-paths.spec.ts" timestamp="2026-05-27T16:34:22.861Z" hostname="firefox" tests="3" failures="1" skipped="0" time="73.691" errors="0">
+<testcase name="Critical Paths — Real Browser + Real Backend › real backend API data populates all dropdowns" classname="critical-paths.spec.ts" time="22.535">
 </testcase>
-<testcase name="Card Creation Journey › should handle form validation errors" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › saved card survives a full page reload" classname="critical-paths.spec.ts" time="30.304">
+<failure message="critical-paths.spec.ts:48:7 saved card survives a full page reload" type="FAILURE">
+<![CDATA[  [firefox] › critical-paths.spec.ts:48:7 › Critical Paths — Real Browser + Real Backend › saved card survives a full page reload 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      60 |     // Fully reload the browser — this re-initialises JS, context, and re-reads localStorage
+      61 |     await page.reload();
+    > 62 |     await page.waitForLoadState('networkidle');
+         |                ^
+      63 |     await checkA11y(page);
+      64 |
+      65 |     // Navigate to My Cards and confirm the card is still there
+        at D:\Gareth's Docs\Gareths Code\Python\football-cards\football-cards-ui\tests\e2e\critical-paths.spec.ts:62:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\video.webm]]
+
+[[ATTACHMENT|test-results\critical-paths-Critical-Pa-0d04c-survives-a-full-page-reload-firefox\error-context.md]]
+]]>
+</system-out>
 </testcase>
-<testcase name="Card Creation Journey › should randomize stats correctly" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should create card with predefined player data" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should clear form on reset" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › no console errors during the full create-and-view journey" classname="critical-paths.spec.ts" time="20.852">
 </testcase>
 </testsuite>
-<testsuite name="card-creation.spec.ts" timestamp="2026-05-14T14:08:21.633Z" hostname="webkit" tests="5" failures="0" skipped="5" time="0" errors="0">
-<testcase name="Card Creation Journey › @smoke should create a card successfully" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testsuite name="critical-paths.spec.ts" timestamp="2026-05-27T16:34:22.861Z" hostname="webkit" tests="3" failures="0" skipped="0" time="51.952" errors="0">
+<testcase name="Critical Paths — Real Browser + Real Backend › real backend API data populates all dropdowns" classname="critical-paths.spec.ts" time="12.171">
 </testcase>
-<testcase name="Card Creation Journey › should handle form validation errors" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › saved card survives a full page reload" classname="critical-paths.spec.ts" time="22.25">
 </testcase>
-<testcase name="Card Creation Journey › should randomize stats correctly" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should create card with predefined player data" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
-</testcase>
-<testcase name="Card Creation Journey › should clear form on reset" classname="card-creation.spec.ts" time="0">
-<skipped>
-</skipped>
+<testcase name="Critical Paths — Real Browser + Real Backend › no console errors during the full create-and-view journey" classname="critical-paths.spec.ts" time="17.531">
 </testcase>
 </testsuite>
 </testsuites>

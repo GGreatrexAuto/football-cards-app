@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CardGallery from './CardGallery';
-import { CardProvider } from '../context/CardContext';
+import { CardProvider, CardState } from '../context/CardContext';
 import { getSavedCards, deleteCard } from '../services/storage';
 
 jest.mock('../services/storage');
@@ -54,10 +54,11 @@ describe('CardGallery Component', () => {
       </CardProvider>,
     );
 
-  test('loads and displays saved cards from storage', () => {
+  test('loads and displays saved cards from storage', async () => {
     renderGallery();
 
-    expect(screen.getByText(/Your Card Gallery/i)).toBeInTheDocument();
+    // findByText waits for the async loadCards to complete and the spinner to disappear
+    expect(await screen.findByText(/Your Card Gallery/i)).toBeInTheDocument();
     expect(screen.getByText('Alice')).toBeInTheDocument();
     expect(screen.getByText('Bob')).toBeInTheDocument();
   });
@@ -67,6 +68,8 @@ describe('CardGallery Component', () => {
     const onEditCard = jest.fn();
     renderGallery({ onEditCard });
 
+    // Wait for cards to load before interacting
+    await screen.findAllByRole('button', { name: /Edit/i });
     await user.click(screen.getAllByRole('button', { name: /Edit/i })[0]);
 
     expect(onEditCard).toHaveBeenCalled();
@@ -76,7 +79,10 @@ describe('CardGallery Component', () => {
     const user = userEvent.setup();
     renderGallery();
 
-    const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
+    // Wait for cards to load before interacting
+    const deleteButtons = await screen.findAllByRole('button', {
+      name: /Delete/i,
+    });
     await user.click(deleteButtons[0]);
 
     const dialog = screen.getByRole('dialog');
@@ -91,11 +97,12 @@ describe('CardGallery Component', () => {
     expect(deleteCard).toHaveBeenCalledWith('card1');
   });
 
-  test('shows empty state when no cards', () => {
+  test('shows empty state when no cards', async () => {
     (getSavedCards as jest.Mock).mockReturnValue([]);
     renderGallery();
 
-    expect(screen.getByText(/No saved cards yet/i)).toBeInTheDocument();
+    // findByText waits for the spinner to disappear and empty state to render
+    expect(await screen.findByText(/No saved cards yet/i)).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Create New Card/i }),
     ).toBeInTheDocument();
@@ -108,7 +115,10 @@ describe('CardGallery Component', () => {
 
     renderGallery({ onCreateNew });
 
-    await user.click(screen.getByRole('button', { name: /Create New Card/i }));
+    // Wait for the empty state (loading completes) before clicking
+    await user.click(
+      await screen.findByRole('button', { name: /Create New Card/i }),
+    );
     expect(onCreateNew).toHaveBeenCalled();
   });
 });
@@ -125,17 +135,17 @@ describe('CardGallery — List Semantics', () => {
       </CardProvider>,
     );
 
-  test('card grid has role="list" and each card has role="listitem"', () => {
+  test('card grid has role="list" and each card has role="listitem"', async () => {
     renderGallery();
-    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(await screen.findByRole('list')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(2);
   });
 
-  test('empty state renders as a heading', () => {
+  test('empty state renders as a heading', async () => {
     (getSavedCards as jest.Mock).mockReturnValue([]);
     renderGallery();
     expect(
-      screen.getByRole('heading', { name: /no saved cards/i }),
+      await screen.findByRole('heading', { name: /no saved cards/i }),
     ).toBeInTheDocument();
   });
 });
@@ -173,6 +183,8 @@ describe('CardGallery — Focus Management', () => {
     (getSavedCards as jest.Mock).mockReturnValue([mockCard]);
     renderGallery();
 
+    // Wait for card to load before interacting
+    await screen.findByTestId('delete-card');
     await user.click(screen.getByTestId('delete-card'));
 
     // MUI Dialog first moves focus to the dialog paper element (tabindex=-1)
@@ -189,6 +201,8 @@ describe('CardGallery — Focus Management', () => {
 
     renderGallery();
 
+    // Wait for card to load before interacting
+    await screen.findByTestId('delete-card');
     await user.click(screen.getByTestId('delete-card'));
 
     const dialog = screen.getByRole('dialog');
@@ -202,5 +216,40 @@ describe('CardGallery — Focus Management', () => {
         screen.getByRole('button', { name: /create new card/i }),
       ).toHaveFocus();
     });
+  });
+});
+
+describe('CardGallery — Loading State', () => {
+  const renderGallery = (
+    props: Partial<Parameters<typeof CardGallery>[0]> = {},
+  ) =>
+    render(
+      <CardProvider>
+        <CardGallery {...props} />
+      </CardProvider>,
+    );
+
+  test('shows loading spinner while cards are being fetched', async () => {
+    let resolveCards!: (cards: CardState[]) => void;
+    const pendingPromise = new Promise<CardState[]>((res) => {
+      resolveCards = res;
+    });
+    (getSavedCards as jest.Mock).mockReturnValue(pendingPromise);
+
+    renderGallery();
+
+    // Spinner should be visible while the promise is pending
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.queryByText(/Your Card Gallery/i)).not.toBeInTheDocument();
+
+    // Resolve the promise — spinner should disappear and cards should render
+    await act(async () => {
+      resolveCards(mockCards as CardState[]);
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();
+    });
+    expect(screen.getByText('Alice')).toBeInTheDocument();
   });
 });
