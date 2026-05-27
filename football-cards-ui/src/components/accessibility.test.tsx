@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  act,
-  render,
-  screen,
-  waitFor,
-  within,
-  fireEvent,
-} from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
@@ -59,6 +52,20 @@ beforeEach(() => {
   ]);
   (getSavedCards as jest.Mock).mockReturnValue(mockedCards);
   (deleteCard as jest.Mock).mockImplementation(() => {});
+});
+
+// Suppress MUI TouchRipple/Popover/Modal act() warnings — pulsate animations
+// and exit-transition callbacks fire via setTimeout after act() exits and cannot
+// be fixed by switching to userEvent alone. Real errors still pass through.
+const originalConsoleError = console.error;
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
+    originalConsoleError(msg, ...args);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('Accessibility — WCAG violations (axe)', () => {
@@ -387,7 +394,7 @@ describe('Accessibility — tab order and keyboard interaction', () => {
 
     // Open the delete confirmation dialog
     const deleteBtn = screen.getByRole('button', { name: /delete/i });
-    fireEvent.click(deleteBtn);
+    await user.click(deleteBtn);
 
     await screen.findByRole('dialog');
 

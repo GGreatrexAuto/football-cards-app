@@ -54,6 +54,20 @@ beforeEach(() => {
   (saveCard as jest.Mock).mockClear();
 });
 
+// Suppress MUI transition act() warnings — Modal/Popover exit animations fire
+// via setTimeout after act() exits; this cannot be fixed by userEvent alone.
+// Real errors (wrong props, missing elements, etc.) still pass through.
+const originalConsoleError = console.error;
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
+    originalConsoleError(msg, ...args);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('CardForm Component', () => {
   const renderWithProvider = () =>
     render(
@@ -1690,6 +1704,7 @@ describe('Loading state accessibility — 17.8', () => {
   });
 
   test('role="alert" region announces error when API call fails', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     (getClubs as jest.Mock).mockRejectedValue(new Error('Network error'));
 
     render(
