@@ -61,7 +61,10 @@ describe('CardCreator integration flow', () => {
 
     await screen.findByLabelText('Player Name');
 
-    userEvent.type(screen.getByLabelText('Player Name'), 'Champion Player');
+    await userEvent.type(
+      screen.getByLabelText('Player Name'),
+      'Champion Player',
+    );
 
     await openSelectAndChoose(0, 'FC Test');
     await openSelectAndChoose(1, 'Testland');
@@ -74,8 +77,14 @@ describe('CardCreator integration flow', () => {
     await openSelectAndChoose(3, 'Forward');
     await openSelectAndChoose(4, 'Left');
 
-    fireEvent.click(screen.getByAltText('Player Portrait 1'));
-    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    fireEvent.click(
+      screen.getByAltText(
+        'Portrait of a male footballer, dark hair, looking forward',
+      ),
+    );
+    fireEvent.click(
+      screen.getByAltText('Stadium Blue: blue sky over a stadium'),
+    );
 
     const previewCard = await screen.findByTestId('card-preview');
     expect(previewCard.dataset.backgroundImage).toContain(

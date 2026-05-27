@@ -54,6 +54,7 @@ const CardForm: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [playerNameError, setPlayerNameError] = useState(false);
   const [useCustomClub, setUseCustomClub] = useState(false);
   const [customClubName, setCustomClubName] = useState('');
   const [useCustomLeague, setUseCustomLeague] = useState(false);
@@ -67,16 +68,19 @@ const CardForm: React.FC = () => {
       id: 'bg1',
       url: 'https://picsum.photos/300/200?random=1',
       name: 'Classic Green',
+      description: 'Classic Green: green grass football pitch',
     },
     {
       id: 'bg2',
       url: 'https://picsum.photos/300/200?random=2',
       name: 'Stadium Blue',
+      description: 'Stadium Blue: blue sky over a stadium',
     },
     {
       id: 'bg3',
       url: 'https://picsum.photos/300/200?random=3',
       name: 'Champions Gold',
+      description: 'Champions Gold: golden confetti celebration',
     },
   ];
 
@@ -85,32 +89,32 @@ const CardForm: React.FC = () => {
     {
       id: 'stock1',
       url: 'https://randomuser.me/api/portraits/men/32.jpg',
-      name: 'Player Portrait 1',
+      name: 'Portrait of a male footballer, dark hair, looking forward',
     },
     {
       id: 'stock2',
       url: 'https://randomuser.me/api/portraits/women/44.jpg',
-      name: 'Player Portrait 2',
+      name: 'Portrait of a female footballer, looking forward',
     },
     {
       id: 'stock3',
       url: 'https://randomuser.me/api/portraits/men/67.jpg',
-      name: 'Player Portrait 3',
+      name: 'Portrait of a male footballer, short hair, side profile',
     },
     {
       id: 'stock4',
       url: 'https://randomuser.me/api/portraits/women/19.jpg',
-      name: 'Player Portrait 4',
+      name: 'Portrait of a female footballer, short hair',
     },
     {
       id: 'stock5',
       url: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Player Portrait 5',
+      name: 'Portrait of a male footballer, beard, direct gaze',
     },
     {
       id: 'stock6',
       url: 'https://randomuser.me/api/portraits/women/58.jpg',
-      name: 'Player Portrait 6',
+      name: 'Portrait of a female footballer, ponytail',
     },
   ];
 
@@ -232,7 +236,7 @@ const CardForm: React.FC = () => {
 
   const handleSaveCard = () => {
     if (!card.playerName.trim()) {
-      setValidationError('Player name is required.');
+      setPlayerNameError(true);
       return;
     }
 
@@ -248,6 +252,7 @@ const CardForm: React.FC = () => {
       return;
     }
 
+    setPlayerNameError(false);
     setValidationError('');
 
     if (card.cardId) {
@@ -266,17 +271,40 @@ const CardForm: React.FC = () => {
       ? clubs.filter((c) => c.league_name === card.league)
       : clubs;
 
+  const defenceInvalid = card.defence < 0 || card.defence > 100;
+  const controlInvalid = card.control < 0 || card.control > 100;
+  const attackInvalid = card.attack < 0 || card.attack > 100;
+
   if (loading) {
     return (
-      <CircularProgress
-        data-testid="form-loading"
-        aria-label="Loading form data"
-      />
+      <Box role="status" aria-live="polite">
+        <CircularProgress
+          data-testid="form-loading"
+          aria-label="Loading form options"
+        />
+        <Box
+          component="span"
+          sx={{
+            position: 'absolute',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Loading form options…
+        </Box>
+      </Box>
     );
   }
 
   if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return (
+      <Typography role="alert" color="error">
+        {error}
+      </Typography>
+    );
   }
 
   return (
@@ -320,10 +348,21 @@ const CardForm: React.FC = () => {
         label="Player Name"
         fullWidth
         value={card.playerName}
-        onChange={(e) => updateCard({ playerName: e.target.value })}
+        onChange={(e) => {
+          updateCard({ playerName: e.target.value });
+          if (playerNameError && e.target.value.trim()) {
+            setPlayerNameError(false);
+          }
+        }}
+        error={playerNameError}
+        helperText={playerNameError ? 'Player name is required.' : undefined}
+        FormHelperTextProps={{ id: 'player-name-error' }}
         inputProps={{
           'data-testid': 'player-name',
           'aria-label': 'Player Name',
+          'aria-required': 'true',
+          'aria-invalid': playerNameError ? 'true' : 'false',
+          'aria-describedby': playerNameError ? 'player-name-error' : undefined,
         }}
       />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
@@ -605,6 +644,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'defence-input',
                   'aria-label': 'Defence',
+                  'aria-invalid': defenceInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Defence">
@@ -634,6 +674,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'control-input',
                   'aria-label': 'Control',
+                  'aria-invalid': controlInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Control">
@@ -661,6 +702,7 @@ const CardForm: React.FC = () => {
                   max: 100,
                   'data-testid': 'attack-input',
                   'aria-label': 'Attack',
+                  'aria-invalid': attackInvalid ? 'true' : undefined,
                 }}
               />
               <Tooltip title="Randomise Attack">
@@ -875,7 +917,7 @@ const CardForm: React.FC = () => {
                   component="img"
                   height="60"
                   image={bg.url}
-                  alt={bg.name}
+                  alt={bg.description}
                 />
                 <Typography variant="caption" align="center" display="block">
                   {bg.name}
@@ -1083,6 +1125,8 @@ const CardForm: React.FC = () => {
         onClose={() => setSuccessMessage('')}
       >
         <Alert
+          role="alert"
+          aria-live="assertive"
           severity="success"
           onClose={() => setSuccessMessage('')}
           data-testid="success-message"
@@ -1097,6 +1141,8 @@ const CardForm: React.FC = () => {
         onClose={() => setValidationError('')}
       >
         <Alert
+          role="alert"
+          aria-live="assertive"
           severity="error"
           onClose={() => setValidationError('')}
           data-testid="error-message"

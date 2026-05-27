@@ -249,6 +249,8 @@ See [`docs/plans/TESTING_STRATEGY.md`](docs/plans/TESTING_STRATEGY.md) for compr
 - [x] Ability to choose either club or national team card
 - [x] Nationality should optionally provide flag image, instead of or in addition to text (see Task 18)
 - [x]  Floating card, e.g when scrolling down page so that you can see effects of options you choose rather than changin an attribute and then having to scroll back up
+- [ ] Print formatter - UI functionality to add upto x saved cards to be printed on one page of A4 paper.
+- [ ] Alternate stats styles e.g Match Atk style (Speed, Tackle, Power, Shoot, Skill, Pass) and set existing stat style as Adrenaline (Total will be common for both)
 - [ ] Card style 2.0
 ---
 
@@ -721,8 +723,8 @@ Use established framework:
   - [x] Test that error message is displayed correctly with diagnostic info
 
 - [x] **Step 6: Documentation & Prevention**
-  - [ ] Document the API versioning scheme in API_CONTRACT.md
-  - [ ] Add note about baseURL configuration in frontend README
+  - [x] Document the API versioning scheme in API_CONTRACT.md
+  - [x] Add note about baseURL configuration in frontend README
   - [ ] Document common "Failed to fetch" debugging steps
   - [ ] Add this endpoint mismatch to known issues/lessons learned
 
@@ -776,7 +778,7 @@ The gradient (first background) is on top and blocks the image (second backgroun
   - [ ] Load saved card and verify background appears in preview  
 
 #### Other Code Quality Items
-- [ ] Ensure all TypeScript strict mode enabled
+- [x] Ensure all TypeScript strict mode enabled (`"strict": true` confirmed in `tsconfig.json`)
 - [ ] Resolve all linting warnings
 - [ ] Achieve minimum 80% test coverage globally
 - [ ] Perform code review before merging to main branch
@@ -832,71 +834,71 @@ The gradient (first background) is on top and blocks the image (second backgroun
 
 These are missing ARIA attributes on existing components; tests in 17.2 verify them.
 
-- [ ] Add `aria-required="true"` to Player Name input in `CardForm.tsx` (it is required but this is not declared to assistive tech)
-- [ ] Add `aria-invalid="true"` to Player Name input when validation error is active
-- [ ] Add `aria-describedby` to Player Name input pointing to the error message element; give the error element a stable `id`
-- [ ] Add `aria-invalid` to stat inputs (Defence, Control, Attack) when value is out of range
-- [ ] Wrap the stats section (Defence, Control, Attack) in a `<fieldset>` with `<legend>Player Stats</legend>` for semantic grouping
-- [ ] Ensure the success/error Snackbar has `role="alert"` and `aria-live="assertive"` so screen readers announce it automatically
-- [ ] Add an `aria-live="polite"` status region that announces when form data is loading (e.g. "Loading form options…" while API calls are in progress)
-- [ ] Improve custom-club / custom-league inputs: when the "Other" text field appears, ensure it has an explicit `aria-label` (e.g. `aria-label="Custom club name"`)
+- [x] Add `aria-required="true"` to Player Name input in `CardForm.tsx` (it is required but this is not declared to assistive tech)
+- [x] Add `aria-invalid="true"` to Player Name input when validation error is active
+- [x] Add `aria-describedby` to Player Name input pointing to the error message element; give the error element a stable `id`
+- [x] Add `aria-invalid` to stat inputs (Defence, Control, Attack) when value is out of range
+- [x] Wrap the stats section (Defence, Control, Attack) in a `<fieldset>` with `<legend>Player Stats</legend>` for semantic grouping
+- [x] Ensure the success/error Snackbar has `role="alert"` and `aria-live="assertive"` so screen readers announce it automatically
+- [x] Add an `aria-live="polite"` status region that announces when form data is loading (e.g. "Loading form options…" while API calls are in progress)
+- [x] Improve custom-club / custom-league inputs: when the "Other" text field appears, ensure it has an explicit `aria-label` (e.g. `aria-label="Custom club name"`)
 
 ### Subtask 17.2: Form Semantics — Tests (`CardForm.test.tsx`)
 
-- [ ] Test that Player Name input has `aria-required="true"`
-- [ ] Test that Player Name input has `aria-invalid="true"` when save is attempted without a name
-- [ ] Test that Player Name input has `aria-invalid="false"` (or attribute removed) after the error is cleared
-- [ ] Test that Player Name has `aria-describedby` matching the `id` of the visible error message element
-- [ ] Test that stats inputs show `aria-invalid="true"` when value exceeds 0–100 range
-- [ ] Test that the stats section is wrapped in a `fieldset` with a `<legend>` containing "Player Stats"
-- [ ] Test that error Snackbar has `role="alert"` or `aria-live` attribute
-- [ ] Test that custom club/nationality input has an accessible label when it appears
+- [x] Test that Player Name input has `aria-required="true"`
+- [x] Test that Player Name input has `aria-invalid="true"` when save is attempted without a name
+- [x] Test that Player Name input has `aria-invalid="false"` (or attribute removed) after the error is cleared
+- [x] Test that Player Name has `aria-describedby` matching the `id` of the visible error message element
+- [x] Test that stats inputs show `aria-invalid="true"` when value exceeds 0–100 range
+- [x] Test that the stats section is wrapped in a `fieldset` with a `<legend>` containing "Player Stats"
+- [x] Test that error Snackbar has `role="alert"` or `aria-live` attribute
+- [x] Test that custom club/nationality input has an accessible label when it appears
 
 ### Subtask 17.3: Focus Management — Implementation
 
-- [ ] In the delete confirmation dialog (`CardGallery.tsx`), move focus into the dialog when it opens (MUI Dialog does this by default — verify it is not overridden)
-- [ ] Ensure focus returns to the **Delete button** for the deleted card's row (or to the "Create New" button if the gallery is now empty) after the dialog closes
-- [ ] In `App.tsx` tab navigation, ensure hidden tab panels are excluded from the tab order (`tabIndex={-1}` or `aria-hidden="true"` while not active)
+- [x] In the delete confirmation dialog (`CardGallery.tsx`), move focus into the dialog when it opens (MUI Dialog does this by default — verify it is not overridden)
+- [x] Ensure focus returns to the **Delete button** for the deleted card's row (or to the "Create New" button if the gallery is now empty) after the dialog closes
+- [x] In `App.tsx` tab navigation, ensure hidden tab panels are excluded from the tab order (`tabIndex={-1}` or `aria-hidden="true"` while not active)
 
 ### Subtask 17.4: Focus Management — Tests
 
-- [ ] In `CardGallery.test.tsx`: test that focus moves into the delete confirmation dialog when opened (check `document.activeElement` is inside the dialog)
-- [ ] In `CardGallery.test.tsx`: test that focus returns to a gallery element (or "Create New") after confirming deletion
-- [ ] In `App.test.tsx` or `accessibility.test.tsx`: test that inactive tab panels are not reachable by Tab when hidden
+- [x] In `CardGallery.test.tsx`: test that focus moves into the delete confirmation dialog when opened (check `document.activeElement` is inside the dialog)
+- [x] In `CardGallery.test.tsx`: test that focus returns to a gallery element (or "Create New") after confirming deletion
+- [x] In `App.test.tsx` or `accessibility.test.tsx`: test that inactive tab panels are not reachable by Tab when hidden
 
 ### Subtask 17.5: Tab Order & Keyboard Navigation Tests (`accessibility.test.tsx`)
 
-- [ ] Add explicit Tab-order test for CardForm: Tab through Player Name → Club → League → Nationality → Position → Preferred Foot → Defence → Control → Attack → Randomize → Save; assert each element receives focus in that sequence
-- [ ] Test that Escape key closes the delete confirmation dialog without deleting the card
-- [ ] Test that pressing Space or Enter on a stock photo button triggers selection (assert `aria-pressed` toggles)
-- [ ] Test that pressing Space or Enter on an image frame type / crop focus toggle activates it
-- [ ] Test that arrow keys cycle focus within the ToggleButtonGroup for frame type and crop focus (MUI behaviour — verify it works)
+- [x] Add explicit Tab-order test for CardForm: Tab through Player Name → Club → League → Nationality → Position → Preferred Foot → Defence → Control → Attack → Randomize → Save; assert each element receives focus in that sequence
+- [x] Test that Escape key closes the delete confirmation dialog without deleting the card
+- [x] Test that pressing Space or Enter on a stock photo button triggers selection (assert `aria-pressed` toggles)
+- [x] Test that pressing Space or Enter on an image frame type / crop focus toggle activates it
+- [x] Test that arrow keys cycle focus within the ToggleButtonGroup for frame type and crop focus (MUI behaviour — verify it works)
 
 ### Subtask 17.6: Image & Media Alt Text Improvements — Implementation
 
-- [ ] Improve stock photo `alt` text in `CardForm.tsx` from generic "Player Portrait 1" to descriptive strings (e.g. "Portrait of a male footballer, short dark hair, looking forward")
-- [ ] Improve background option `alt` text to include a brief description of what the image shows (e.g. "Classic Green: green grass football pitch", "Stadium Blue: blue sky over a stadium")
-- [ ] Update the player photo `alt` text format in `CardPreview.tsx` to use human-readable labels instead of internal field values (e.g. "Player photo, head & shoulders, positioned at bottom" not "Player headAndShoulders photo, cropped from bottom")
-- [ ] Mark any purely decorative images (e.g. background textures not selected by the user) with `alt=""`
+- [x] Improve stock photo `alt` text in `CardForm.tsx` from generic "Player Portrait 1" to descriptive strings (e.g. "Portrait of a male footballer, short dark hair, looking forward")
+- [x] Improve background option `alt` text to include a brief description of what the image shows (e.g. "Classic Green: green grass football pitch", "Stadium Blue: blue sky over a stadium")
+- [x] Update the player photo `alt` text format in `CardPreview.tsx` to use human-readable labels instead of internal field values (e.g. "Player photo, head & shoulders, positioned at bottom" not "Player headAndShoulders photo, cropped from bottom")
+- [x] Mark any purely decorative images (e.g. background textures not selected by the user) with `alt=""` (decorative SVG overlay uses `aria-hidden="true"`; all `<img>` elements have descriptive alt text)
 
 ### Subtask 17.7: Image & Media Alt Text — Tests
 
-- [ ] In `CardForm.test.tsx`: test each stock photo button has a descriptive `aria-label` / `alt` that does not just say "Portrait 1"
-- [ ] In `CardForm.test.tsx`: test each background option has an `alt` containing a human-readable description
-- [ ] In `CardPreview.test.tsx`: test that player photo `alt` text uses human-readable labels ("head & shoulders") rather than raw field values ("headAndShoulders")
+- [x] In `CardForm.test.tsx`: test each stock photo button has a descriptive `aria-label` / `alt` that does not just say "Portrait 1"
+- [x] In `CardForm.test.tsx`: test each background option has an `alt` containing a human-readable description
+- [x] In `CardPreview.test.tsx`: test that player photo `alt` text uses human-readable labels ("head & shoulders") rather than raw field values ("headAndShoulders")
 
 ### Subtask 17.8: Loading State Accessibility — Tests
 
-- [ ] Test that a `role="status"` or `aria-live="polite"` region exists in CardForm and contains the text "Loading…" (or equivalent) while API calls are in flight
-- [ ] Test that the region is empty (or removed) once data has loaded
-- [ ] Test that when an API error occurs, a region with `role="alert"` announces the error text
+- [x] Test that a `role="status"` or `aria-live="polite"` region exists in CardForm and contains the text "Loading…" (or equivalent) while API calls are in flight
+- [x] Test that the region is empty (or removed) once data has loaded
+- [x] Test that when an API error occurs, a region with `role="alert"` announces the error text
 
 ### Subtask 17.9: Gallery List Semantics — Implementation & Tests
 
-- [ ] Verify (or update) the card grid in `CardGallery.tsx` to use `role="list"` on the container and `role="listitem"` on each card; MUI Grid does not add these by default
-- [ ] Ensure the empty-state message uses a heading element (`<Typography variant="h6">`) so screen readers announce the absence of cards as a heading
-- [ ] In `CardGallery.test.tsx`: test `role="list"` on the grid container and `role="listitem"` on each card item
-- [ ] In `CardGallery.test.tsx`: test the empty-state element has a heading role (e.g. `getByRole('heading', { name: /no saved cards/i })`)
+- [x] Verify (or update) the card grid in `CardGallery.tsx` to use `role="list"` on the container and `role="listitem"` on each card; MUI Grid does not add these by default
+- [x] Ensure the empty-state message uses a heading element (`<Typography variant="h6">`) so screen readers announce the absence of cards as a heading
+- [x] In `CardGallery.test.tsx`: test `role="list"` on the grid container and `role="listitem"` on each card item
+- [x] In `CardGallery.test.tsx`: test the empty-state element has a heading role (e.g. `getByRole('heading', { name: /no saved cards/i })`)
 
 ### Subtask 17.10: Keyboard-Only E2E Test
 
@@ -904,25 +906,25 @@ These are missing ARIA attributes on existing components; tests in 17.2 verify t
 
 > This is the only gap that cannot be caught at component level — confirming that the entire create-and-save journey is completable without a mouse in a real browser.
 
-- [ ] Navigate to CREATE CARD using keyboard only (no mouse)
-- [ ] Tab to Player Name, type a name, Tab to each dropdown, open with Enter/Space, select an option with Arrow + Enter, Tab through remaining fields
-- [ ] Tab to "Randomize Stats" button and activate with Enter
-- [ ] Tab to the Save button and activate with Enter
-- [ ] Assert success message appears and has `role="alert"`
-- [ ] Tab to MY CARDS navigation and press Enter
-- [ ] Assert the saved card appears in the gallery — all without a single mouse interaction
+- [x] Navigate to CREATE CARD using keyboard only (no mouse)
+- [x] Tab to Player Name, type a name, Tab to each dropdown, open with Enter/Space, select an option with Arrow + Enter, Tab through remaining fields
+- [x] Tab to "Randomize Stats" button and activate with Enter
+- [x] Tab to the Save button and activate with Enter
+- [x] Assert success message appears and has `role="alert"`
+- [x] Tab to MY CARDS navigation and press Enter
+- [x] Assert the saved card appears in the gallery — all without a single mouse interaction
 
 ### Subtask 17.11: axe-playwright for E2E Accessibility Checks
 
-- [ ] Install `@axe-core/playwright` (`npm install --save-dev @axe-core/playwright`)
-- [ ] Add a reusable helper `checkA11y(page)` in `test-helpers.ts` that wraps `checkA11y` from axe-playwright
-- [ ] Call `checkA11y(page)` in `critical-paths.spec.ts` after the app loads and after each major navigation step
+- [x] Install `@axe-core/playwright` (`npm install --save-dev @axe-core/playwright`)
+- [x] Add a reusable helper `checkA11y(page)` in `test-helpers.ts` that wraps `checkA11y` from axe-playwright
+- [x] Call `checkA11y(page)` in `critical-paths.spec.ts` after the app loads and after each major navigation step
 - [ ] Confirm no new axe violations are introduced when running E2E against the real browser
 
 ### Subtask 17.12: Missing Component Tests
 
-- [ ] Create `CardCreator.test.tsx` — test that Save, Print, and "Load from Gallery" buttons all have accessible names (`getByRole('button', { name: /save/i })` etc.) and that emoji-only visual content is supplemented with text labels or `aria-label`
-- [ ] Create `PrintableCard.test.tsx` — test that the printable layout includes the player name, rating, and stats as text nodes (not just images), and that the component passes axe violation checks
+- [x] Create `CardCreator.test.tsx` — test that Save, Print, and "Load from Gallery" buttons all have accessible names (`getByRole('button', { name: /save/i })` etc.) and that emoji-only visual content is supplemented with text labels or `aria-label`
+- [x] Create `PrintableCard.test.tsx` — test that the printable layout includes the player name, rating, and stats as text nodes (not just images), and that the component passes axe violation checks
 
 ---
 

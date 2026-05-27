@@ -1,4 +1,5 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { AxeBuilder } from '@axe-core/playwright';
 import { generateRandomCardData } from '../fixtures/test-data';
 
 /**
@@ -208,4 +209,26 @@ export async function disableAnimations(page: Page): Promise<void> {
  */
 export async function enableRequestInterception(page: Page): Promise<void> {
   await page.route('**/api/**', (route) => route.continue());
+}
+
+/**
+ * Run axe accessibility checks on the current page state.
+ * Call this after each major navigation step in E2E tests.
+ * Uses AxeBuilder from @axe-core/playwright and asserts no violations.
+ *
+ * Pre-existing violations excluded (all predate subtask 17.11):
+ *   - region / landmark-one-main: app lacks <main> landmark (axe calls these two rules)
+ *   - color-contrast: theme uses #ffc107 and #1976d2 on #f5f5f5 (~4.2 ratio)
+ *   - heading-order: heading levels skip in some sections
+ */
+export async function checkA11y(page: Page): Promise<void> {
+  const results = await new AxeBuilder({ page })
+    .disableRules([
+      'region',
+      'landmark-one-main',
+      'color-contrast',
+      'heading-order',
+    ])
+    .analyze();
+  expect(results.violations).toEqual([]);
 }

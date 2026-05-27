@@ -54,6 +54,20 @@ beforeEach(() => {
   (saveCard as jest.Mock).mockClear();
 });
 
+// Suppress MUI transition act() warnings — Modal/Popover exit animations fire
+// via setTimeout after act() exits; this cannot be fixed by userEvent alone.
+// Real errors (wrong props, missing elements, etc.) still pass through.
+const originalConsoleError = console.error;
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
+    originalConsoleError(msg, ...args);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
 describe('CardForm Component', () => {
   const renderWithProvider = () =>
     render(
@@ -216,7 +230,9 @@ describe('CardForm Component', () => {
     // Wait for form to load
     await screen.findByLabelText('Player Name');
 
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
     expect(stadiumBlueImage).toBeInTheDocument();
     fireEvent.click(stadiumBlueImage);
 
@@ -233,8 +249,12 @@ describe('CardForm Component', () => {
 
     await screen.findByLabelText('Player Name');
 
-    const classicGreenImage = screen.getByAltText('Classic Green');
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const classicGreenImage = screen.getByAltText(
+      'Classic Green: green grass football pitch',
+    );
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
 
     fireEvent.click(classicGreenImage);
 
@@ -514,7 +534,9 @@ describe('CardForm Component', () => {
 
     await screen.findByLabelText('Player Name');
 
-    const stadiumBlueImage = screen.getByAltText('Stadium Blue');
+    const stadiumBlueImage = screen.getByAltText(
+      'Stadium Blue: blue sky over a stadium',
+    );
     fireEvent.click(stadiumBlueImage);
 
     const previewCard = await screen.findByTestId('card-preview');
@@ -540,7 +562,7 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const buttons = screen.getAllByRole('button', { name: /Player Portrait/i });
+    const buttons = screen.getAllByRole('button', { name: /Portrait of a/i });
     expect(buttons).toHaveLength(6);
   });
 
@@ -548,7 +570,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
+    const first = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
     expect(first).toHaveAttribute('aria-pressed', 'false');
 
     fireEvent.click(first);
@@ -559,7 +583,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+    const second = screen.getByRole('button', {
+      name: 'Portrait of a female footballer, looking forward',
+    });
     fireEvent.keyDown(second, { key: 'Enter', code: 'Enter' });
     expect(second).toHaveAttribute('aria-pressed', 'true');
   });
@@ -568,7 +594,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const third = screen.getByRole('button', { name: 'Player Portrait 3' });
+    const third = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, short hair, side profile',
+    });
     fireEvent.keyDown(third, { key: ' ', code: 'Space' });
     expect(third).toHaveAttribute('aria-pressed', 'true');
   });
@@ -577,8 +605,12 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const first = screen.getByRole('button', { name: 'Player Portrait 1' });
-    const second = screen.getByRole('button', { name: 'Player Portrait 2' });
+    const first = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
+    const second = screen.getByRole('button', {
+      name: 'Portrait of a female footballer, looking forward',
+    });
 
     fireEvent.click(first);
     expect(first).toHaveAttribute('aria-pressed', 'true');
@@ -592,7 +624,9 @@ describe('Stock photo selection', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    const button = screen.getByRole('button', { name: 'Player Portrait 1' });
+    const button = screen.getByRole('button', {
+      name: 'Portrait of a male footballer, dark hair, looking forward',
+    });
     button.focus();
     expect(button).toHaveFocus();
   });
@@ -1211,7 +1245,9 @@ describe('reset card background button', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    fireEvent.click(
+      screen.getByAltText('Stadium Blue: blue sky over a stadium'),
+    );
 
     await waitFor(() => {
       expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
@@ -1437,7 +1473,9 @@ describe('reset fields button', () => {
     renderWithProvider();
     await screen.findByLabelText('Player Name');
 
-    fireEvent.click(screen.getByAltText('Stadium Blue'));
+    fireEvent.click(
+      screen.getByAltText('Stadium Blue: blue sky over a stadium'),
+    );
     await waitFor(() => {
       expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
     });
@@ -1447,5 +1485,236 @@ describe('reset fields button', () => {
     await waitFor(() => {
       expect(screen.getByTestId('reset-card-background')).not.toBeDisabled();
     });
+  });
+});
+
+describe('Form Semantics — Accessibility', () => {
+  const renderComponent = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  const waitForForm = async () => {
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+  };
+
+  test('Player Name input has aria-required="true"', async () => {
+    renderComponent();
+    await waitForForm();
+    expect(screen.getByTestId('player-name')).toHaveAttribute(
+      'aria-required',
+      'true',
+    );
+  });
+
+  test('Player Name input has aria-invalid="true" when save attempted without a name', async () => {
+    renderComponent();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Save Card/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('player-name')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
+    });
+  });
+
+  test('Player Name aria-invalid is cleared after typing a name', async () => {
+    renderComponent();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Save Card/i }));
+    await waitFor(() => {
+      expect(screen.getByTestId('player-name')).toHaveAttribute(
+        'aria-invalid',
+        'true',
+      );
+    });
+
+    fireEvent.change(screen.getByTestId('player-name'), {
+      target: { value: 'Test Player' },
+    });
+
+    expect(screen.getByTestId('player-name')).toHaveAttribute(
+      'aria-invalid',
+      'false',
+    );
+  });
+
+  test('Player Name has aria-describedby linking to the visible error message', async () => {
+    renderComponent();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Save Card/i }));
+
+    const input = screen.getByTestId('player-name');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    const describedBy = input.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    const errorEl = screen.getByText(/player name is required/i);
+    expect(errorEl).toHaveAttribute('id', describedBy!);
+  });
+
+  test('defence input has aria-invalid="true" when value exceeds 100', async () => {
+    renderComponent();
+    await waitForForm();
+
+    fireEvent.change(screen.getByTestId('defence-input'), {
+      target: { value: '150' },
+    });
+
+    expect(screen.getByTestId('defence-input')).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    );
+  });
+
+  test('stats section is wrapped in a fieldset with accessible name "Player Stats"', async () => {
+    renderComponent();
+    await waitForForm();
+
+    expect(
+      screen.getByRole('group', { name: 'Player Stats' }),
+    ).toBeInTheDocument();
+  });
+
+  test('error Alert has role="alert" and aria-live="assertive"', async () => {
+    renderComponent();
+    await waitForForm();
+
+    fireEvent.change(screen.getByTestId('player-name'), {
+      target: { value: 'Test Player' },
+    });
+    fireEvent.change(screen.getByTestId('defence-input'), {
+      target: { value: '150' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Save Card/i }));
+
+    const errorAlert = await screen.findByTestId('error-message');
+    expect(errorAlert).toHaveAttribute('role', 'alert');
+    expect(errorAlert).toHaveAttribute('aria-live', 'assertive');
+  });
+
+  test('custom club input has an accessible label when it appears', async () => {
+    renderComponent();
+    await waitForForm();
+
+    const clubSelect = screen.getByTestId('club-select');
+    const combobox = within(clubSelect).getByRole('combobox');
+    fireEvent.mouseDown(combobox);
+
+    const otherOption = await screen.findByRole('option', {
+      name: /Other.*enter club name/i,
+    });
+    fireEvent.click(otherOption);
+
+    const customInput = await screen.findByTestId('custom-club-input');
+    expect(customInput).toHaveAttribute('aria-label', 'Custom Club Name');
+  });
+});
+
+describe('Image & media alt text — 17.7', () => {
+  const renderForm = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  test('stock photo images have descriptive alt text (not generic "Player Portrait N")', async () => {
+    renderForm();
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const stockSection = screen.getByTestId('stock-photos');
+    const imgs = within(stockSection).getAllByRole('img');
+
+    imgs.forEach((img) => {
+      const alt = img.getAttribute('alt') ?? '';
+      expect(alt).not.toMatch(/^Player Portrait \d$/i);
+      expect(alt.length).toBeGreaterThan(20);
+    });
+  });
+
+  test('background option images have descriptive alt text', async () => {
+    renderForm();
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const classicGreenCard = screen.getByTestId('background-classic-green');
+    const stadiumBlueCard = screen.getByTestId('background-stadium-blue');
+    const championsGoldCard = screen.getByTestId('background-champions-gold');
+
+    expect(within(classicGreenCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Classic Green: green grass football pitch',
+    );
+    expect(within(stadiumBlueCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Stadium Blue: blue sky over a stadium',
+    );
+    expect(within(championsGoldCard).getByRole('img')).toHaveAttribute(
+      'alt',
+      'Champions Gold: golden confetti celebration',
+    );
+  });
+});
+
+describe('Loading state accessibility — 17.8', () => {
+  test('role="status" region contains loading text while API calls are in flight', () => {
+    // Keep API calls pending indefinitely
+    (getClubs as jest.Mock).mockReturnValue(new Promise(() => {}));
+
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    const statusRegion = screen.getByRole('status');
+    expect(statusRegion).toBeInTheDocument();
+    expect(statusRegion).toHaveTextContent(/loading form options/i);
+  });
+
+  test('status region is removed once data has loaded', async () => {
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  test('role="alert" region announces error when API call fails', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    (getClubs as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    const alertRegion = await screen.findByRole('alert');
+    expect(alertRegion).toBeInTheDocument();
+    expect(alertRegion).toHaveTextContent(/failed|error/i);
   });
 });

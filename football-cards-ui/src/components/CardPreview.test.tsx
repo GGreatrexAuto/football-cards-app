@@ -455,7 +455,7 @@ describe('CardPreview Component', () => {
       const photo = await screen.findByTestId('player-photo');
       expect(photo).toHaveAttribute(
         'alt',
-        'Player headAndShoulders photo, cropped from bottom',
+        'Player photo, head & shoulders, positioned at bottom',
       );
     });
 

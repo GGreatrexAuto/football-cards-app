@@ -47,10 +47,18 @@ const CardCreator: React.FC<CardCreatorProps> = ({ onNavigateToGallery }) => {
         </Box>
       </Box>
       <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'center' }}>
-        <Button variant="outlined" onClick={handleLoadGallery}>
+        <Button
+          variant="outlined"
+          onClick={handleLoadGallery}
+          aria-label="Load from Gallery"
+        >
           📚 Load from Gallery
         </Button>
-        <Button variant="outlined" onClick={handlePrint}>
+        <Button
+          variant="outlined"
+          onClick={handlePrint}
+          aria-label="Print Card"
+        >
           🖨️ Print Card
         </Button>
       </Box>

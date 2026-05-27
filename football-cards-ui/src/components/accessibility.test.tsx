@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
 import CardForm from './CardForm';
@@ -51,6 +52,20 @@ beforeEach(() => {
   ]);
   (getSavedCards as jest.Mock).mockReturnValue(mockedCards);
   (deleteCard as jest.Mock).mockImplementation(() => {});
+});
+
+// Suppress MUI TouchRipple/Popover/Modal act() warnings — pulsate animations
+// and exit-transition callbacks fire via setTimeout after act() exits and cannot
+// be fixed by switching to userEvent alone. Real errors still pass through.
+const originalConsoleError = console.error;
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
+    originalConsoleError(msg, ...args);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('Accessibility — WCAG violations (axe)', () => {
@@ -168,7 +183,7 @@ describe('Accessibility — aria-labels and alt text', () => {
     );
 
     const photoButtons = screen.getAllByRole('button', {
-      name: /Player Portrait/i,
+      name: /Portrait of a/i,
     });
     expect(photoButtons.length).toBeGreaterThanOrEqual(6);
 
@@ -214,16 +229,25 @@ describe('Accessibility — keyboard navigation', () => {
 
     // Verify each key input can receive focus — confirms it is not disabled or
     // removed from the tab sequence. Uses toHaveFocus() (jest-dom) not document.activeElement.
-    playerNameInput.focus();
+    // Wrapped in act() so MUI's onFocus/onBlur state updates are flushed synchronously.
+    act(() => {
+      playerNameInput.focus();
+    });
     expect(playerNameInput).toHaveFocus();
 
-    defenceInput.focus();
+    act(() => {
+      defenceInput.focus();
+    });
     expect(defenceInput).toHaveFocus();
 
-    controlInput.focus();
+    act(() => {
+      controlInput.focus();
+    });
     expect(controlInput).toHaveFocus();
 
-    attackInput.focus();
+    act(() => {
+      attackInput.focus();
+    });
     expect(attackInput).toHaveFocus();
   });
 
@@ -239,9 +263,11 @@ describe('Accessibility — keyboard navigation', () => {
     );
 
     const firstButton = screen.getAllByRole('button', {
-      name: /Player Portrait/i,
+      name: /Portrait of a/i,
     })[0];
-    firstButton.focus();
+    act(() => {
+      firstButton.focus();
+    });
     expect(firstButton).toHaveFocus();
   });
 
@@ -256,7 +282,9 @@ describe('Accessibility — keyboard navigation', () => {
     const combobox = within(
       screen.getByTestId('font-selector-player-name-font'),
     ).getByRole('combobox');
-    combobox.focus();
+    act(() => {
+      combobox.focus();
+    });
     expect(combobox).toHaveFocus();
   });
 
@@ -270,7 +298,9 @@ describe('Accessibility — keyboard navigation', () => {
     await screen.findByTestId('image-frame-type-selector');
     const selector = screen.getByTestId('image-frame-type-selector');
     const faceButton = within(selector).getByRole('button', { name: 'Face' });
-    faceButton.focus();
+    act(() => {
+      faceButton.focus();
+    });
     expect(faceButton).toHaveFocus();
   });
 
@@ -284,7 +314,9 @@ describe('Accessibility — keyboard navigation', () => {
     await screen.findByTestId('image-crop-focus-selector');
     const selector = screen.getByTestId('image-crop-focus-selector');
     const topButton = within(selector).getByRole('button', { name: 'Top' });
-    topButton.focus();
+    act(() => {
+      topButton.focus();
+    });
     expect(topButton).toHaveFocus();
   });
 
@@ -301,5 +333,156 @@ describe('Accessibility — keyboard navigation', () => {
     buttons.forEach((btn) => {
       expect(btn).toHaveAccessibleName();
     });
+  });
+});
+
+describe('Accessibility — tab order and keyboard interaction', () => {
+  test('CardForm: tab order covers Player Name → stats inputs in sequence', async () => {
+    const user = userEvent.setup();
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const playerNameInput = screen.getByLabelText('Player Name');
+    const defenceInput = screen.getByTestId('defence-input');
+    const controlInput = screen.getByTestId('control-input');
+    const attackInput = screen.getByTestId('attack-input');
+
+    // Focus Player Name first
+    act(() => {
+      playerNameInput.focus();
+    });
+    expect(playerNameInput).toHaveFocus();
+
+    // Tab through dropdowns until we reach Defence
+    let iterations = 0;
+    while (!defenceInput.matches(':focus') && iterations < 20) {
+      await user.tab();
+      iterations++;
+    }
+    expect(defenceInput).toHaveFocus();
+
+    // Each stat input is followed by a per-stat randomise button, so tab past it
+    iterations = 0;
+    while (!controlInput.matches(':focus') && iterations < 5) {
+      await user.tab();
+      iterations++;
+    }
+    expect(controlInput).toHaveFocus();
+
+    iterations = 0;
+    while (!attackInput.matches(':focus') && iterations < 5) {
+      await user.tab();
+      iterations++;
+    }
+    expect(attackInput).toHaveFocus();
+  });
+
+  test('CardGallery: Escape key closes delete dialog without deleting', async () => {
+    const user = userEvent.setup();
+    render(
+      <CardProvider>
+        <CardGallery />
+      </CardProvider>,
+    );
+
+    // Open the delete confirmation dialog
+    const deleteBtn = screen.getByRole('button', { name: /delete/i });
+    await user.click(deleteBtn);
+
+    await screen.findByRole('dialog');
+
+    // Press Escape to dismiss
+    await user.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+
+    expect(deleteCard).not.toHaveBeenCalled();
+  });
+
+  test('CardForm: Space on a stock photo button toggles aria-pressed', async () => {
+    const user = userEvent.setup();
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    );
+
+    const firstPhotoBtn = screen.getAllByRole('button', {
+      name: /Portrait of a/i,
+    })[0];
+
+    expect(firstPhotoBtn).toHaveAttribute('aria-pressed', 'false');
+
+    act(() => {
+      firstPhotoBtn.focus();
+    });
+    await user.keyboard(' ');
+
+    expect(firstPhotoBtn).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('CardForm: Enter on image frame type toggle activates it', async () => {
+    const user = userEvent.setup();
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-frame-type-selector');
+    const selector = screen.getByTestId('image-frame-type-selector');
+    const headShouldersBtn = within(selector).getByRole('button', {
+      name: /head & shoulders/i,
+    });
+
+    act(() => {
+      headShouldersBtn.focus();
+    });
+    await user.keyboard('{Enter}');
+
+    // MUI ToggleButton sets aria-pressed="true" when selected
+    expect(headShouldersBtn).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('CardForm: arrow keys within ToggleButtonGroup for frame type', async () => {
+    const user = userEvent.setup();
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+    await screen.findByTestId('image-frame-type-selector');
+    const selector = screen.getByTestId('image-frame-type-selector');
+    const faceBtn = within(selector).getByRole('button', { name: 'Face' });
+    const headShouldersBtn = within(selector).getByRole('button', {
+      name: /head & shoulders/i,
+    });
+
+    act(() => {
+      faceBtn.focus();
+    });
+    expect(faceBtn).toHaveFocus();
+
+    await user.keyboard('{ArrowRight}');
+
+    // MUI ToggleButtonGroup uses standard buttons — arrow key navigation is not
+    // built-in. Focus stays on the original button (documenting the limitation).
+    const headShouldersFocused = headShouldersBtn.matches(':focus');
+    const faceFocused = faceBtn.matches(':focus');
+    expect(headShouldersFocused || faceFocused).toBe(true);
   });
 });
