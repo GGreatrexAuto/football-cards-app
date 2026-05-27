@@ -37,8 +37,12 @@ test('renders main title and navigation tabs', async () => {
   });
 });
 
-test('inactive tab panels have aria-hidden="true"', () => {
+test('inactive tab panels have aria-hidden="true"', async () => {
   render(<App />);
+
+  // Wait for CardForm's useEffect/fetchData chain to settle so that
+  // setState calls (setClubs, setNationalities, etc.) happen inside act().
+  await screen.findByText(/save card/i);
 
   const panels = screen.getAllByRole('tabpanel', { hidden: true });
   const inactivePanels = panels.filter(

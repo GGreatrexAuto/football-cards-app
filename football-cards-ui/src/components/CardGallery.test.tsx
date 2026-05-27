@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  within,
-  waitFor,
-} from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import CardGallery from './CardGallery';
 import { CardProvider } from '../context/CardContext';
@@ -67,20 +62,22 @@ describe('CardGallery Component', () => {
     expect(screen.getByText('Bob')).toBeInTheDocument();
   });
 
-  test('calls onEditCard callback when edit button clicked', () => {
+  test('calls onEditCard callback when edit button clicked', async () => {
+    const user = userEvent.setup();
     const onEditCard = jest.fn();
     renderGallery({ onEditCard });
 
-    fireEvent.click(screen.getAllByRole('button', { name: /Edit/i })[0]);
+    await user.click(screen.getAllByRole('button', { name: /Edit/i })[0]);
 
     expect(onEditCard).toHaveBeenCalled();
   });
 
-  test('shows delete confirmation and deletes card', () => {
+  test('shows delete confirmation and deletes card', async () => {
+    const user = userEvent.setup();
     renderGallery();
 
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
-    fireEvent.click(deleteButtons[0]);
+    await user.click(deleteButtons[0]);
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
@@ -89,7 +86,7 @@ describe('CardGallery Component', () => {
     const confirmDeleteButton = within(dialog).getByRole('button', {
       name: /Delete/i,
     });
-    fireEvent.click(confirmDeleteButton);
+    await user.click(confirmDeleteButton);
 
     expect(deleteCard).toHaveBeenCalledWith('card1');
   });
@@ -104,13 +101,14 @@ describe('CardGallery Component', () => {
     ).toBeInTheDocument();
   });
 
-  test('invokes onCreateNew when create new is clicked', () => {
+  test('invokes onCreateNew when create new is clicked', async () => {
+    const user = userEvent.setup();
     (getSavedCards as jest.Mock).mockReturnValue([]);
     const onCreateNew = jest.fn();
 
     renderGallery({ onCreateNew });
 
-    fireEvent.click(screen.getByRole('button', { name: /Create New Card/i }));
+    await user.click(screen.getByRole('button', { name: /Create New Card/i }));
     expect(onCreateNew).toHaveBeenCalled();
   });
 });
@@ -171,10 +169,11 @@ describe('CardGallery — Focus Management', () => {
     );
 
   test('moves focus into the delete dialog when opened', async () => {
+    const user = userEvent.setup();
     (getSavedCards as jest.Mock).mockReturnValue([mockCard]);
     renderGallery();
 
-    fireEvent.click(screen.getByTestId('delete-card'));
+    await user.click(screen.getByTestId('delete-card'));
 
     // MUI Dialog first moves focus to the dialog paper element (tabindex=-1)
     await waitFor(() => {
@@ -183,19 +182,20 @@ describe('CardGallery — Focus Management', () => {
   });
 
   test('returns focus to Create New button after confirming deletion', async () => {
+    const user = userEvent.setup();
     (getSavedCards as jest.Mock)
       .mockReturnValueOnce([mockCard])
       .mockReturnValue([]);
 
     renderGallery();
 
-    fireEvent.click(screen.getByTestId('delete-card'));
+    await user.click(screen.getByTestId('delete-card'));
 
     const dialog = screen.getByRole('dialog');
     const confirmButton = within(dialog).getByRole('button', {
       name: /delete/i,
     });
-    fireEvent.click(confirmButton);
+    await user.click(confirmButton);
 
     await waitFor(() => {
       expect(
