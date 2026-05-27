@@ -26,8 +26,10 @@ export type ImageFrameType = 'face' | 'headAndShoulders' | 'fullBody';
 export type ImageCropFocus = 'top' | 'centre' | 'bottom';
 export type NationalityDisplay = 'text' | 'flag' | 'both';
 export type CardType = 'club' | 'national';
+export type StatsStyle = 'adrenaline' | 'matchAtk';
 export const DEFAULT_IMAGE_FRAME_TYPE: ImageFrameType = 'face';
 export const DEFAULT_IMAGE_CROP_FOCUS: ImageCropFocus = 'top';
+export const DEFAULT_STATS_STYLE: StatsStyle = 'adrenaline';
 
 export interface CardState {
   playerName: string;
@@ -42,6 +44,13 @@ export interface CardState {
   control: number;
   attack: number;
   rating: number;
+  statsStyle: StatsStyle;
+  speed: number;
+  tackle: number;
+  power: number;
+  shoot: number;
+  skill: number;
+  pass: number;
   playerPhoto: string | null;
   cardBackground: string | null;
   cardId: string | null;
@@ -66,6 +75,13 @@ const initialState: CardState = {
   control: 50,
   attack: 50,
   rating: 50,
+  statsStyle: 'adrenaline',
+  speed: 50,
+  tackle: 50,
+  power: 50,
+  shoot: 50,
+  skill: 50,
+  pass: 50,
   playerPhoto: null,
   cardBackground: null,
   cardId: null,

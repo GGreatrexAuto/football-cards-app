@@ -560,6 +560,109 @@ describe('CardPreview Component', () => {
     });
   });
 
+  describe('stats style', () => {
+    const renderWithMatchAtk = (stats: {
+      speed: number;
+      tackle: number;
+      power: number;
+      shoot: number;
+      skill: number;
+      pass: number;
+    }) => {
+      const Setup = () => {
+        const { updateCard } = useCard();
+        useEffect(() => {
+          updateCard({ statsStyle: 'matchAtk', ...stats });
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, []);
+        return <CardPreview />;
+      };
+      return render(
+        <CardProvider>
+          <Setup />
+        </CardProvider>,
+      );
+    };
+
+    test('renders DEF/CTRL/ATT stat labels when statsStyle is adrenaline (default)', async () => {
+      render(
+        <CardProvider>
+          <TestPreviewSetup />
+        </CardProvider>,
+      );
+      expect(await screen.findByTestId('stat-label-def')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-ctrl')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-att')).toBeInTheDocument();
+      expect(screen.queryByTestId('stat-label-spd')).not.toBeInTheDocument();
+    });
+
+    test('renders SPD/TAC/PWR/SHT/SKL/PAS stat labels when statsStyle is matchAtk', async () => {
+      renderWithMatchAtk({
+        speed: 80,
+        tackle: 60,
+        power: 70,
+        shoot: 90,
+        skill: 65,
+        pass: 75,
+      });
+      expect(await screen.findByTestId('stat-label-spd')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-tac')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-pwr')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-sht')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-skl')).toBeInTheDocument();
+      expect(screen.getByTestId('stat-label-pas')).toBeInTheDocument();
+      expect(screen.queryByTestId('stat-label-def')).not.toBeInTheDocument();
+    });
+
+    test('renders Match Atk stat values in the preview', async () => {
+      renderWithMatchAtk({
+        speed: 80,
+        tackle: 60,
+        power: 70,
+        shoot: 90,
+        skill: 65,
+        pass: 75,
+      });
+      expect(await screen.findByTestId('stat-value-speed')).toHaveTextContent(
+        '80',
+      );
+      expect(screen.getByTestId('stat-value-tackle')).toHaveTextContent('60');
+      expect(screen.getByTestId('stat-value-power')).toHaveTextContent('70');
+      expect(screen.getByTestId('stat-value-shoot')).toHaveTextContent('90');
+      expect(screen.getByTestId('stat-value-skill')).toHaveTextContent('65');
+      expect(screen.getByTestId('stat-value-pass')).toHaveTextContent('75');
+    });
+
+    test('computes weighted rating for matchAtk style', async () => {
+      // SPD=80, TAC=60, PWR=70(×2), SHT=90(×2), SKL=65, PAS=75
+      // = (80+60+140+180+65+75)/8 = 600/8 = 75
+      renderWithMatchAtk({
+        speed: 80,
+        tackle: 60,
+        power: 70,
+        shoot: 90,
+        skill: 65,
+        pass: 75,
+      });
+      await waitFor(() => {
+        expect(screen.getByTestId('stat-value-rating')).toHaveTextContent('75');
+      });
+    });
+
+    test('has no accessibility violations when statsStyle is matchAtk', async () => {
+      const { container } = renderWithMatchAtk({
+        speed: 80,
+        tackle: 60,
+        power: 70,
+        shoot: 90,
+        skill: 65,
+        pass: 75,
+      });
+      await screen.findByTestId('stat-label-spd');
+      expect(await axe(container)).toHaveNoViolations();
+    });
+  });
+
   describe('nationality flag display', () => {
     const renderWithNationality = (opts: {
       nationality: string;

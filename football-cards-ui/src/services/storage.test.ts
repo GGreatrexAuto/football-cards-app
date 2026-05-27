@@ -12,6 +12,7 @@ import {
   DEFAULT_IMAGE_CROP_FOCUS,
   DEFAULT_CARD_BORDER_SHAPE,
   DEFAULT_CARD_BORDER_COLOR,
+  DEFAULT_STATS_STYLE,
 } from '../context/CardContext';
 
 const card: CardState = {
@@ -27,6 +28,13 @@ const card: CardState = {
   control: 40,
   attack: 40,
   rating: 40,
+  statsStyle: 'adrenaline',
+  speed: 60,
+  tackle: 65,
+  power: 70,
+  shoot: 75,
+  skill: 55,
+  pass: 50,
   playerPhoto: null,
   cardBackground: null,
   cardId: null,
@@ -201,5 +209,91 @@ describe('Storage service', () => {
 
     expect(stored[0].imageFrameType).toBe(DEFAULT_IMAGE_FRAME_TYPE);
     expect(stored[0].imageCropFocus).toBe(DEFAULT_IMAGE_CROP_FOCUS);
+  });
+
+  test('saveCard and getSavedCards preserve statsStyle and Match Atk stats', () => {
+    const matchAtkCard: CardState = {
+      ...card,
+      statsStyle: 'matchAtk',
+      speed: 80,
+      tackle: 75,
+      power: 85,
+      shoot: 90,
+      skill: 70,
+      pass: 65,
+    };
+    saveCard(matchAtkCard);
+    const stored = getSavedCards();
+
+    expect(stored[0].statsStyle).toBe('matchAtk');
+    expect(stored[0].speed).toBe(80);
+    expect(stored[0].tackle).toBe(75);
+    expect(stored[0].power).toBe(85);
+    expect(stored[0].shoot).toBe(90);
+    expect(stored[0].skill).toBe(70);
+    expect(stored[0].pass).toBe(65);
+  });
+
+  test('getSavedCards fills in default statsStyle for legacy cards missing the field', () => {
+    const legacyCard = {
+      playerName: 'Legacy Player',
+      club: 'Old Club',
+      nationality: 'Oldland',
+      league: 'Old League',
+      position: 'GK',
+      preferredFoot: 'Left',
+      defence: 70,
+      control: 60,
+      attack: 50,
+      rating: 60,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'card_legacy_stats_1',
+      textFonts: { ...DEFAULT_TEXT_FONTS },
+      imageFrameType: DEFAULT_IMAGE_FRAME_TYPE,
+      imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
+      cardBorderShape: DEFAULT_CARD_BORDER_SHAPE,
+      cardBorderColor: DEFAULT_CARD_BORDER_COLOR,
+      // no statsStyle — simulates a card saved before this field existed
+    };
+    localStorage.setItem('football-cards', JSON.stringify([legacyCard]));
+
+    const stored = getSavedCards();
+
+    expect(stored[0].statsStyle).toBe(DEFAULT_STATS_STYLE);
+  });
+
+  test('getSavedCards fills in default Match Atk stats for legacy cards missing those fields', () => {
+    const legacyCard = {
+      playerName: 'Legacy Player',
+      club: 'Old Club',
+      nationality: 'Oldland',
+      league: 'Old League',
+      position: 'GK',
+      preferredFoot: 'Left',
+      defence: 70,
+      control: 60,
+      attack: 50,
+      rating: 60,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'card_legacy_stats_2',
+      textFonts: { ...DEFAULT_TEXT_FONTS },
+      imageFrameType: DEFAULT_IMAGE_FRAME_TYPE,
+      imageCropFocus: DEFAULT_IMAGE_CROP_FOCUS,
+      cardBorderShape: DEFAULT_CARD_BORDER_SHAPE,
+      cardBorderColor: DEFAULT_CARD_BORDER_COLOR,
+      // no speed, tackle, power, shoot, skill, pass
+    };
+    localStorage.setItem('football-cards', JSON.stringify([legacyCard]));
+
+    const stored = getSavedCards();
+
+    expect(stored[0].speed).toBe(50);
+    expect(stored[0].tackle).toBe(50);
+    expect(stored[0].power).toBe(50);
+    expect(stored[0].shoot).toBe(50);
+    expect(stored[0].skill).toBe(50);
+    expect(stored[0].pass).toBe(50);
   });
 });

@@ -26,6 +26,7 @@ import type {
   NationalityDisplay,
   CardBorderShape,
   CardType,
+  StatsStyle,
 } from '../context/CardContext';
 import { BORDER_SHAPE_LABELS } from './CardBorderShapes';
 import CardBorderShapeIcon from './CardBorderShapeIcon';
@@ -180,6 +181,13 @@ const CardForm: React.FC = () => {
       control: 50,
       attack: 50,
       rating: 50,
+      statsStyle: 'adrenaline',
+      speed: 50,
+      tackle: 50,
+      power: 50,
+      shoot: 50,
+      skill: 50,
+      pass: 50,
     });
     setUseCustomClub(false);
     setCustomClubName('');
@@ -189,11 +197,47 @@ const CardForm: React.FC = () => {
   };
 
   const handleRandomizeStats = () => {
-    updateCard({
-      defence: randomStat(),
-      control: randomStat(),
-      attack: randomStat(),
-    });
+    if (card.statsStyle === 'matchAtk') {
+      updateCard({
+        speed: randomStat(),
+        tackle: randomStat(),
+        power: randomStat(),
+        shoot: randomStat(),
+        skill: randomStat(),
+        pass: randomStat(),
+      });
+    } else {
+      updateCard({
+        defence: randomStat(),
+        control: randomStat(),
+        attack: randomStat(),
+      });
+    }
+  };
+
+  const handleStatsStyleChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newStyle: StatsStyle | null,
+  ): void => {
+    if (!newStyle || newStyle === card.statsStyle) return;
+    if (newStyle === 'adrenaline') {
+      updateCard({
+        statsStyle: 'adrenaline',
+        defence: 50,
+        control: 50,
+        attack: 50,
+      });
+    } else {
+      updateCard({
+        statsStyle: 'matchAtk',
+        speed: 50,
+        tackle: 50,
+        power: 50,
+        shoot: 50,
+        skill: 50,
+        pass: 50,
+      });
+    }
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,14 +284,20 @@ const CardForm: React.FC = () => {
       return;
     }
 
-    if (
-      card.defence < 0 ||
-      card.defence > 100 ||
-      card.control < 0 ||
-      card.control > 100 ||
-      card.attack < 0 ||
-      card.attack > 100
-    ) {
+    const activeStatsInvalid =
+      card.statsStyle === 'matchAtk'
+        ? [
+            card.speed,
+            card.tackle,
+            card.power,
+            card.shoot,
+            card.skill,
+            card.pass,
+          ].some((v) => v < 0 || v > 100)
+        : [card.defence, card.control, card.attack].some(
+            (v) => v < 0 || v > 100,
+          );
+    if (activeStatsInvalid) {
       setValidationError('Stats must be between 0 and 100.');
       return;
     }
@@ -274,6 +324,12 @@ const CardForm: React.FC = () => {
   const defenceInvalid = card.defence < 0 || card.defence > 100;
   const controlInvalid = card.control < 0 || card.control > 100;
   const attackInvalid = card.attack < 0 || card.attack > 100;
+  const speedInvalid = card.speed < 0 || card.speed > 100;
+  const tackleInvalid = card.tackle < 0 || card.tackle > 100;
+  const powerInvalid = card.power < 0 || card.power > 100;
+  const shootInvalid = card.shoot < 0 || card.shoot > 100;
+  const skillInvalid = card.skill < 0 || card.skill > 100;
+  const passInvalid = card.pass < 0 || card.pass > 100;
 
   if (loading) {
     return (
@@ -628,96 +684,212 @@ const CardForm: React.FC = () => {
         >
           Player Stats
         </Box>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <TextField
-                label="Defence"
-                type="number"
-                fullWidth
-                value={card.defence}
-                onChange={(e) =>
-                  updateCard({ defence: Number(e.target.value) })
-                }
-                inputProps={{
-                  min: 0,
-                  max: 100,
-                  'data-testid': 'defence-input',
-                  'aria-label': 'Defence',
-                  'aria-invalid': defenceInvalid ? 'true' : undefined,
-                }}
-              />
-              <Tooltip title="Randomise Defence">
-                <IconButton
-                  size="small"
-                  onClick={() => updateCard({ defence: randomStat() })}
-                  data-testid="randomize-defence"
-                  aria-label="Randomise Defence"
-                >
-                  <Casino fontSize="small" aria-hidden="true" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
-          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <TextField
-                label="Control"
-                type="number"
-                fullWidth
-                value={card.control}
-                onChange={(e) =>
-                  updateCard({ control: Number(e.target.value) })
-                }
-                inputProps={{
-                  min: 0,
-                  max: 100,
-                  'data-testid': 'control-input',
-                  'aria-label': 'Control',
-                  'aria-invalid': controlInvalid ? 'true' : undefined,
-                }}
-              />
-              <Tooltip title="Randomise Control">
-                <IconButton
-                  size="small"
-                  onClick={() => updateCard({ control: randomStat() })}
-                  data-testid="randomize-control"
-                  aria-label="Randomise Control"
-                >
-                  <Casino fontSize="small" aria-hidden="true" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
-          <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <TextField
-                label="Attack"
-                type="number"
-                fullWidth
-                value={card.attack}
-                onChange={(e) => updateCard({ attack: Number(e.target.value) })}
-                inputProps={{
-                  min: 0,
-                  max: 100,
-                  'data-testid': 'attack-input',
-                  'aria-label': 'Attack',
-                  'aria-invalid': attackInvalid ? 'true' : undefined,
-                }}
-              />
-              <Tooltip title="Randomise Attack">
-                <IconButton
-                  size="small"
-                  onClick={() => updateCard({ attack: randomStat() })}
-                  data-testid="randomize-attack"
-                  aria-label="Randomise Attack"
-                >
-                  <Casino fontSize="small" aria-hidden="true" />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
+
+        {/* Stats Style Selector */}
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Stats Style
+          </Typography>
+          <ToggleButtonGroup
+            value={card.statsStyle}
+            exclusive
+            onChange={handleStatsStyleChange}
+            aria-label="Stats Style"
+            data-testid="stats-style-selector"
+            size="small"
+            fullWidth
+          >
+            <ToggleButton value="adrenaline" aria-label="Adrenaline style">
+              Adrenaline
+            </ToggleButton>
+            <ToggleButton value="matchAtk" aria-label="Match Atk style">
+              Match Atk
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Box>
+
+        {card.statsStyle === 'adrenaline' ? (
+          /* Adrenaline stats: Defence / Control / Attack */
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <TextField
+                  label="Defence"
+                  type="number"
+                  fullWidth
+                  value={card.defence}
+                  onChange={(e) =>
+                    updateCard({ defence: Number(e.target.value) })
+                  }
+                  inputProps={{
+                    min: 0,
+                    max: 100,
+                    'data-testid': 'defence-input',
+                    'aria-label': 'Defence',
+                    'aria-invalid': defenceInvalid ? 'true' : undefined,
+                  }}
+                />
+                <Tooltip title="Randomise Defence">
+                  <IconButton
+                    size="small"
+                    onClick={() => updateCard({ defence: randomStat() })}
+                    data-testid="randomize-defence"
+                    aria-label="Randomise Defence"
+                  >
+                    <Casino fontSize="small" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <TextField
+                  label="Control"
+                  type="number"
+                  fullWidth
+                  value={card.control}
+                  onChange={(e) =>
+                    updateCard({ control: Number(e.target.value) })
+                  }
+                  inputProps={{
+                    min: 0,
+                    max: 100,
+                    'data-testid': 'control-input',
+                    'aria-label': 'Control',
+                    'aria-invalid': controlInvalid ? 'true' : undefined,
+                  }}
+                />
+                <Tooltip title="Randomise Control">
+                  <IconButton
+                    size="small"
+                    onClick={() => updateCard({ control: randomStat() })}
+                    data-testid="randomize-control"
+                    aria-label="Randomise Control"
+                  >
+                    <Casino fontSize="small" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <TextField
+                  label="Attack"
+                  type="number"
+                  fullWidth
+                  value={card.attack}
+                  onChange={(e) =>
+                    updateCard({ attack: Number(e.target.value) })
+                  }
+                  inputProps={{
+                    min: 0,
+                    max: 100,
+                    'data-testid': 'attack-input',
+                    'aria-label': 'Attack',
+                    'aria-invalid': attackInvalid ? 'true' : undefined,
+                  }}
+                />
+                <Tooltip title="Randomise Attack">
+                  <IconButton
+                    size="small"
+                    onClick={() => updateCard({ attack: randomStat() })}
+                    data-testid="randomize-attack"
+                    aria-label="Randomise Attack"
+                  >
+                    <Casino fontSize="small" aria-hidden="true" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+          </Box>
+        ) : (
+          /* Match Atk stats: Speed / Tackle / Power / Shoot / Skill / Pass */
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+            {(
+              [
+                {
+                  label: 'Speed',
+                  field: 'speed',
+                  value: card.speed,
+                  invalid: speedInvalid,
+                  testId: 'speed-input',
+                  randomId: 'randomize-speed',
+                },
+                {
+                  label: 'Tackle',
+                  field: 'tackle',
+                  value: card.tackle,
+                  invalid: tackleInvalid,
+                  testId: 'tackle-input',
+                  randomId: 'randomize-tackle',
+                },
+                {
+                  label: 'Power',
+                  field: 'power',
+                  value: card.power,
+                  invalid: powerInvalid,
+                  testId: 'power-input',
+                  randomId: 'randomize-power',
+                },
+                {
+                  label: 'Shoot',
+                  field: 'shoot',
+                  value: card.shoot,
+                  invalid: shootInvalid,
+                  testId: 'shoot-input',
+                  randomId: 'randomize-shoot',
+                },
+                {
+                  label: 'Skill',
+                  field: 'skill',
+                  value: card.skill,
+                  invalid: skillInvalid,
+                  testId: 'skill-input',
+                  randomId: 'randomize-skill',
+                },
+                {
+                  label: 'Pass',
+                  field: 'pass',
+                  value: card.pass,
+                  invalid: passInvalid,
+                  testId: 'pass-input',
+                  randomId: 'randomize-pass',
+                },
+              ] as const
+            ).map(({ label, field, value, invalid, testId, randomId }) => (
+              <Box key={field} sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <TextField
+                    label={label}
+                    type="number"
+                    fullWidth
+                    value={value}
+                    onChange={(e) =>
+                      updateCard({ [field]: Number(e.target.value) })
+                    }
+                    inputProps={{
+                      min: 0,
+                      max: 100,
+                      'data-testid': testId,
+                      'aria-label': label,
+                      'aria-invalid': invalid ? 'true' : undefined,
+                    }}
+                  />
+                  <Tooltip title={`Randomise ${label}`}>
+                    <IconButton
+                      size="small"
+                      onClick={() => updateCard({ [field]: randomStat() })}
+                      data-testid={randomId}
+                      aria-label={`Randomise ${label}`}
+                    >
+                      <Casino fontSize="small" aria-hidden="true" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        )}
       </Box>
       <Button
         variant="contained"

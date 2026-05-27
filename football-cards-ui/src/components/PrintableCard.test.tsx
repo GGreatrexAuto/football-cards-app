@@ -79,3 +79,66 @@ describe('PrintableCard — Accessibility', () => {
     );
   });
 });
+
+describe('PrintableCard — Match Atk Stats Style', () => {
+  const MatchAtkSetup: React.FC = () => {
+    const { updateCard } = useCard();
+
+    useEffect(() => {
+      updateCard({
+        playerName: 'Match Player',
+        statsStyle: 'matchAtk',
+        speed: 80,
+        tackle: 60,
+        power: 70,
+        shoot: 90,
+        skill: 65,
+        pass: 77,
+        rating: 75,
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return <PrintableCard />;
+  };
+
+  const renderMatchAtkCard = () =>
+    render(
+      <CardProvider>
+        <MatchAtkSetup />
+      </CardProvider>,
+    );
+
+  test('renders SPD, TAC, PWR, SHT, SKL, PAS stat labels for matchAtk style', () => {
+    renderMatchAtkCard();
+    expect(screen.getByText('SPD')).toBeInTheDocument();
+    expect(screen.getByText('TAC')).toBeInTheDocument();
+    expect(screen.getByText('PWR')).toBeInTheDocument();
+    expect(screen.getByText('SHT')).toBeInTheDocument();
+    expect(screen.getByText('SKL')).toBeInTheDocument();
+    expect(screen.getByText('PAS')).toBeInTheDocument();
+  });
+
+  test('does not render DEF, CTRL, ATT labels when statsStyle is matchAtk', () => {
+    renderMatchAtkCard();
+    expect(screen.queryByText('DEF')).not.toBeInTheDocument();
+    expect(screen.queryByText('CTRL')).not.toBeInTheDocument();
+    expect(screen.queryByText('ATT')).not.toBeInTheDocument();
+  });
+
+  test('renders Match Atk stat values', () => {
+    renderMatchAtkCard();
+    expect(screen.getByText('80')).toBeInTheDocument();
+    expect(screen.getByText('60')).toBeInTheDocument();
+    expect(screen.getByText('70')).toBeInTheDocument();
+    expect(screen.getByText('90')).toBeInTheDocument();
+    expect(screen.getByText('65')).toBeInTheDocument();
+    expect(screen.getByText('77')).toBeInTheDocument();
+  });
+
+  test('passes axe accessibility checks with matchAtk style', async () => {
+    const { container } = renderMatchAtkCard();
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
