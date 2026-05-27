@@ -18,6 +18,13 @@ const PrintableCard: React.FC = () => {
     control,
     attack,
     rating,
+    statsStyle,
+    speed,
+    tackle,
+    power,
+    shoot,
+    skill,
+    pass,
     playerPhoto,
     cardBackground,
     textFonts,
@@ -194,64 +201,112 @@ const PrintableCard: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-around', mb: 0.5 }}
-          >
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontFamily: textFonts.statsText,
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                }}
-              >
-                {defence}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-              >
-                DEF
-              </Typography>
+          {statsStyle === 'adrenaline' ? (
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-around', mb: 0.5 }}
+            >
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: textFonts.statsText,
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {defence}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+                >
+                  DEF
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: textFonts.statsText,
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {control}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+                >
+                  CTRL
+                </Typography>
+              </Box>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontFamily: textFonts.statsText,
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {attack}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
+                >
+                  ATT
+                </Typography>
+              </Box>
             </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontFamily: textFonts.statsText,
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                }}
-              >
-                {control}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-              >
-                CTRL
-              </Typography>
+          ) : (
+            /* Match Atk: 6 stats in 2 rows of 3 */
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-around',
+                mb: 0.5,
+              }}
+            >
+              {(
+                [
+                  { label: 'SPD', value: speed },
+                  { label: 'TAC', value: tackle },
+                  { label: 'PWR', value: power },
+                  { label: 'SHT', value: shoot },
+                  { label: 'SKL', value: skill },
+                  { label: 'PAS', value: pass },
+                ] as const
+              ).map(({ label, value }) => (
+                <Box
+                  key={label}
+                  sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      fontWeight: 'bold',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {value}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      fontSize: '0.55rem',
+                    }}
+                  >
+                    {label}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontFamily: textFonts.statsText,
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                }}
-              >
-                {attack}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-              >
-                ATT
-              </Typography>
-            </Box>
-          </Box>
+          )}
 
           {/* Rating */}
           <Box sx={{ textAlign: 'center' }}>

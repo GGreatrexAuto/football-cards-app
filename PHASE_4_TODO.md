@@ -319,16 +319,20 @@
 - [ ] Write component tests for card selection and layout calculation
 - [ ] Write E2E print test using `page.emulateMedia({ media: 'print' })`
 
-### Task 31: Alternate Stats Styles
-- [ ] Rename current stats style (Defence / Control / Attack) to **"Adrenaline"** style in UI labels and code
-- [ ] Add **"Match Atk"** stats style: Speed, Tackle, Power, Shoot, Skill, Pass
-- [ ] Add `statsStyle: 'adrenaline' | 'matchAtk'` to `CardState`
-- [ ] Update `CardForm.tsx` to show the correct stat inputs based on `statsStyle`
-- [ ] Update `CardPreview.tsx` to render the correct stat labels and values
-- [ ] Update `PrintableCard.tsx` accordingly
-- [ ] Update `storage.ts` to persist and migrate `statsStyle`
-- [ ] Write component tests for both stat styles
-- [ ] Write E2E smoke test confirming switching style changes preview stats
+### Task 31: Alternate Stats Styles ✅
+- [x] Rename current stats style (Defence / Control / Attack) to **"Adrenaline"** style in UI labels and code
+- [x] Add **"Match Atk"** stats style: Speed, Tackle, Power, Shoot, Skill, Pass
+- [x] Add `statsStyle: 'adrenaline' | 'matchAtk'` to `CardState`
+- [x] Update `CardForm.tsx` to show the correct stat inputs based on `statsStyle`
+- [x] Update Total average calculation based on stats style chosen
+- [x] Update `CardPreview.tsx` to render the correct stat labels and values
+- [x] Update `PrintableCard.tsx` accordingly
+- [x] Update `storage.ts` to persist and migrate `statsStyle`
+- [x] Write component tests for both stat styles
+- [x] Write E2E smoke test confirming switching style changes preview stats
+- [x] Build all UI Code to project Accessibility and Usability standards
+- [x] Lint all code changes
+- [x] Update project documentation (readme, claude.md, gemini.md, copilot etc)
 
 ### Task 32: Card Style 2.0
 - [ ] Define design requirements for Card Style 2.0 (new visual treatment)

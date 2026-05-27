@@ -5,6 +5,7 @@ import {
   DEFAULT_IMAGE_CROP_FOCUS,
   DEFAULT_CARD_BORDER_SHAPE,
   DEFAULT_CARD_BORDER_COLOR,
+  DEFAULT_STATS_STYLE,
 } from '../context/CardContext';
 
 const CARDS_KEY = 'football-cards';
@@ -30,6 +31,13 @@ export const getSavedCards = (): CardState[] => {
     imageCropFocus: c.imageCropFocus ?? DEFAULT_IMAGE_CROP_FOCUS,
     cardBorderShape: c.cardBorderShape ?? DEFAULT_CARD_BORDER_SHAPE,
     cardBorderColor: c.cardBorderColor ?? DEFAULT_CARD_BORDER_COLOR,
+    statsStyle: c.statsStyle ?? DEFAULT_STATS_STYLE,
+    speed: c.speed ?? 50,
+    tackle: c.tackle ?? 50,
+    power: c.power ?? 50,
+    shoot: c.shoot ?? 50,
+    skill: c.skill ?? 50,
+    pass: c.pass ?? 50,
   }));
 };
 

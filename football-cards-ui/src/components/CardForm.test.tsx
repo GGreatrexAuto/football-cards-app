@@ -1718,3 +1718,144 @@ describe('Loading state accessibility — 17.8', () => {
     expect(alertRegion).toHaveTextContent(/failed|error/i);
   });
 });
+
+describe('Stats Style selector', () => {
+  const renderWithProvider = () =>
+    render(
+      <CardProvider>
+        <CardForm />
+      </CardProvider>,
+    );
+
+  const waitForForm = async () => {
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+  };
+
+  test('renders Adrenaline and Match Atk toggle buttons', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    expect(
+      screen.getByRole('button', { name: /Adrenaline style/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Match Atk style/i }),
+    ).toBeInTheDocument();
+  });
+
+  test('Adrenaline inputs are visible by default', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    expect(screen.getByTestId('defence-input')).toBeInTheDocument();
+    expect(screen.getByTestId('control-input')).toBeInTheDocument();
+    expect(screen.getByTestId('attack-input')).toBeInTheDocument();
+    expect(screen.queryByTestId('speed-input')).not.toBeInTheDocument();
+  });
+
+  test('switching to Match Atk shows Match Atk inputs and hides Adrenaline inputs', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+
+    await screen.findByTestId('speed-input');
+    expect(screen.getByTestId('tackle-input')).toBeInTheDocument();
+    expect(screen.getByTestId('power-input')).toBeInTheDocument();
+    expect(screen.getByTestId('shoot-input')).toBeInTheDocument();
+    expect(screen.getByTestId('skill-input')).toBeInTheDocument();
+    expect(screen.getByTestId('pass-input')).toBeInTheDocument();
+    expect(screen.queryByTestId('defence-input')).not.toBeInTheDocument();
+  });
+
+  test('switching to Match Atk resets Match Atk stats to 50', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+
+    const speed = (await screen.findByTestId(
+      'speed-input',
+    )) as HTMLInputElement;
+    expect(Number(speed.value)).toBe(50);
+  });
+
+  test('switching back to Adrenaline shows Adrenaline inputs again', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+    await screen.findByTestId('speed-input');
+
+    fireEvent.click(screen.getByRole('button', { name: /Adrenaline style/i }));
+    await screen.findByTestId('defence-input');
+    expect(screen.queryByTestId('speed-input')).not.toBeInTheDocument();
+  });
+
+  test('randomize stats button randomizes Match Atk stats when style is matchAtk', async () => {
+    const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.8);
+
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+    await screen.findByTestId('speed-input');
+
+    fireEvent.click(screen.getByTestId('randomize-stats'));
+
+    await waitFor(() => {
+      const speed = screen.getByTestId('speed-input') as HTMLInputElement;
+      expect(Number(speed.value)).toBe(80);
+    });
+
+    mockRandom.mockRestore();
+  });
+
+  test('per-stat randomise buttons work for Match Atk inputs', async () => {
+    const mockRandom = jest.spyOn(Math, 'random').mockReturnValue(0.65);
+
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+    await screen.findByTestId('speed-input');
+
+    fireEvent.click(screen.getByTestId('randomize-speed'));
+
+    await waitFor(() => {
+      const speed = screen.getByTestId('speed-input') as HTMLInputElement;
+      expect(Number(speed.value)).toBe(65);
+    });
+
+    mockRandom.mockRestore();
+  });
+
+  test('shoot-input has aria-invalid="true" when value exceeds 100', async () => {
+    renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+    await screen.findByTestId('shoot-input');
+
+    fireEvent.change(screen.getByTestId('shoot-input'), {
+      target: { value: '150' },
+    });
+
+    expect(screen.getByTestId('shoot-input')).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    );
+  });
+
+  test('has no accessibility violations in Match Atk mode', async () => {
+    const { container } = renderWithProvider();
+    await waitForForm();
+
+    fireEvent.click(screen.getByRole('button', { name: /Match Atk style/i }));
+    await screen.findByTestId('speed-input');
+
+    expect(await axe(container)).toHaveNoViolations();
+  });
+});

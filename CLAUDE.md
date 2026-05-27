@@ -8,7 +8,7 @@ Web app for creating Ultimate-team-style football trading cards with customisabl
 - **Frontend**: React 19 + TypeScript (strict mode), Material-UI v7, Axios
 - **Data**: Browser localStorage (MVP — no backend DB)
 - **External API**: Football-Data.org (clubs, nations, leagues, positions)
-- **Current phase**: Phase 3 — Frontend (~80% complete). See [PHASE_3_FRONTEND_TODO.md](PHASE_3_FRONTEND_TODO.md) for the active backlog.
+- **Current phase**: Phase 4 — Hardening, Features, Performance & DevOps. See [PHASE_4_TODO.md](PHASE_4_TODO.md) for the active backlog.
 
 ## Project Structure
 
@@ -40,6 +40,7 @@ football-cards/
 - **CORS**: configured for `localhost:3000` (React dev server)
 - Frontend state managed via React Context API; cards persisted to `localStorage`
 - **External API**: Football-Data.org v4 — set `FOOTBALL_DATA_API_KEY` in `.env` (copy `.env.example`). Without a key the backend returns built-in mock data automatically.
+- **`CardState`** includes `statsStyle: 'adrenaline' | 'matchAtk'` (Task 31). Adrenaline = DEF/CTRL/ATT (average of 3); Match Atk = SPD/TAC/PWR/SHT/SKL/PAS (weighted average, PWR and SHT count double). Legacy cards without `statsStyle` default to `'adrenaline'` on load.
 
 ## Quick Start
 

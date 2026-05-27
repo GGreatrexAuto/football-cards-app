@@ -7,6 +7,7 @@ import {
   DEFAULT_TEXT_FONTS,
   DEFAULT_IMAGE_FRAME_TYPE,
   DEFAULT_IMAGE_CROP_FOCUS,
+  DEFAULT_STATS_STYLE,
 } from './CardContext';
 
 const TestComponent = () => {
@@ -24,6 +25,13 @@ const TestComponent = () => {
       <div data-testid="textFonts-statsText">{card.textFonts.statsText}</div>
       <div data-testid="imageFrameType">{card.imageFrameType}</div>
       <div data-testid="imageCropFocus">{card.imageCropFocus}</div>
+      <div data-testid="statsStyle">{card.statsStyle}</div>
+      <div data-testid="speed">{card.speed}</div>
+      <div data-testid="tackle">{card.tackle}</div>
+      <div data-testid="power">{card.power}</div>
+      <div data-testid="shoot">{card.shoot}</div>
+      <div data-testid="skill">{card.skill}</div>
+      <div data-testid="pass">{card.pass}</div>
       <button onClick={() => updateCard({ playerName: 'Star Player' })}>
         update
       </button>
@@ -46,6 +54,9 @@ const TestComponent = () => {
       </button>
       <button onClick={() => updateCard({ imageCropFocus: 'bottom' })}>
         update crop focus
+      </button>
+      <button onClick={() => updateCard({ statsStyle: 'matchAtk' })}>
+        update stats style
       </button>
       <button onClick={() => resetCard()}>reset</button>
     </div>
@@ -228,5 +239,65 @@ describe('CardContext', () => {
     expect(screen.getByTestId('imageCropFocus')).toHaveTextContent(
       DEFAULT_IMAGE_CROP_FOCUS,
     );
+  });
+
+  test('statsStyle defaults to adrenaline', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    expect(screen.getByTestId('statsStyle')).toHaveTextContent(
+      DEFAULT_STATS_STYLE,
+    );
+  });
+
+  test('Match Atk stats default to 50', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    expect(screen.getByTestId('speed')).toHaveTextContent('50');
+    expect(screen.getByTestId('tackle')).toHaveTextContent('50');
+    expect(screen.getByTestId('power')).toHaveTextContent('50');
+    expect(screen.getByTestId('shoot')).toHaveTextContent('50');
+    expect(screen.getByTestId('skill')).toHaveTextContent('50');
+    expect(screen.getByTestId('pass')).toHaveTextContent('50');
+  });
+
+  test('updateCard propagates statsStyle to consumers', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    fireEvent.click(screen.getByText('update stats style'));
+    expect(screen.getByTestId('statsStyle')).toHaveTextContent('matchAtk');
+  });
+
+  test('resetCard restores statsStyle and Match Atk stats to defaults', () => {
+    render(
+      <CardProvider>
+        <TestComponent />
+      </CardProvider>,
+    );
+
+    fireEvent.click(screen.getByText('update stats style'));
+    expect(screen.getByTestId('statsStyle')).toHaveTextContent('matchAtk');
+
+    fireEvent.click(screen.getByText('reset'));
+    expect(screen.getByTestId('statsStyle')).toHaveTextContent(
+      DEFAULT_STATS_STYLE,
+    );
+    expect(screen.getByTestId('speed')).toHaveTextContent('50');
+    expect(screen.getByTestId('tackle')).toHaveTextContent('50');
+    expect(screen.getByTestId('power')).toHaveTextContent('50');
+    expect(screen.getByTestId('shoot')).toHaveTextContent('50');
+    expect(screen.getByTestId('skill')).toHaveTextContent('50');
+    expect(screen.getByTestId('pass')).toHaveTextContent('50');
   });
 });
