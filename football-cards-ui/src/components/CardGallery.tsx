@@ -133,10 +133,11 @@ const CardGallery: React.FC<CardGalleryProps> = ({
           Create New Card
         </Button>
       </Box>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+      <Box role="list" sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
         {cards.map((card) => (
           <Box
             key={card.cardId}
+            role="listitem"
             sx={{ flex: '1 1 300px', maxWidth: '345px', margin: 'auto' }}
           >
             <Card>

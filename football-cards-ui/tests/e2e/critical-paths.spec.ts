@@ -1,6 +1,6 @@
 import { expect, test } from './base/test-base';
 import { CardCreatorPage } from './base/page-objects/CardCreatorPage';
-import { clearBrowserStorage } from './base/helpers/test-helpers';
+import { clearBrowserStorage, checkA11y } from './base/helpers/test-helpers';
 
 // These 3 tests cover what component-level tests with mocked services cannot prove:
 // 1. Real backend API responses populate dropdowns
@@ -19,6 +19,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
   test('real backend API data populates all dropdowns', async ({ page }) => {
     // Wait for the form to finish loading API data
     await page.waitForLoadState('networkidle');
+    await checkA11y(page);
 
     // Each dropdown must have at least one real option from the backend
     const clubOptions = page.locator('[aria-label="Club"]');
@@ -59,10 +60,12 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
     // Fully reload the browser — this re-initialises JS, context, and re-reads localStorage
     await page.reload();
     await page.waitForLoadState('networkidle');
+    await checkA11y(page);
 
     // Navigate to My Cards and confirm the card is still there
     await page.getByRole('tab', { name: /my cards/i }).click();
     await page.waitForLoadState('networkidle');
+    await checkA11y(page);
 
     const cards = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('football-cards') || '[]'),
@@ -83,6 +86,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
 
     // Complete the full journey: load → fill form → save → navigate to gallery
     await page.waitForLoadState('networkidle');
+    await checkA11y(page);
 
     await cardCreator.fillCardForm({
       name: 'Console Check Player',
@@ -96,6 +100,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
 
     await page.getByRole('tab', { name: /my cards/i }).click();
     await page.waitForLoadState('networkidle');
+    await checkA11y(page);
 
     expect(consoleErrors).toHaveLength(0);
   });

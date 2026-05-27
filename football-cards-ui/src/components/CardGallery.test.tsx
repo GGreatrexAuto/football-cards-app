@@ -115,6 +115,33 @@ describe('CardGallery Component', () => {
   });
 });
 
+describe('CardGallery — List Semantics', () => {
+  beforeEach(() => {
+    (getSavedCards as jest.Mock).mockReturnValue(mockCards);
+  });
+
+  const renderGallery = (props: any = {}) =>
+    render(
+      <CardProvider>
+        <CardGallery {...props} />
+      </CardProvider>,
+    );
+
+  test('card grid has role="list" and each card has role="listitem"', () => {
+    renderGallery();
+    expect(screen.getByRole('list')).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem')).toHaveLength(2);
+  });
+
+  test('empty state renders as a heading', () => {
+    (getSavedCards as jest.Mock).mockReturnValue([]);
+    renderGallery();
+    expect(
+      screen.getByRole('heading', { name: /no saved cards/i }),
+    ).toBeInTheDocument();
+  });
+});
+
 describe('CardGallery — Focus Management', () => {
   const mockCard = {
     playerName: 'Alice',
