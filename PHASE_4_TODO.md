@@ -310,14 +310,14 @@
 - [ ] Implement the reordered layout in `CardForm.tsx`
 - [ ] Update `accessibility.test.tsx` Tab order test to match the new field sequence
 
-### Task 30: Print Formatter (Multi-Card per A4 Page)
-- [ ] Design UI for selecting up to N saved cards to print on one A4 page
-- [ ] Implement `PrintFormatter` component with card selection grid
-- [ ] Add a "Print Selected" button that renders selected cards in an A4-sized print layout
-- [ ] Calculate card sizing to fit 1, 2, 4, or 6 cards per A4 page (user selectable)
-- [ ] Update `print.css` with multi-card layout rules
-- [ ] Write component tests for card selection and layout calculation
-- [ ] Write E2E print test using `page.emulateMedia({ media: 'print' })`
+### Task 30: Print Formatter (Multi-Card per A4 Page) ✅
+- [x] Design UI for selecting up to N saved cards to print on one A4 page
+- [x] Implement `PrintFormatter` component with card selection grid
+- [x] Add a "Print Selected" button that renders selected cards in an A4-sized print layout
+- [x] Calculate card sizing to fit 1, 2, 4, or 6 cards per A4 page (user selectable)
+- [x] Update `print.css` with multi-card layout rules
+- [x] Write component tests for card selection and layout calculation
+- [x] Write E2E print test using `page.emulateMedia({ media: 'print' })`
 
 ### Task 31: Alternate Stats Styles ✅
 - [x] Rename current stats style (Defence / Control / Attack) to **"Adrenaline"** style in UI labels and code

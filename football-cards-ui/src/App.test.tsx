@@ -12,6 +12,12 @@ jest.mock('axios', () => ({
   create: jest.fn(() => ({ get: jest.fn() })),
 }));
 jest.mock('./services/api');
+jest.mock('./services/storage', () => ({
+  getSavedCards: jest.fn().mockReturnValue([]),
+  saveCard: jest.fn(),
+  updateCard: jest.fn(),
+  deleteCard: jest.fn(),
+}));
 
 beforeEach(() => {
   (getClubs as jest.Mock).mockResolvedValue([]);
@@ -48,5 +54,5 @@ test('inactive tab panels have aria-hidden="true"', async () => {
   const inactivePanels = panels.filter(
     (p) => p.getAttribute('aria-hidden') === 'true',
   );
-  expect(inactivePanels).toHaveLength(2);
+  expect(inactivePanels).toHaveLength(3);
 });
