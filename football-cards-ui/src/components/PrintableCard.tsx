@@ -52,7 +52,11 @@ const PrintableCard: React.FC = () => {
   };
 
   return (
-    <Card className="printable-card" sx={cardStyle}>
+    <Card
+      className="printable-card"
+      data-testid="printable-card"
+      sx={cardStyle}
+    >
       {cardBorderShape !== 'none' && (
         <Box
           component="svg"
@@ -115,6 +119,7 @@ const PrintableCard: React.FC = () => {
         <Typography
           variant="h6"
           component="div"
+          data-testid="player-name-text"
           sx={{
             fontFamily: textFonts.playerName,
             textAlign: 'center',

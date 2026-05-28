@@ -13,9 +13,9 @@
 ## Task 19: Remaining Test Gaps (from Phase 3)
 
 ### Subtask 19.1: CardGallery — Loading State Test
-- [ ] In `src/components/CardGallery.test.tsx`, add a test that confirms the loading spinner (or equivalent loading indicator) is visible while the initial `getSavedCards()` call is in progress
-- [ ] Mock `storage.getSavedCards` to return a promise that does not resolve immediately; assert loading state renders
-- [ ] Confirm loading indicator disappears once the promise resolves
+- [x] In `src/components/CardGallery.test.tsx`, add a test that confirms the loading spinner (or equivalent loading indicator) is visible while the initial `getSavedCards()` call is in progress
+- [x] Mock `storage.getSavedCards` to return a promise that does not resolve immediately; assert loading state renders
+- [x] Confirm loading indicator disappears once the promise resolves
 
 ### Subtask 19.2: Phase 3 Task 12.8 — Success Criteria Gate
 - [ ] Run `npm run test:coverage` and confirm overall coverage ≥ 80% (lines, functions, branches, statements)
@@ -27,22 +27,22 @@
 ### Subtask 19.3: Font E2E — Scenario 2 Completion
 **File:** `football-cards-ui/tests/e2e/font-customization.spec.ts`
 
-- [ ] In the existing "font selection persists after saving and reloading a card" scenario, add an assertion that the `CardPreview` element has the correct `font-family` CSS re-applied after page reload (use `toHaveCSS`)
+- [x] In the existing "font selection persists after saving and reloading a card" scenario, add an assertion that the `CardPreview` element has the correct `font-family` CSS re-applied after page reload (use `toHaveCSS`)
 
 ### Subtask 19.4: Font E2E — Scenario 3 (Print with Custom Fonts)
 **File:** `football-cards-ui/tests/e2e/font-customization.spec.ts`
 
-- [ ] Add Scenario 3: create a card with "Playfair Display" selected as the player name font
-- [ ] Apply print media with `page.emulateMedia({ media: 'print' })`
-- [ ] Assert `PrintableCard` element has `font-family` CSS containing `Playfair Display` (via `toHaveCSS`)
-- [ ] Take screenshot of print layout for visual record
-- [ ] Restore media to `screen` and verify preview returns to normal
+- [x] Add Scenario 3: create a card with "Playfair Display" selected as the player name font
+- [x] Apply print media with `page.emulateMedia({ media: 'print' })`
+- [x] Assert `PrintableCard` element has `font-family` CSS containing `Playfair Display` (via `toHaveCSS`)
+- [x] Take screenshot of print layout for visual record
+- [x] Restore media to `screen` and verify preview returns to normal
 
 ### Subtask 19.5: CardPreview Background — Additional URL Tests
 **File:** `src/components/CardPreview.test.tsx`
 
-- [ ] Add test mocking a second distinct `cardBackground` URL (e.g. `https://example.com/bg2.png`) and asserting it appears in the background style output
-- [ ] Add test mocking a third URL and asserting it also appears correctly (covers multiple background selections in sequence)
+- [x] Add test mocking a second distinct `cardBackground` URL (e.g. `https://example.com/bg2.png`) and asserting it appears in the background style output
+- [x] Add test mocking a third URL and asserting it also appears correctly (covers multiple background selections in sequence)
 
 ### Subtask 19.6: CardForm — Background Selection Visual Style Test
 **File:** `src/components/CardForm.test.tsx` (or `CardCreatorFlow.test.tsx`)
@@ -170,9 +170,9 @@
 
 ## Task 25: Accessibility E2E Verification (from Phase 3 Task 17.11)
 
-- [ ] Run the full E2E suite against the running app: `npm run test:e2e`
-- [ ] Confirm `checkA11y(page)` calls in `critical-paths.spec.ts` (wired via `test-helpers.ts`) produce zero axe violations in the CI output
-- [ ] If any violations are found, fix the offending elements and re-run to confirm clean
+- [x] Run the full E2E suite against the running app: `npm run test:e2e`
+- [x] Confirm `checkA11y(page)` calls in `critical-paths.spec.ts` (wired via `test-helpers.ts`) produce zero axe violations in the CI output
+- [x] If any violations are found, fix the offending elements and re-run to confirm clean
 
 ---
 

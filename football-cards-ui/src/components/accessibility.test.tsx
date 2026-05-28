@@ -102,6 +102,8 @@ describe('Accessibility — WCAG violations (axe)', () => {
       </CardProvider>,
     );
 
+    // Wait for async loadCards to complete before running axe
+    await screen.findByText(/Your Card Gallery/i);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -198,14 +200,17 @@ describe('Accessibility — aria-labels and alt text', () => {
       .forEach((img) => expect(img).toHaveAttribute('alt'));
   });
 
-  test('CardGallery: Edit and Delete buttons have accessible names', () => {
+  test('CardGallery: Edit and Delete buttons have accessible names', async () => {
     render(
       <CardProvider>
         <CardGallery />
       </CardProvider>,
     );
 
-    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
+    // Wait for async loadCards to complete before checking buttons
+    expect(
+      await screen.findByRole('button', { name: /edit/i }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
   });
 });
@@ -392,8 +397,10 @@ describe('Accessibility — tab order and keyboard interaction', () => {
       </CardProvider>,
     );
 
+    // Wait for async loadCards before interacting
+    const deleteBtn = await screen.findByRole('button', { name: /delete/i });
+
     // Open the delete confirmation dialog
-    const deleteBtn = screen.getByRole('button', { name: /delete/i });
     await user.click(deleteBtn);
 
     await screen.findByRole('dialog');

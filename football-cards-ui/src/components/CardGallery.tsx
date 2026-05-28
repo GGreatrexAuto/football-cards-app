@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
   Box,
+  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -26,6 +27,7 @@ const CardGallery: React.FC<CardGalleryProps> = ({
 }) => {
   const { updateCard, resetCard } = useCard();
   const [cards, setCards] = useState<CardState[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     cardId: string | null;
@@ -42,15 +44,17 @@ const CardGallery: React.FC<CardGalleryProps> = ({
   }, []);
 
   useEffect(() => {
-    if (pendingFocusCreateNew && !deleteDialog.open) {
+    if (pendingFocusCreateNew && !deleteDialog.open && !isLoading) {
       (createNewInHeaderRef.current || createNewInEmptyRef.current)?.focus();
       setPendingFocusCreateNew(false);
     }
-  }, [pendingFocusCreateNew, deleteDialog.open]);
+  }, [pendingFocusCreateNew, deleteDialog.open, isLoading]);
 
-  const loadCards = () => {
-    const savedCards = getSavedCards();
+  const loadCards = async () => {
+    setIsLoading(true);
+    const savedCards = await Promise.resolve(getSavedCards());
     setCards(savedCards);
+    setIsLoading(false);
   };
 
   const handleEditCard = (card: CardState) => {
@@ -85,6 +89,19 @@ const CardGallery: React.FC<CardGalleryProps> = ({
       onCreateNew();
     }
   };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+        <CircularProgress
+          data-testid="loading-spinner"
+          role="status"
+          aria-live="polite"
+          aria-label="Loading cards"
+        />
+      </Box>
+    );
+  }
 
   if (cards.length === 0) {
     return (
