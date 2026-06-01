@@ -365,552 +365,599 @@ const CardForm: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
-        <Box
-          component="legend"
-          sx={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.6)', mb: 1 }}
-        >
-          Card type
-        </Box>
-        <ToggleButtonGroup
-          value={card.cardType}
-          exclusive
-          onChange={(_, value: CardType | null) => {
-            if (!value) return;
-            updateCard({
-              cardType: value,
-              ...(value === 'national' ? { club: '', league: '' } : {}),
-            });
-            if (value === 'national') {
-              setUseCustomClub(false);
-              setCustomClubName('');
-              setUseCustomLeague(false);
-              setCustomLeagueName('');
-            }
-          }}
-          aria-label="Card type"
-          data-testid="card-type-selector"
-          size="small"
-        >
-          <ToggleButton value="club" aria-label="Club card">
-            Club
-          </ToggleButton>
-          <ToggleButton value="national" aria-label="National team card">
-            National Team
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-      <TextField
-        label="Player Name"
-        fullWidth
-        value={card.playerName}
-        onChange={(e) => {
-          updateCard({ playerName: e.target.value });
-          if (playerNameError && e.target.value.trim()) {
-            setPlayerNameError(false);
-          }
-        }}
-        error={playerNameError}
-        helperText={playerNameError ? 'Player name is required.' : undefined}
-        FormHelperTextProps={{ id: 'player-name-error' }}
-        inputProps={{
-          'data-testid': 'player-name',
-          'aria-label': 'Player Name',
-          'aria-required': 'true',
-          'aria-invalid': playerNameError ? 'true' : 'false',
-          'aria-describedby': playerNameError ? 'player-name-error' : undefined,
-        }}
-      />
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        {card.cardType === 'club' && (
-          <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-            <FormControl fullWidth>
-              <InputLabel id="club-label">Club</InputLabel>
-              <Select
-                labelId="club-label"
-                id="club-select"
-                data-testid="club-select"
-                aria-label="Club"
-                value={useCustomClub ? '__custom__' : card.club}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '__custom__') {
-                    setUseCustomClub(true);
-                    updateCard({ club: customClubName });
-                  } else {
-                    setUseCustomClub(false);
-                    const chosenClub = clubs.find((c) => c.name === val);
-                    setUseCustomLeague(false);
-                    updateCard({
-                      club: val,
-                      ...(chosenClub?.league_name
-                        ? { league: chosenClub.league_name }
-                        : {}),
-                    });
-                  }
-                }}
-                label="Club"
-              >
-                {filteredClubs.map((club) => (
-                  <MenuItem key={club.id} value={club.name}>
-                    {club.name}
-                  </MenuItem>
-                ))}
-                <MenuItem value="__custom__">
-                  Other — enter club name...
-                </MenuItem>
-              </Select>
-            </FormControl>
-            {useCustomClub && (
-              <TextField
-                label="Custom Club Name"
-                fullWidth
-                value={customClubName}
-                onChange={(e) => {
-                  setCustomClubName(e.target.value);
-                  updateCard({ club: e.target.value });
-                }}
-                inputProps={{
-                  'data-testid': 'custom-club-input',
-                  'aria-label': 'Custom Club Name',
-                }}
-                sx={{ mt: 1 }}
-              />
-            )}
-          </Box>
-        )}
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="nationality-label">Nationality</InputLabel>
-            <Select
-              labelId="nationality-label"
-              id="nationality-select"
-              data-testid="nationality-select"
-              aria-label="Nationality"
-              value={card.nationality}
-              onChange={(e) => {
-                const name = e.target.value;
-                const selected = nationalities.find((n) => n.name === name);
-                const code = selected?.country_code ?? '';
-                const hasFlagUrl = Boolean(getFlagUrl(code));
-                const currentDisplay = card.nationalityDisplay;
-                const nextDisplay: NationalityDisplay =
-                  !hasFlagUrl && currentDisplay !== 'text'
-                    ? 'text'
-                    : currentDisplay;
-                updateCard({
-                  nationality: name,
-                  nationalityCode: code,
-                  nationalityDisplay: nextDisplay,
-                });
-              }}
-              label="Nationality"
-            >
-              {nationalities?.map((nationality) => (
-                <MenuItem key={nationality.id} value={nationality.name}>
-                  {nationality.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {card.nationality && (
-            <fieldset style={{ border: 'none', margin: '8px 0 0', padding: 0 }}>
-              <legend
-                style={{
-                  fontSize: '0.75rem',
-                  color: 'rgba(0,0,0,0.6)',
-                  marginBottom: 4,
-                }}
-              >
-                Nationality display
-              </legend>
-              <ToggleButtonGroup
-                value={card.nationalityDisplay}
-                exclusive
-                onChange={(_, value: NationalityDisplay | null) => {
-                  if (value) updateCard({ nationalityDisplay: value });
-                }}
-                aria-label="Nationality display mode"
-                data-testid="nationality-display-selector"
-                size="small"
-                fullWidth
-              >
-                <ToggleButton value="text" aria-label="Show text only">
-                  Text
-                </ToggleButton>
-                <ToggleButton
-                  value="flag"
-                  aria-label="Show flag only"
-                  disabled={!getFlagUrl(card.nationalityCode)}
-                  title={
-                    !getFlagUrl(card.nationalityCode)
-                      ? 'Flag not available for this nationality'
-                      : undefined
-                  }
-                >
-                  Flag
-                </ToggleButton>
-                <ToggleButton
-                  value="both"
-                  aria-label="Show flag and text"
-                  disabled={!getFlagUrl(card.nationalityCode)}
-                  title={
-                    !getFlagUrl(card.nationalityCode)
-                      ? 'Flag not available for this nationality'
-                      : undefined
-                  }
-                >
-                  Both
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </fieldset>
-          )}
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        {card.cardType === 'club' && (
-          <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-            <FormControl fullWidth>
-              <InputLabel id="league-label">League</InputLabel>
-              <Select
-                labelId="league-label"
-                id="league-select"
-                data-testid="league-select"
-                aria-label="League"
-                value={useCustomLeague ? '__custom_league__' : card.league}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '__custom_league__') {
-                    setUseCustomLeague(true);
-                    updateCard({ league: customLeagueName });
-                  } else {
-                    setUseCustomLeague(false);
-                    const currentClub = clubs.find((c) => c.name === card.club);
-                    const clubBelongs =
-                      !val || !currentClub || currentClub.league_name === val;
-                    updateCard({
-                      league: val,
-                      ...(!clubBelongs ? { club: '' } : {}),
-                    });
-                  }
-                }}
-                label="League"
-              >
-                {leagues?.map((league) => (
-                  <MenuItem key={league.id} value={league.name}>
-                    {league.name}
-                  </MenuItem>
-                ))}
-                {useCustomClub && (
-                  <MenuItem value="__custom_league__">
-                    Other — enter league name...
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
-            {useCustomLeague && (
-              <TextField
-                label="Custom League Name"
-                fullWidth
-                value={customLeagueName}
-                onChange={(e) => {
-                  setCustomLeagueName(e.target.value);
-                  updateCard({ league: e.target.value });
-                }}
-                inputProps={{
-                  'data-testid': 'custom-league-input',
-                  'aria-label': 'Custom League Name',
-                }}
-                sx={{ mt: 1 }}
-              />
-            )}
-          </Box>
-        )}
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="position-label">Position</InputLabel>
-            <Select
-              labelId="position-label"
-              id="position-select"
-              data-testid="position-select"
-              aria-label="Position"
-              value={card.position}
-              onChange={(e) => updateCard({ position: e.target.value })}
-              label="Position"
-            >
-              {positions.map((pos) => (
-                <MenuItem key={pos.code} value={pos.code}>
-                  {pos.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      </Box>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-        <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="preferred-foot-label">Preferred Foot</InputLabel>
-            <Select
-              labelId="preferred-foot-label"
-              id="preferred-foot-select"
-              data-testid="preferred-foot-select"
-              aria-label="Preferred Foot"
-              value={card.preferredFoot}
-              onChange={(e) => updateCard({ preferredFoot: e.target.value })}
-              label="Preferred Foot"
-            >
-              <MenuItem value="Left">Left</MenuItem>
-              <MenuItem value="Right">Right</MenuItem>
-              <MenuItem value="Both">Both</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-      </Box>
-      <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
-        <Box
-          component="legend"
-          sx={{
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            padding: 0,
-            margin: '-1px',
-            overflow: 'hidden',
-            clip: 'rect(0,0,0,0)',
-            whiteSpace: 'nowrap',
-            border: 0,
-          }}
-        >
-          Player Stats
-        </Box>
-
-        {/* Stats Style Selector */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Stats Style
-          </Typography>
-          <ToggleButtonGroup
-            value={card.statsStyle}
-            exclusive
-            onChange={handleStatsStyleChange}
-            aria-label="Stats Style"
-            data-testid="stats-style-selector"
-            size="small"
-            fullWidth
+      {/* Card Type Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Card Type
+        </Typography>
+        <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+          <Box
+            component="legend"
+            sx={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
           >
-            <ToggleButton value="adrenaline" aria-label="Adrenaline style">
-              Adrenaline
+            Card type
+          </Box>
+          <ToggleButtonGroup
+            value={card.cardType}
+            exclusive
+            onChange={(_, value: CardType | null) => {
+              if (!value) return;
+              updateCard({
+                cardType: value,
+                ...(value === 'national' ? { club: '', league: '' } : {}),
+              });
+              if (value === 'national') {
+                setUseCustomClub(false);
+                setCustomClubName('');
+                setUseCustomLeague(false);
+                setCustomLeagueName('');
+              }
+            }}
+            aria-label="Card type"
+            data-testid="card-type-selector"
+            size="small"
+          >
+            <ToggleButton value="club" aria-label="Club card">
+              Club
             </ToggleButton>
-            <ToggleButton value="matchAtk" aria-label="Match Atk style">
-              Match Atk
+            <ToggleButton value="national" aria-label="National team card">
+              National Team
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
+      </Box>
 
-        {card.statsStyle === 'adrenaline' ? (
-          /* Adrenaline stats: Defence / Control / Attack */
+      {/* Player Info Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Player Info
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TextField
+            label="Player Name"
+            fullWidth
+            value={card.playerName}
+            onChange={(e) => {
+              updateCard({ playerName: e.target.value });
+              if (playerNameError && e.target.value.trim()) {
+                setPlayerNameError(false);
+              }
+            }}
+            error={playerNameError}
+            helperText={
+              playerNameError ? 'Player name is required.' : undefined
+            }
+            FormHelperTextProps={{ id: 'player-name-error' }}
+            inputProps={{
+              'data-testid': 'player-name',
+              'aria-label': 'Player Name',
+              'aria-required': 'true',
+              'aria-invalid': playerNameError ? 'true' : 'false',
+              'aria-describedby': playerNameError
+                ? 'player-name-error'
+                : undefined,
+            }}
+          />
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <TextField
-                  label="Defence"
-                  type="number"
-                  fullWidth
-                  value={card.defence}
-                  onChange={(e) =>
-                    updateCard({ defence: Number(e.target.value) })
-                  }
-                  inputProps={{
-                    min: 0,
-                    max: 100,
-                    'data-testid': 'defence-input',
-                    'aria-label': 'Defence',
-                    'aria-invalid': defenceInvalid ? 'true' : undefined,
-                  }}
-                />
-                <Tooltip title="Randomise Defence">
-                  <IconButton
-                    size="small"
-                    onClick={() => updateCard({ defence: randomStat() })}
-                    data-testid="randomize-defence"
-                    aria-label="Randomise Defence"
+            {card.cardType === 'club' && (
+              <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+                <FormControl fullWidth>
+                  <InputLabel id="league-label">League</InputLabel>
+                  <Select
+                    labelId="league-label"
+                    id="league-select"
+                    data-testid="league-select"
+                    aria-label="League"
+                    value={useCustomLeague ? '__custom_league__' : card.league}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '__custom_league__') {
+                        setUseCustomLeague(true);
+                        updateCard({ league: customLeagueName });
+                      } else {
+                        setUseCustomLeague(false);
+                        const currentClub = clubs.find(
+                          (c) => c.name === card.club,
+                        );
+                        const clubBelongs =
+                          !val ||
+                          !currentClub ||
+                          currentClub.league_name === val;
+                        updateCard({
+                          league: val,
+                          ...(!clubBelongs ? { club: '' } : {}),
+                        });
+                      }
+                    }}
+                    label="League"
                   >
-                    <Casino fontSize="small" aria-hidden="true" />
-                  </IconButton>
-                </Tooltip>
+                    {leagues?.map((league) => (
+                      <MenuItem key={league.id} value={league.name}>
+                        {league.name}
+                      </MenuItem>
+                    ))}
+                    {useCustomClub && (
+                      <MenuItem value="__custom_league__">
+                        Other — enter league name...
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+                {useCustomLeague && (
+                  <TextField
+                    label="Custom League Name"
+                    fullWidth
+                    value={customLeagueName}
+                    onChange={(e) => {
+                      setCustomLeagueName(e.target.value);
+                      updateCard({ league: e.target.value });
+                    }}
+                    inputProps={{
+                      'data-testid': 'custom-league-input',
+                      'aria-label': 'Custom League Name',
+                    }}
+                    sx={{ mt: 1 }}
+                  />
+                )}
               </Box>
+            )}
+            {card.cardType === 'club' && (
+              <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+                <FormControl fullWidth>
+                  <InputLabel id="club-label">Club</InputLabel>
+                  <Select
+                    labelId="club-label"
+                    id="club-select"
+                    data-testid="club-select"
+                    aria-label="Club"
+                    value={useCustomClub ? '__custom__' : card.club}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '__custom__') {
+                        setUseCustomClub(true);
+                        updateCard({ club: customClubName });
+                      } else {
+                        setUseCustomClub(false);
+                        const chosenClub = clubs.find((c) => c.name === val);
+                        setUseCustomLeague(false);
+                        updateCard({
+                          club: val,
+                          ...(chosenClub?.league_name
+                            ? { league: chosenClub.league_name }
+                            : {}),
+                        });
+                      }
+                    }}
+                    label="Club"
+                  >
+                    {filteredClubs.map((club) => (
+                      <MenuItem key={club.id} value={club.name}>
+                        {club.name}
+                      </MenuItem>
+                    ))}
+                    <MenuItem value="__custom__">
+                      Other — enter club name...
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                {useCustomClub && (
+                  <TextField
+                    label="Custom Club Name"
+                    fullWidth
+                    value={customClubName}
+                    onChange={(e) => {
+                      setCustomClubName(e.target.value);
+                      updateCard({ club: e.target.value });
+                    }}
+                    inputProps={{
+                      'data-testid': 'custom-club-input',
+                      'aria-label': 'Custom Club Name',
+                    }}
+                    sx={{ mt: 1 }}
+                  />
+                )}
+              </Box>
+            )}
+          </Box>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+            <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+              <FormControl fullWidth>
+                <InputLabel id="nationality-label">Nationality</InputLabel>
+                <Select
+                  labelId="nationality-label"
+                  id="nationality-select"
+                  data-testid="nationality-select"
+                  aria-label="Nationality"
+                  value={card.nationality}
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    const selected = nationalities.find((n) => n.name === name);
+                    const code = selected?.country_code ?? '';
+                    const hasFlagUrl = Boolean(getFlagUrl(code));
+                    const currentDisplay = card.nationalityDisplay;
+                    const nextDisplay: NationalityDisplay =
+                      !hasFlagUrl && currentDisplay !== 'text'
+                        ? 'text'
+                        : currentDisplay;
+                    updateCard({
+                      nationality: name,
+                      nationalityCode: code,
+                      nationalityDisplay: nextDisplay,
+                    });
+                  }}
+                  label="Nationality"
+                >
+                  {nationalities?.map((nationality) => (
+                    <MenuItem key={nationality.id} value={nationality.name}>
+                      {nationality.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {card.nationality && (
+                <fieldset
+                  style={{ border: 'none', margin: '8px 0 0', padding: 0 }}
+                >
+                  <legend
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(0,0,0,0.6)',
+                      marginBottom: 4,
+                    }}
+                  >
+                    Nationality display
+                  </legend>
+                  <ToggleButtonGroup
+                    value={card.nationalityDisplay}
+                    exclusive
+                    onChange={(_, value: NationalityDisplay | null) => {
+                      if (value) updateCard({ nationalityDisplay: value });
+                    }}
+                    aria-label="Nationality display mode"
+                    data-testid="nationality-display-selector"
+                    size="small"
+                    fullWidth
+                  >
+                    <ToggleButton value="text" aria-label="Show text only">
+                      Text
+                    </ToggleButton>
+                    <ToggleButton
+                      value="flag"
+                      aria-label="Show flag only"
+                      disabled={!getFlagUrl(card.nationalityCode)}
+                      title={
+                        !getFlagUrl(card.nationalityCode)
+                          ? 'Flag not available for this nationality'
+                          : undefined
+                      }
+                    >
+                      Flag
+                    </ToggleButton>
+                    <ToggleButton
+                      value="both"
+                      aria-label="Show flag and text"
+                      disabled={!getFlagUrl(card.nationalityCode)}
+                      title={
+                        !getFlagUrl(card.nationalityCode)
+                          ? 'Flag not available for this nationality'
+                          : undefined
+                      }
+                    >
+                      Both
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </fieldset>
+              )}
             </Box>
-            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <TextField
-                  label="Control"
-                  type="number"
-                  fullWidth
-                  value={card.control}
-                  onChange={(e) =>
-                    updateCard({ control: Number(e.target.value) })
-                  }
-                  inputProps={{
-                    min: 0,
-                    max: 100,
-                    'data-testid': 'control-input',
-                    'aria-label': 'Control',
-                    'aria-invalid': controlInvalid ? 'true' : undefined,
-                  }}
-                />
-                <Tooltip title="Randomise Control">
-                  <IconButton
-                    size="small"
-                    onClick={() => updateCard({ control: randomStat() })}
-                    data-testid="randomize-control"
-                    aria-label="Randomise Control"
-                  >
-                    <Casino fontSize="small" aria-hidden="true" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </Box>
-            <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <TextField
-                  label="Attack"
-                  type="number"
-                  fullWidth
-                  value={card.attack}
-                  onChange={(e) =>
-                    updateCard({ attack: Number(e.target.value) })
-                  }
-                  inputProps={{
-                    min: 0,
-                    max: 100,
-                    'data-testid': 'attack-input',
-                    'aria-label': 'Attack',
-                    'aria-invalid': attackInvalid ? 'true' : undefined,
-                  }}
-                />
-                <Tooltip title="Randomise Attack">
-                  <IconButton
-                    size="small"
-                    onClick={() => updateCard({ attack: randomStat() })}
-                    data-testid="randomize-attack"
-                    aria-label="Randomise Attack"
-                  >
-                    <Casino fontSize="small" aria-hidden="true" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
+            <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+              <FormControl fullWidth>
+                <InputLabel id="position-label">Position</InputLabel>
+                <Select
+                  labelId="position-label"
+                  id="position-select"
+                  data-testid="position-select"
+                  aria-label="Position"
+                  value={card.position}
+                  onChange={(e) => updateCard({ position: e.target.value })}
+                  label="Position"
+                >
+                  {positions.map((pos) => (
+                    <MenuItem key={pos.code} value={pos.code}>
+                      {pos.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
           </Box>
-        ) : (
-          /* Match Atk stats: Speed / Tackle / Power / Shoot / Skill / Pass */
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-            {(
-              [
-                {
-                  label: 'Speed',
-                  field: 'speed',
-                  value: card.speed,
-                  invalid: speedInvalid,
-                  testId: 'speed-input',
-                  randomId: 'randomize-speed',
-                },
-                {
-                  label: 'Tackle',
-                  field: 'tackle',
-                  value: card.tackle,
-                  invalid: tackleInvalid,
-                  testId: 'tackle-input',
-                  randomId: 'randomize-tackle',
-                },
-                {
-                  label: 'Power',
-                  field: 'power',
-                  value: card.power,
-                  invalid: powerInvalid,
-                  testId: 'power-input',
-                  randomId: 'randomize-power',
-                },
-                {
-                  label: 'Shoot',
-                  field: 'shoot',
-                  value: card.shoot,
-                  invalid: shootInvalid,
-                  testId: 'shoot-input',
-                  randomId: 'randomize-shoot',
-                },
-                {
-                  label: 'Skill',
-                  field: 'skill',
-                  value: card.skill,
-                  invalid: skillInvalid,
-                  testId: 'skill-input',
-                  randomId: 'randomize-skill',
-                },
-                {
-                  label: 'Pass',
-                  field: 'pass',
-                  value: card.pass,
-                  invalid: passInvalid,
-                  testId: 'pass-input',
-                  randomId: 'randomize-pass',
-                },
-              ] as const
-            ).map(({ label, field, value, invalid, testId, randomId }) => (
-              <Box key={field} sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+            <Box sx={{ flex: '1 1 300px', minWidth: '250px' }}>
+              <FormControl fullWidth>
+                <InputLabel id="preferred-foot-label">
+                  Preferred Foot
+                </InputLabel>
+                <Select
+                  labelId="preferred-foot-label"
+                  id="preferred-foot-select"
+                  data-testid="preferred-foot-select"
+                  aria-label="Preferred Foot"
+                  value={card.preferredFoot}
+                  onChange={(e) =>
+                    updateCard({ preferredFoot: e.target.value })
+                  }
+                  label="Preferred Foot"
+                >
+                  <MenuItem value="Left">Left</MenuItem>
+                  <MenuItem value="Right">Right</MenuItem>
+                  <MenuItem value="Both">Both</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+          <Tooltip title="Clears player details and stats — keeps photo, background and visual settings">
+            <Button
+              variant="outlined"
+              onClick={handleResetFields}
+              fullWidth
+              data-testid="reset-fields"
+              aria-label="Reset Fields"
+            >
+              Reset Fields
+            </Button>
+          </Tooltip>
+        </Box>
+      </Box>
+
+      {/* Stats Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Stats
+        </Typography>
+        <Box component="fieldset" sx={{ border: 'none', p: 0, m: 0 }}>
+          <Box
+            component="legend"
+            sx={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
+            Player Stats
+          </Box>
+
+          {/* Stats Style Selector */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Stats Style
+            </Typography>
+            <ToggleButtonGroup
+              value={card.statsStyle}
+              exclusive
+              onChange={handleStatsStyleChange}
+              aria-label="Stats Style"
+              data-testid="stats-style-selector"
+              size="small"
+              fullWidth
+            >
+              <ToggleButton value="adrenaline" aria-label="Adrenaline style">
+                Adrenaline
+              </ToggleButton>
+              <ToggleButton value="matchAtk" aria-label="Match Atk style">
+                Match Atk
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
+          {card.statsStyle === 'adrenaline' ? (
+            /* Adrenaline stats: Defence / Control / Attack */
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <TextField
-                    label={label}
+                    label="Defence"
                     type="number"
                     fullWidth
-                    value={value}
+                    value={card.defence}
                     onChange={(e) =>
-                      updateCard({ [field]: Number(e.target.value) })
+                      updateCard({ defence: Number(e.target.value) })
                     }
                     inputProps={{
                       min: 0,
                       max: 100,
-                      'data-testid': testId,
-                      'aria-label': label,
-                      'aria-invalid': invalid ? 'true' : undefined,
+                      'data-testid': 'defence-input',
+                      'aria-label': 'Defence',
+                      'aria-invalid': defenceInvalid ? 'true' : undefined,
                     }}
                   />
-                  <Tooltip title={`Randomise ${label}`}>
+                  <Tooltip title="Randomise Defence">
                     <IconButton
                       size="small"
-                      onClick={() => updateCard({ [field]: randomStat() })}
-                      data-testid={randomId}
-                      aria-label={`Randomise ${label}`}
+                      onClick={() => updateCard({ defence: randomStat() })}
+                      data-testid="randomize-defence"
+                      aria-label="Randomise Defence"
                     >
                       <Casino fontSize="small" aria-hidden="true" />
                     </IconButton>
                   </Tooltip>
                 </Box>
               </Box>
-            ))}
-          </Box>
-        )}
-      </Box>
-      <Button
-        variant="contained"
-        onClick={handleRandomizeStats}
-        fullWidth
-        data-testid="randomize-stats"
-        aria-label="Randomize Stats"
-      >
-        🎲 Randomize Stats
-      </Button>
-      <Tooltip title="Clears player details and stats — keeps photo, background and visual settings">
+              <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <TextField
+                    label="Control"
+                    type="number"
+                    fullWidth
+                    value={card.control}
+                    onChange={(e) =>
+                      updateCard({ control: Number(e.target.value) })
+                    }
+                    inputProps={{
+                      min: 0,
+                      max: 100,
+                      'data-testid': 'control-input',
+                      'aria-label': 'Control',
+                      'aria-invalid': controlInvalid ? 'true' : undefined,
+                    }}
+                  />
+                  <Tooltip title="Randomise Control">
+                    <IconButton
+                      size="small"
+                      onClick={() => updateCard({ control: randomStat() })}
+                      data-testid="randomize-control"
+                      aria-label="Randomise Control"
+                    >
+                      <Casino fontSize="small" aria-hidden="true" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+              <Box sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <TextField
+                    label="Attack"
+                    type="number"
+                    fullWidth
+                    value={card.attack}
+                    onChange={(e) =>
+                      updateCard({ attack: Number(e.target.value) })
+                    }
+                    inputProps={{
+                      min: 0,
+                      max: 100,
+                      'data-testid': 'attack-input',
+                      'aria-label': 'Attack',
+                      'aria-invalid': attackInvalid ? 'true' : undefined,
+                    }}
+                  />
+                  <Tooltip title="Randomise Attack">
+                    <IconButton
+                      size="small"
+                      onClick={() => updateCard({ attack: randomStat() })}
+                      data-testid="randomize-attack"
+                      aria-label="Randomise Attack"
+                    >
+                      <Casino fontSize="small" aria-hidden="true" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+            </Box>
+          ) : (
+            /* Match Atk stats: Speed / Tackle / Power / Shoot / Skill / Pass */
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              {(
+                [
+                  {
+                    label: 'Speed',
+                    field: 'speed',
+                    value: card.speed,
+                    invalid: speedInvalid,
+                    testId: 'speed-input',
+                    randomId: 'randomize-speed',
+                  },
+                  {
+                    label: 'Tackle',
+                    field: 'tackle',
+                    value: card.tackle,
+                    invalid: tackleInvalid,
+                    testId: 'tackle-input',
+                    randomId: 'randomize-tackle',
+                  },
+                  {
+                    label: 'Power',
+                    field: 'power',
+                    value: card.power,
+                    invalid: powerInvalid,
+                    testId: 'power-input',
+                    randomId: 'randomize-power',
+                  },
+                  {
+                    label: 'Shoot',
+                    field: 'shoot',
+                    value: card.shoot,
+                    invalid: shootInvalid,
+                    testId: 'shoot-input',
+                    randomId: 'randomize-shoot',
+                  },
+                  {
+                    label: 'Skill',
+                    field: 'skill',
+                    value: card.skill,
+                    invalid: skillInvalid,
+                    testId: 'skill-input',
+                    randomId: 'randomize-skill',
+                  },
+                  {
+                    label: 'Pass',
+                    field: 'pass',
+                    value: card.pass,
+                    invalid: passInvalid,
+                    testId: 'pass-input',
+                    randomId: 'randomize-pass',
+                  },
+                ] as const
+              ).map(({ label, field, value, invalid, testId, randomId }) => (
+                <Box key={field} sx={{ flex: '1 1 100px', minWidth: '80px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <TextField
+                      label={label}
+                      type="number"
+                      fullWidth
+                      value={value}
+                      onChange={(e) =>
+                        updateCard({ [field]: Number(e.target.value) })
+                      }
+                      inputProps={{
+                        min: 0,
+                        max: 100,
+                        'data-testid': testId,
+                        'aria-label': label,
+                        'aria-invalid': invalid ? 'true' : undefined,
+                      }}
+                    />
+                    <Tooltip title={`Randomise ${label}`}>
+                      <IconButton
+                        size="small"
+                        onClick={() => updateCard({ [field]: randomStat() })}
+                        data-testid={randomId}
+                        aria-label={`Randomise ${label}`}
+                      >
+                        <Casino fontSize="small" aria-hidden="true" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
         <Button
-          variant="outlined"
-          onClick={handleResetFields}
+          variant="contained"
+          onClick={handleRandomizeStats}
           fullWidth
-          data-testid="reset-fields"
-          aria-label="Reset Fields"
+          data-testid="randomize-stats"
+          aria-label="Randomize Stats"
+          sx={{ mt: 2 }}
         >
-          Reset Fields
+          🎲 Randomize Stats
         </Button>
-      </Tooltip>
+      </Box>
 
       {/* Player Photo Section */}
       <Box>

@@ -66,8 +66,8 @@ describe('CardCreator integration flow', () => {
       'Champion Player',
     );
 
-    await openSelectAndChoose(0, 'FC Test');
-    await openSelectAndChoose(1, 'Testland');
+    await openSelectAndChoose(1, 'FC Test');
+    await openSelectAndChoose(2, 'Testland');
     // league is auto-populated when a known club is selected
     await waitFor(() =>
       expect(screen.getByTestId('league-select')).toHaveTextContent(

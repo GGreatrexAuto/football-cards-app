@@ -365,7 +365,8 @@ describe('Accessibility — tab order and keyboard interaction', () => {
     });
     expect(playerNameInput).toHaveFocus();
 
-    // Tab through dropdowns until we reach Defence
+    // Tab through Player Info fields (League, Position, Club, Nationality, Foot, Reset Fields)
+    // and Stats Style toggles until we reach Defence
     let iterations = 0;
     while (!defenceInput.matches(':focus') && iterations < 20) {
       await user.tab();
