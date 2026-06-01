@@ -148,17 +148,17 @@
 - [ ] Document how to view Lighthouse reports locally: `npx lhci collect --url=http://localhost:3000`
 
 ### Subtask 24.4: Backend Benchmarks (pytest-benchmark)
-- [ ] Install `pytest-benchmark`: add to `requirements-dev.txt`
-- [ ] Create `tests/performance/test_endpoint_benchmarks.py` with `@pytest.mark.benchmark` tests for:
-  - `GET /api/v1/clubs` — assert mean response time < 200 ms
-  - `GET /api/v1/nations` — assert mean response time < 200 ms
-  - `GET /api/v1/leagues` — assert mean response time < 200 ms
-  - `GET /api/v1/positions` — assert mean response time < 200 ms
-- [ ] Add `pytest tests/performance/ --benchmark-autosave` to CI; store benchmark JSON for regression comparison
-- [ ] Configure `--benchmark-compare` to fail if any benchmark regresses > 20% vs. stored baseline
+- [x] Install `pytest-benchmark`: add to `requirements.txt`
+- [x] Create `tests/performance/backend/test_endpoint_benchmarks.py` with `@pytest.mark.performance` tests for:
+  - `GET /api/v1/clubs` — assert mean response time < 50 ms (actual ~1-2 ms; 200 ms was vs live API)
+  - `GET /api/v1/nations` — assert mean response time < 50 ms
+  - `GET /api/v1/leagues` — assert mean response time < 50 ms
+  - `GET /api/v1/positions` — assert mean response time < 50 ms
+- [x] Add `pytest tests/performance/backend/ --benchmark-autosave` to CI; store benchmark JSON for regression comparison
+- [x] Configure `--benchmark-compare` to fail if any benchmark regresses > 20% vs. stored baseline
 
 ### Subtask 24.5: Locust Load Test
-- [ ] Install `locust`: add to `requirements-dev.txt`
+- [ ] Install `locust`: add to `requirements.txt`
 - [ ] Create `tests/load/locustfile.py` with a `CardApiUser` task set:
   - Tasks: `GET /api/v1/clubs`, `GET /api/v1/nations`, `GET /api/v1/leagues`, `GET /api/v1/positions` (equal weight)
   - Target: 50 concurrent users, ramp-up 5 users/second

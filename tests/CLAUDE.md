@@ -202,6 +202,24 @@ Run specific feature: `behave tests/integration/features/clubs.feature`
 
 ---
 
+## Performance Tests (`tests/performance/backend/`)
+
+pytest-benchmark tests that start a **real uvicorn server** (port 8001) and measure actual HTTP latency. Always run against mock data (no `FOOTBALL_DATA_API_KEY` required). Run **separately** from the main test suite — they are not included in `pytest tests/`.
+
+- Marker: `@pytest.mark.performance`
+- Fixture: session-scoped `live_server` patches `football_api.settings` to force mock data, starts uvicorn in a background thread, and polls `/api/v1/health` before yielding
+- Assertion: `benchmark.stats['mean'] < 0.05` (50 ms floor; actual mean ~1–2 ms with mock data)
+- Baseline: stored in `.benchmarks/` (committed to repo)
+
+```bash
+pytest tests/performance/backend/ -v                                    # run benchmarks
+pytest tests/performance/backend/ --benchmark-autosave                  # save/update baseline
+# CI regression check — fail if mean regresses > 20%:
+pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%
+```
+
+---
+
 ## Running All Backend Tests
 
 ```bash
@@ -209,4 +227,6 @@ pytest tests/unit/ -v                              # unit tests
 pytest tests/contract/ -v                          # contract tests
 behave tests/integration                           # BDD integration tests
 pytest tests/ --cov=app --cov-report=term-missing  # full suite + coverage
+# Performance benchmarks (run separately):
+pytest tests/performance/backend/ --benchmark-autosave
 ```
