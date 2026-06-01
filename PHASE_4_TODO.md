@@ -305,10 +305,10 @@
 - [ ] Write component tests for each layout variant
 - [ ] Write E2E smoke test confirming layout selector updates the preview
 
-### Task 29: Card Form — Section Heading & Field Reordering
-- [ ] Review and agree revised field order (e.g. Card Type → Player Info → Visual → Stats → Save)
-- [ ] Implement the reordered layout in `CardForm.tsx`
-- [ ] Update `accessibility.test.tsx` Tab order test to match the new field sequence
+### Task 29: Card Form — Section Heading & Field Reordering ✅
+- [x] Review and agree revised field order (Card Type → Player Info → Stats → Visual → Save)
+- [x] Implement the reordered layout in `CardForm.tsx` with visible `Typography h6` section headings; within Player Info: League → Club → Nationality/Position → Foot → Reset Fields
+- [x] Update `accessibility.test.tsx` Tab order test to match the new field sequence
 
 ### Task 30: Print Formatter (Multi-Card per A4 Page) ✅
 - [x] Design UI for selecting up to N saved cards to print on one A4 page
