@@ -92,7 +92,8 @@ football-cards/
 │   ├── unit/                     # Unit tests
 │   ├── integration/              # Integration tests (BDD)
 │   ├── contract/                 # API contract tests
-│   └── e2e/                      # End-to-end tests (Playwright)
+│   └── performance/
+│       └── backend/              # pytest-benchmark endpoint benchmarks
 │
 ├── docs/                         # Documentation
 │   └── plans/                    # Project plans
@@ -146,8 +147,16 @@ football-cards/
 ### Running Tests
 
 ```bash
-# Backend tests
-pytest tests/
+# Backend tests (run in order)
+pytest tests/unit/              # unit tests
+pytest tests/contract/          # API contract tests
+behave tests/integration        # BDD integration tests
+pytest tests/ --cov=app         # full suite + coverage
+
+# Backend performance benchmarks (run separately — starts a real server on port 8001)
+pytest tests/performance/backend/ -v
+pytest tests/performance/backend/ --benchmark-autosave                                                         # save/update baseline
+pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%  # CI regression check
 
 # Frontend tests (unit/component)
 cd football-cards-ui

@@ -12,3 +12,4 @@ isort
 flake8
 pylint
 pytest-asyncio
+pytest-benchmark

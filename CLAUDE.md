@@ -26,7 +26,9 @@ football-cards/
 ├── tests/                      # Backend tests (see tests/CLAUDE.md)
 │   ├── unit/
 │   ├── contract/
-│   └── integration/
+│   ├── integration/
+│   └── performance/
+│       └── backend/            # pytest-benchmark endpoint benchmarks
 ├── scripts/                    # Developer convenience scripts
 │   ├── start.sh                # Start both servers (bash)
 │   └── start.ps1               # Start both servers (PowerShell)
@@ -66,6 +68,11 @@ pytest tests/unit/             # unit tests
 pytest tests/contract/         # Schemathesis API contract tests
 behave tests/integration       # BDD integration tests
 pytest tests/ --cov=app        # full suite with coverage
+
+# Backend performance benchmarks (run separately — starts a real uvicorn server on port 8001)
+pytest tests/performance/backend/ -v
+pytest tests/performance/backend/ --benchmark-autosave                                                         # save/update baseline
+pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%  # CI regression check
 
 # Frontend
 cd football-cards-ui

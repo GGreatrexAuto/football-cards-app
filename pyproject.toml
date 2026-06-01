@@ -6,9 +6,12 @@ profile = "black"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-ra -q --ignore=tests/performance"
 testpaths = [
     "tests",
+]
+markers = [
+    "performance: benchmark tests — run separately via pytest tests/performance/backend/",
 ]
 
 [tool.pylint.master]
