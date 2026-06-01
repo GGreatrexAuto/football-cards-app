@@ -39,9 +39,12 @@ const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 |---|---|---|
 | Components | `PascalCase.tsx` | `CardForm.tsx` |
 | Tests | Adjacent, same name | `CardForm.test.tsx` |
+| Tests (split) | `ComponentName.<topic>.test.tsx` | `CardForm.visual.test.tsx` |
 | Services/utils | `camelCase.ts` | `api.ts`, `storage.ts` |
 | Interfaces | `PascalCase` | `CardState`, `CardFormProps` |
 | Custom hooks | `use` prefix | `useCard()` |
+
+**Splitting large test files**: If a single `.test.tsx` file grows beyond ~60 tests and causes the Jest suite to exceed the 30 s wall-clock target, split it by topic into parallel files (e.g. `CardForm.test.tsx`, `CardForm.visual.test.tsx`, `CardForm.selections.test.tsx`, `CardForm.interactions.test.tsx`, `CardForm.a11y.test.tsx`). Each file duplicates the shared mock setup header — this is intentional; it keeps files self-contained and lets Jest run them on separate workers.
 
 ## Component Structure
 
@@ -131,6 +134,25 @@ beforeEach(() => {
 });
 ```
 
+### MUI act() Warning Suppression
+
+MUI v7 + React 19 triggers spurious `not wrapped in act()` warnings from SelectInput, Tooltip, and Popper internal state updates during Modal/Popover exit animations. Suppress only these known-safe warnings in each test file's `beforeEach`/`afterEach` pair:
+
+```typescript
+const originalConsoleError = console.error;
+beforeEach(() => {
+  jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
+    originalConsoleError(msg, ...args);
+  });
+});
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+```
+
+All other act() violations still surface. Do **not** widen the filter — it would mask real errors.
+
 ### Async Patterns
 
 ```typescript
@@ -191,4 +213,5 @@ See `.github/instructions/frontend.instructions.md` for code patterns and `.gith
 - [ ] **A11y**: `<fieldset>` + `<legend>` for grouped inputs
 - [ ] `ComponentName.test.tsx` with mocked services including `toHaveNoViolations()` (jest-axe)
 - [ ] No TypeScript errors: `tsc --noEmit`
-- [ ] Tests pass: `npm test`
+- [ ] Tests pass: `npm test -- --watchAll=false`
+- [ ] Coverage still ≥ 80%: `npm run test:coverage`

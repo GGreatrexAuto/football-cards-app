@@ -253,12 +253,13 @@ Cards without `textFonts` (saved before font customization was introduced) are t
 ## 🧪 Testing Strategy
 
 **Test Pyramid:**
-- ✅ **Unit Tests**: Component, hook, service logic
+- ✅ **Unit Tests**: Component, hook, service logic (264 Jest tests, 18 test suites; ≥90% coverage)
 - ✅ **Integration Tests**: Component workflows, BDD scenarios
-- ⏳ **E2E Tests**: Full user journeys (Playwright) — In Progress
-- ⏳ **Contract Tests**: API request/response validation — In Progress
+- ✅ **E2E Tests**: Full user journeys (Playwright — Chromium + WebKit)
+- ✅ **Contract Tests**: API request/response validation (Schemathesis)
+- ✅ **Performance Tests**: Backend benchmarks (pytest-benchmark)
 
-Target coverage: **80%+ globally**
+Target coverage: **80%+ globally** (achieved: ~90% statements)
 
 ---
 
@@ -289,18 +290,21 @@ See [requirements.txt](requirements.txt) for complete list.
 
 ---
 
-## 🚧 Current Phase: Phase 3 - Frontend Implementation
+## 🚧 Current Phase: Phase 4 — Hardening, Features, Performance & DevOps
 
-**Status**: ~80% complete
+**Status**: In progress
 
 - ✅ Project scaffolding & setup
-- ✅ UI components & state management  
-- ✅ Basic unit/integration tests
-- ⏳ E2E tests with Playwright
-- ⏳ Cross-cutting concerns (code quality, docs, perf)
-- ⏳ Deployment readiness
+- ✅ UI components & state management
+- ✅ Unit, integration, contract & E2E tests (≥90% coverage)
+- ✅ Alternate stats styles (Adrenaline / Match Atk)
+- ✅ Print formatter (multi-card A4 layout)
+- ✅ Alternative card form layout & section headings
+- ⏳ CI pipeline (GitHub Actions)
+- ⏳ CD pipeline & hosting (Vercel/Render)
+- ⏳ Performance optimisation (lazy loading, bundle analysis)
 
-See [PHASE_3_FRONTEND_TODO.md](PHASE_3_FRONTEND_TODO.md) for detailed task breakdown.
+See [PHASE_4_TODO.md](PHASE_4_TODO.md) for detailed task breakdown.
 
 ---
 
@@ -318,9 +322,9 @@ See [football-cards-ui/src/components/CardForm.tsx](football-cards-ui/src/compon
 
 ## 📋 Code Quality Checklist
 
-- [ ] TypeScript strict mode enabled
+- [x] TypeScript strict mode enabled
+- [x] 80%+ test coverage achieved (≥90% statements, ≥86% branches)
 - [ ] All linting warnings resolved
-- [ ] 80%+ test coverage achieved
 - [ ] Code review completed
 - [ ] Documentation updated
 - [ ] Performance optimized
@@ -342,8 +346,8 @@ See [football-cards-ui/src/components/CardForm.tsx](football-cards-ui/src/compon
 
 - **Phase 1**: Project planning & requirements (✅ Complete)
 - **Phase 2**: Backend implementation (✅ Complete — live Football-Data.org integration with mock fallback)
-- **Phase 3**: Frontend implementation (⏳ In progress — ~80% complete)
-- **Phase 4**: Testing, optimization, deployment (🔲 Not started)
+- **Phase 3**: Frontend implementation (✅ Complete)
+- **Phase 4**: Hardening, features, performance & DevOps (⏳ In progress — see [PHASE_4_TODO.md](PHASE_4_TODO.md))
 
 ---
 
@@ -369,4 +373,4 @@ For issues, questions, or contributions, refer to the project documentation or c
 
 ---
 
-**Last Updated**: May 18, 2026
+**Last Updated**: June 1, 2026
