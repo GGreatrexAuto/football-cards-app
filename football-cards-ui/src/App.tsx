@@ -11,6 +11,7 @@ import { CardProvider } from './context/CardContext';
 import CardCreator from './components/CardCreator';
 import CardGallery from './components/CardGallery';
 import PrintableCard from './components/PrintableCard';
+import PrintFormatter from './components/PrintFormatter';
 import theme from './theme';
 import './styles/print.css';
 
@@ -61,6 +62,7 @@ function App() {
               <Tab label="Create Card" />
               <Tab label="My Cards" />
               <Tab label="Print Preview" />
+              <Tab label="Print Cards" />
             </Tabs>
           </Box>
 
@@ -77,6 +79,9 @@ function App() {
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <PrintableCard />
             </Box>
+          </TabPanel>
+          <TabPanel value={tabValue} index={3}>
+            <PrintFormatter onNavigateToGallery={() => setTabValue(1)} />
           </TabPanel>
         </Container>
       </CardProvider>

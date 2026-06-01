@@ -1,17 +1,15 @@
 @media print {
-  /* Hide everything except the printable card */
-  body * {
+  /* === Single-card mode (Print Preview tab — default) === */
+  body:not(.print-formatter) * {
     visibility: hidden;
   }
 
-  /* Show only the printable card */
-  .printable-card,
-  .printable-card * {
+  body:not(.print-formatter) .printable-card,
+  body:not(.print-formatter) .printable-card * {
     visibility: visible;
   }
 
-  /* Position the card at the top left of the page */
-  .printable-card {
+  body:not(.print-formatter) .printable-card {
     position: absolute;
     left: 0;
     top: 0;
@@ -21,13 +19,51 @@
     padding: 0 !important;
   }
 
-  /* Set page size and margins */
+  /* Default page size for single-card print; overridden dynamically to A4 for PrintFormatter */
   @page {
     size: 3.5in 2.5in;
     margin: 0;
   }
 
-  /* Ensure no background colors are printed (optional) */
+  /* === Multi-card formatter mode (Print Cards tab) === */
+  body.print-formatter * {
+    visibility: hidden;
+  }
+
+  body.print-formatter .print-formatter-output,
+  body.print-formatter .print-a4-sheet,
+  body.print-formatter .print-a4-sheet * {
+    visibility: visible;
+  }
+
+  body.print-formatter .print-formatter-output {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  body.print-formatter .print-a4-sheet {
+    width: 210mm;
+    min-height: 297mm;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 10mm;
+    gap: 5mm;
+    box-sizing: border-box;
+    page-break-after: always;
+  }
+
+  body.print-formatter .printable-card {
+    position: static !important;
+    margin: 0 !important;
+    width: 3.5in !important;
+    height: 2.5in !important;
+    flex-shrink: 0;
+  }
+
+  /* Common: preserve background colours and images for all printable cards */
   .printable-card {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

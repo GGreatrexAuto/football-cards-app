@@ -84,6 +84,24 @@ const { card, updateCard, resetCard } = useCard();
 
 `src/services/storage.ts` — thin localStorage wrapper. Key: `'football-cards'`. Always import from this module; never call `localStorage` directly in components.
 
+## Print Architecture
+
+There are two distinct print flows, both driven by `src/styles/print.css`:
+
+**Single-card** (Tab 2 — Print Preview): The default. `@page` is set to `3.5in × 2.5in`. On `window.print()`, `body:not(.print-formatter) *` is hidden and only `.printable-card` is made visible at `position: absolute; left: 0; top: 0`.
+
+**Multi-card** (Tab 3 — Print Cards, `PrintFormatter` component): Activated by the `PrintFormatter.handlePrint()` method, which:
+1. Dynamically injects `<style id="pf-page-override">@page { size: A4 portrait; margin: 0; }</style>` into `<head>` to override the default `@page` rule (CSS `@page` cannot be scoped to a selector, so runtime injection is the only way to switch page size).
+2. Adds `print-formatter` class to `<body>`.
+3. Calls `window.print()`.
+4. Cleans up both on `afterprint`.
+
+Under `body.print-formatter`, print.css hides everything except `.print-formatter-output > .print-a4-sheet`, which is an off-screen flex container (`left: -9999px`) that becomes the visible printed content.
+
+**`PrintableCard` props**: Accepts an optional `cardData?: CardState` prop. When provided it renders that card; when omitted it falls back to `useCard()` context. Use the prop form when rendering multiple cards (e.g. in `PrintFormatter`).
+
+**Tests**: `PrintFormatter.test.tsx` mocks `./PrintableCard` to avoid rendering card internals; mock `window.print` with `jest.spyOn` and dispatch `afterprint` manually to test cleanup.
+
 ---
 
 ## UI / Component Testing (`*.test.tsx`)

@@ -80,6 +80,57 @@ describe('PrintableCard — Accessibility', () => {
   });
 });
 
+describe('PrintableCard — explicit cardData prop', () => {
+  test('renders data from cardData prop instead of context', () => {
+    const explicitCard = {
+      playerName: 'Direct Prop Player',
+      club: 'Prop FC',
+      nationality: 'Propland',
+      nationalityCode: 'PP',
+      nationalityDisplay: 'text' as const,
+      league: 'Prop League',
+      position: 'GK',
+      preferredFoot: 'Right',
+      defence: 10,
+      control: 20,
+      attack: 30,
+      rating: 20,
+      statsStyle: 'adrenaline' as const,
+      speed: 50,
+      tackle: 50,
+      power: 50,
+      shoot: 50,
+      skill: 50,
+      pass: 50,
+      playerPhoto: null,
+      cardBackground: null,
+      cardId: 'prop-card',
+      textFonts: {
+        playerName: 'Roboto',
+        clubText: 'Roboto',
+        countryText: 'Roboto',
+        statsText: 'Roboto',
+      },
+      imageFrameType: 'face' as const,
+      imageCropFocus: 'top' as const,
+      cardBorderShape: 'none' as const,
+      cardBorderColor: '#ffffff',
+      cardType: 'club' as const,
+    };
+
+    render(
+      <CardProvider>
+        <PrintableCard cardData={explicitCard} />
+      </CardProvider>,
+    );
+
+    expect(screen.getByText('Direct Prop Player')).toBeInTheDocument();
+    expect(screen.getByTestId('player-name-text')).toHaveTextContent(
+      'Direct Prop Player',
+    );
+  });
+});
+
 describe('PrintableCard — Match Atk Stats Style', () => {
   const MatchAtkSetup: React.FC = () => {
     const { updateCard } = useCard();

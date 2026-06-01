@@ -1,11 +1,16 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
-import { useCard } from '../context/CardContext';
+import { useCard, CardState } from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
 import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
-const PrintableCard: React.FC = () => {
-  const { card } = useCard();
+interface PrintableCardProps {
+  cardData?: CardState;
+}
+
+const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
+  const { card: contextCard } = useCard();
+  const card = cardData ?? contextCard;
   const {
     playerName,
     club,
@@ -48,7 +53,6 @@ const PrintableCard: React.FC = () => {
     flexDirection: 'column',
     boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
     pageBreakInside: 'avoid',
-    margin: '0.25in',
   };
 
   return (
