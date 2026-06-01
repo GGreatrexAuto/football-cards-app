@@ -77,6 +77,8 @@ pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --ben
 # Frontend
 cd football-cards-ui
 npm test                       # Jest component tests (watch mode)
+npm test -- --watchAll=false   # single run (CI)
+npm run test:coverage          # single run + coverage report (≥80% enforced)
 npm run test:e2e               # Playwright E2E (requires both servers running)
 ```
 

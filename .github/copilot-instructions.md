@@ -14,7 +14,7 @@ description: "Football Cards App - root-level context for GitHub Copilot with pr
 - **Frontend**: React 18+, TypeScript (strict mode), Material-UI
 - **Database**: Browser Local Storage (MVP - no backend DB)
 - **Key Docs**: See [GEMINI.md](GEMINI.md) for detailed conventions
-- **Current Backlog / Todo List**: See [PHASE_3_FRONTEND_TODO.md](PHASE_3_FRONTEND_TODO.md)
+- **Current Backlog / Todo List**: See [PHASE_4_TODO.md](PHASE_4_TODO.md)
 
 ---
 
@@ -139,7 +139,7 @@ cd football-cards-ui && npm run test:e2e  # E2E tests
 - **Requirements**: [docs/plans/REQUIREMENTS.md](docs/plans/REQUIREMENTS.md)
 - **Architecture**: [docs/plans/ARCHITECTURAL_PLAN.md](docs/plans/ARCHITECTURAL_PLAN.md)
 - **Frontend README**: [football-cards-ui/README.md](football-cards-ui/README.md)
-- **Frontend Tasks**: [PHASE_3_FRONTEND_TODO.md](PHASE_3_FRONTEND_TODO.md)
+- **Frontend Tasks**: [PHASE_4_TODO.md](PHASE_4_TODO.md)
 
 ---
 
@@ -149,5 +149,5 @@ cd football-cards-ui && npm run test:e2e  # E2E tests
 - Run formatters before committing: `black .`, `isort .`, `npm run lint`
 - Add tests alongside new features
 - Keep PRs focused on single features
-- Keep PHASE_3_FRONTEND_TODO updated with new tasks and progress
+- Keep PHASE_4_TODO.md updated with new tasks and progress
 - New UI components: verify accessibility requirements (ARIA attributes, jest-axe check, keyboard navigability) before marking tasks complete

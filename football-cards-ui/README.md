@@ -226,15 +226,19 @@ Print styling in src/styles/print.css optimizes card dimensions and hides UI ele
 
 ### Unit Tests
 
-Located in component files with .test.tsx suffix:
-- CardForm.test.tsx
-- CardPreview.test.tsx
-- CardGallery.test.tsx
-- CardContext.test.tsx
-- api.test.ts
-- storage.test.ts
+Located in component files with .test.tsx suffix. 264 tests across 18 suites; ≥90% statement coverage.
 
-**Run with:** `npm test`
+CardForm tests are split across 5 parallel files for faster CI runs:
+- `CardForm.test.tsx` — core form, dropdowns, background selection
+- `CardForm.visual.test.tsx` — stock photos, frame type, crop focus, text customisation
+- `CardForm.selections.test.tsx` — nationality flag display, card border
+- `CardForm.interactions.test.tsx` — per-stat randomise, reset buttons, card type toggle
+- `CardForm.a11y.test.tsx` — form semantics accessibility, alt text, stats style selector
+
+Other test files: `CardPreview.test.tsx`, `CardGallery.test.tsx`, `CardCreator.test.tsx`, `CardCreatorFlow.test.tsx`, `PrintableCard.test.tsx`, `PrintFormatter.test.tsx`, `FontSelector.test.tsx`, `accessibility.test.tsx`, `CardContext.test.tsx`, `api.test.ts`, `storage.test.ts`, `flags.test.ts`
+
+**Run with:** `npm test`  
+**Coverage report:** `npm run test:coverage`
 
 ### E2E Tests
 
@@ -372,20 +376,22 @@ Before submitting changes:
 
 ## 📋 Current Status
 
-**Phase 3: Frontend Implementation**
+**Phase 4: Hardening, Features, Performance & DevOps**
 
 - ✅ Project scaffolding & setup
 - ✅ UI components & state management
-- ✅ Unit & integration tests
-- ⏳ E2E tests (Playwright)
-- ⏳ Cross-cutting concerns (code quality, perf, a11y)
-- ⏳ Deployment readiness
+- ✅ Unit, integration, contract & E2E tests (≥90% coverage)
+- ✅ Alternate stats styles (Adrenaline / Match Atk)
+- ✅ Print formatter (multi-card A4 layout)
+- ⏳ CI pipeline (GitHub Actions)
+- ⏳ CD pipeline & hosting
+- ⏳ Performance optimisation
 
-See ../PHASE_3_FRONTEND_TODO.md for detailed task status.
+See ../PHASE_4_TODO.md for detailed task status.
 
 ---
 
-**Last Updated**: April 26, 2026
+**Last Updated**: June 1, 2026
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

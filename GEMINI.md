@@ -49,7 +49,7 @@ football-cards/
 │   └── plans/
 ├── README.md               # Project overview & quick start
 ├── GEMINI.md               # This file
-├── PHASE_3_FRONTEND_TODO.md # Frontend task checklist
+├── PHASE_4_TODO.md          # Active backlog (Phase 4)
 ├── requirements.txt        # Python dependencies
 └── pyproject.toml          # Python config (black, isort, pytest)
 ```
@@ -274,16 +274,16 @@ pytest tests/ --cov=app
 ## Phase Status
 - **Phase 1**: Planning & Requirements ✅
 - **Phase 2**: Backend Implementation ✅ (live Football-Data.org integration with mock fallback)
-- **Phase 3**: Frontend Implementation ⏳ (80% complete)
-- **Phase 4**: Testing & Deployment ⏳
+- **Phase 3**: Frontend Implementation ✅
+- **Phase 4**: Hardening, Features, Performance & DevOps ⏳ (in progress)
 
-See `PHASE_3_FRONTEND_TODO.md` for frontend task details.
+See `PHASE_4_TODO.md` for the active backlog.
 
 ## Useful Links
 
 - **Project README**: `README.md`
 - **Requirements**: `docs/plans/REQUIREMENTS.md`
-- **P3 plan**: `PHASE_3_FRONTEND_TODO.md`
+- **Active backlog**: `PHASE_4_TODO.md`
 - **Architecture**: `docs/plans/ARCHITECTURAL_PLAN.md`
 - **Frontend Guide**: `football-cards-ui/README.md`
 - **Test Plan**: `docs/plans/testplan.md`
