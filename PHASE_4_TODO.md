@@ -339,3 +339,7 @@
 - [ ] Implement new card style as an opt-in variant (`cardStyleVersion: 'v1' | 'v2'`)
 - [ ] Update `CardPreview.tsx` and `PrintableCard.tsx` to support both style versions
 - [ ] Write component tests and visual regression screenshots for both versions
+
+### Task 33: Text Colour Selection
+- [ ] Give user options to select colour of each text field
+- [ ] Give user options to select colour of card border
