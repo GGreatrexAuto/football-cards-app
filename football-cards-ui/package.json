@@ -48,6 +48,16 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "functions": 80,
+        "branches": 80,
+        "statements": 80
+      }
+    }
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.58.2",

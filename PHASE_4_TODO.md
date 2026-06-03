@@ -66,12 +66,12 @@
 ## Task 21: Code Quality
 
 ### Subtask 21.1: Linting Warnings
-- [ ] Run `npm run lint` in `football-cards-ui/` and resolve every warning until exit code is 0 with no warnings
-- [ ] Run `pylint app/` from repo root and resolve all warnings/errors to a clean run
-- [ ] Add `pylint` minimum score gate (e.g. `--fail-under=9.0`) to the pre-commit hook and CI
+- [x] Run `npm run lint` in `football-cards-ui/` and resolve every warning until exit code is 0 with no warnings
+- [x] Run `pylint app/` from repo root and resolve all warnings/errors to a clean run
+- [x] Add `pylint` minimum score gate (e.g. `--fail-under=9.0`) to the pre-commit hook and CI
 
 ### Subtask 21.2: Jest Coverage Threshold
-- [ ] Add a `jest` config block to `football-cards-ui/package.json` with `coverageThreshold`:
+- [x] Add a `jest` config block to `football-cards-ui/package.json` with `coverageThreshold`:
   ```json
   "coverageThreshold": {
     "global": {
@@ -82,8 +82,8 @@
     }
   }
   ```
-- [ ] Run `npm run test:coverage` — if coverage is below 80% in any dimension, add the missing tests to close the gap
-- [ ] Confirm `npm run test:coverage` exits non-zero when the threshold is not met (verify the gate works)
+- [x] Run `npm run test:coverage` — if coverage is below 80% in any dimension, add the missing tests to close the gap
+- [x] Confirm `npm run test:coverage` exits non-zero when the threshold is not met (verify the gate works)
 
 ---
 
@@ -202,8 +202,8 @@
   - Setup Node 20 + Python 3.10
   - Install frontend deps (`npm ci`)
   - Install Python deps (`pip install -r requirements.txt -r requirements-dev.txt`)
-  - Run: `npm run lint && npm run format -- --check` (frontend)
-  - Run: `pylint app/ && black --check . && isort --check .` (backend)
+  - Run: `npm run lint -- --max-warnings=0 && npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,css,md}"` (frontend)
+  - Run: `pylint app/ --fail-under=9.0 && flake8 app/ && black --check . && isort --check .` (backend)
   - Run: `yamllint .` (all YAML files)
 - [ ] **Job: build** (depends on lint):
   - Run `npm run build` in `football-cards-ui/`
