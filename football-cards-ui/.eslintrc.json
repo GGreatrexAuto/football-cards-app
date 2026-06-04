@@ -10,5 +10,13 @@
   "rules": {
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/e2e/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "testing-library/prefer-screen-queries": "off"
+      }
+    }
+  ]
 }

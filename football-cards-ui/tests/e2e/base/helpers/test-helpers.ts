@@ -162,10 +162,10 @@ export async function compareScreenshot(
   name: string,
   options: { threshold?: number; fullPage?: boolean } = {},
 ): Promise<boolean> {
-  const { threshold = 0.1, fullPage = false } = options;
+  const { fullPage = false } = options;
 
   try {
-    const screenshot = await page.screenshot({ fullPage });
+    await page.screenshot({ fullPage });
     // In a real implementation, you'd compare with a baseline image
     // For now, just take the screenshot
     await takeScreenshot(page, name);
