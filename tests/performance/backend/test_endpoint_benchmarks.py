@@ -22,7 +22,9 @@ import uvicorn
 from app.main import app
 
 BASE_URL = "http://127.0.0.1:8001"
-MEAN_THRESHOLD = 0.05  # 50 ms — floor for catastrophic regressions (actual mean ~1-2 ms)
+MEAN_THRESHOLD = (
+    0.05  # 50 ms — floor for catastrophic regressions (actual mean ~1-2 ms)
+)
 
 
 @pytest.fixture(scope="session")
