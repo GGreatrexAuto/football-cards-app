@@ -15,7 +15,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : parseInt(process.env.PLAYWRIGHT_WORKERS || '2'),
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['html', { outputFolder: 'test-results/html' }],
+    ['html', { outputFolder: 'playwright-report' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/results.xml' }],
   ],
@@ -82,7 +82,7 @@ export default defineConfig({
   webServer: {
     command: 'npm start',
     url: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
     env: {
       REACT_APP_API_BASE_URL:

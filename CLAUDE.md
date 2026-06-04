@@ -32,6 +32,14 @@ football-cards/
 ├── scripts/                    # Developer convenience scripts
 │   ├── start.sh                # Start both servers (bash)
 │   └── start.ps1               # Start both servers (PowerShell)
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml              # CI pipeline (lint → build/unit → contract/e2e/perf)
+│   │   └── security.yml        # CodeQL + Semgrep (push to main + weekly)
+│   ├── dependabot.yml          # Automated dependency updates (npm + pip, weekly)
+│   └── instructions/           # AI coding assistant context files
+├── .yamllint.yml               # YAML linting config (extends default, max 120)
+├── requirements-dev.txt        # Dev-only extras (pytest-cov, coverage)
 └── docs/plans/                 # Architecture & requirements docs
 ```
 
@@ -92,11 +100,11 @@ Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`. Keep commi
 - **Linter**: Pylint — fix all warnings before commit
 - **Types**: PEP 484 type hints on all public functions
 - **Docstrings**: Google-style on public functions
-- Run before committing: `black . && isort . && pylint app/`
+- Run before committing: `black . && isort . && pylint app/ tests/ && flake8 app/ tests/`
 
 ### TypeScript/React (frontend)
 - **Strict mode ON** — no `any` types, everything explicitly typed
-- **Linter/formatter**: ESLint + Prettier (single quotes, trailing commas)
+- **Linter/formatter**: ESLint + Prettier (single quotes, trailing commas); covers `src/` and `tests/e2e/`
 - Run before committing: `npm run lint && npm run format`
 
 ### Testing

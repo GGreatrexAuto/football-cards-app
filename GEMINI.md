@@ -31,7 +31,7 @@ All tests have an appropriate place on the test pyramid, tests should be shifted
 *   **Integration Tests**: Integration tests are written with `behave` and are located in `tests/integration`.
 *   **E2E Tests**: Front end app tests should implement `playwright` and are located in `football-cards-ui/tests/e2e` 
 *   **Coverage Target**: Minimum 80% globally
-*   **CI/CD**: To be decided, but we would be looking for a low cost / free option
+*   **CI/CD**: GitHub Actions — see `.github/workflows/ci.yml` (lint, build, test, performance) and `.github/workflows/security.yml` (CodeQL + Semgrep). Dependabot configured for npm and pip updates.
 
 ## Project Structure
 
@@ -47,10 +47,17 @@ football-cards/
 │   └── integration/
 ├── docs/                   # Documentation
 │   └── plans/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml          # CI pipeline (lint, build, test, performance)
+│   │   └── security.yml    # CodeQL + Semgrep security scans
+│   └── dependabot.yml      # Automated dependency updates (npm + pip)
+├── .yamllint.yml           # YAML linting config
 ├── README.md               # Project overview & quick start
 ├── GEMINI.md               # This file
-├── PHASE_4_TODO.md          # Active backlog (Phase 4)
-├── requirements.txt        # Python dependencies
+├── PHASE_4_TODO.md         # Active backlog (Phase 4)
+├── requirements.txt        # Python runtime + dev dependencies
+├── requirements-dev.txt    # Additional dev-only dependencies (pytest-cov, coverage)
 └── pyproject.toml          # Python config (black, isort, pytest)
 ```
 
@@ -171,9 +178,10 @@ Every new UI component or interactive feature must meet these requirements:
 # Backend
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload  # Start server
 pytest tests/                      # Run all tests
-black app tests                    # Format code
-flake8 app tests                   # Lint code
-isort app tests                    # Sort imports
+black .                            # Format code
+flake8 app/ tests/                 # Lint code (application + test code)
+pylint app/ tests/ --fail-under=9.0  # Lint with score gate
+isort .                            # Sort imports
 
 # Frontend
 npm start                          # Dev server

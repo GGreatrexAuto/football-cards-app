@@ -66,12 +66,12 @@
 ## Task 21: Code Quality
 
 ### Subtask 21.1: Linting Warnings
-- [ ] Run `npm run lint` in `football-cards-ui/` and resolve every warning until exit code is 0 with no warnings
-- [ ] Run `pylint app/` from repo root and resolve all warnings/errors to a clean run
-- [ ] Add `pylint` minimum score gate (e.g. `--fail-under=9.0`) to the pre-commit hook and CI
+- [x] Run `npm run lint` in `football-cards-ui/` and resolve every warning until exit code is 0 with no warnings
+- [x] Run `pylint app/` from repo root and resolve all warnings/errors to a clean run
+- [x] Add `pylint` minimum score gate (e.g. `--fail-under=9.0`) to the pre-commit hook and CI
 
 ### Subtask 21.2: Jest Coverage Threshold
-- [ ] Add a `jest` config block to `football-cards-ui/package.json` with `coverageThreshold`:
+- [x] Add a `jest` config block to `football-cards-ui/package.json` with `coverageThreshold`:
   ```json
   "coverageThreshold": {
     "global": {
@@ -82,8 +82,8 @@
     }
   }
   ```
-- [ ] Run `npm run test:coverage` — if coverage is below 80% in any dimension, add the missing tests to close the gap
-- [ ] Confirm `npm run test:coverage` exits non-zero when the threshold is not met (verify the gate works)
+- [x] Run `npm run test:coverage` — if coverage is below 80% in any dimension, add the missing tests to close the gap
+- [x] Confirm `npm run test:coverage` exits non-zero when the threshold is not met (verify the gate works)
 
 ---
 
@@ -181,7 +181,7 @@
 > **Tooling decision**: GitHub Actions — free for public repos (unlimited minutes); 2,000 min/month on private repos; zero extra tooling since project is already on GitHub.
 
 ### Subtask 26.1: YAML Lint Config
-- [ ] Create `.yamllint.yml` at repo root:
+- [x] Create `.yamllint.yml` at repo root:
   ```yaml
   extends: default
   rules:
@@ -190,47 +190,47 @@
     truthy:
       allowed-values: ['true', 'false']
   ```
-- [ ] Add `yamllint` to `requirements.txt`
-- [ ] Verify `yamllint .` passes on all existing YAML files before adding CI workflow
+- [x] Add `yamllint` to `requirements.txt`
+- [x] Verify `yamllint .` passes on all existing YAML files before adding CI workflow
 
 ### Subtask 26.2: CI Workflow — Lint & Build
 **File:** `.github/workflows/ci.yml`
 
-- [ ] Create workflow triggered on `push` and `pull_request` to `main` and `accessibility_retrofit`
-- [ ] **Job: lint** (runs on `ubuntu-latest`):
+- [x] Create workflow triggered on `push` and `pull_request` to `main` and `accessibility_retrofit`
+- [x] **Job: lint** (runs on `ubuntu-latest`):
   - Checkout repo
   - Setup Node 20 + Python 3.10
   - Install frontend deps (`npm ci`)
   - Install Python deps (`pip install -r requirements.txt -r requirements-dev.txt`)
-  - Run: `npm run lint && npm run format -- --check` (frontend)
-  - Run: `pylint app/ && black --check . && isort --check .` (backend)
+  - Run: `npm run lint -- --max-warnings=0 && npx prettier --check "src/**/*.{js,jsx,ts,tsx,json,css,md}"` (frontend — `src/` and `tests/`)
+  - Run: `pylint app/ tests/ --fail-under=9.0 && flake8 app/ tests/ && black --check . && isort --check .` (backend)
   - Run: `yamllint .` (all YAML files)
-- [ ] **Job: build** (depends on lint):
+- [x] **Job: build** (depends on lint):
   - Run `npm run build` in `football-cards-ui/`
   - Upload build artefact for use in downstream jobs
-  - Run `bundlesize` check against built artefact
+  - ~~Run `bundlesize` check against built artefact~~ (follow-up: bundlesize not yet configured)
 
 ### Subtask 26.3: CI Workflow — Tests
-- [ ] **Job: unit-tests** (depends on lint):
+- [x] **Job: unit-tests** (depends on lint):
   - Run `pytest tests/unit/ --tb=short`
   - Run `npm test -- --watchAll=false --coverage --ci` (Jest); fail if coverage < 80%
-- [ ] **Job: contract-integration-tests** (depends on unit-tests):
+- [x] **Job: contract-integration-tests** (depends on unit-tests):
   - Start FastAPI test server
   - Run `pytest tests/contract/`
   - Run `behave tests/integration/`
-- [ ] **Job: e2e-tests** (depends on build):
+- [x] **Job: e2e-tests** (depends on build):
   - Start FastAPI backend (`uvicorn app.main:app`)
   - Start React frontend (`serve -s build`)
   - Run `npx playwright test --project=chromium --project=webkit` (Firefox as separate optional job)
   - Upload Playwright report as artefact on failure
-- [ ] **Job: performance** (depends on build):
+- [x] **Job: performance** (depends on build):
   - Run `pytest tests/performance/ --benchmark-autosave`
-  - Run Lighthouse CI (`lhci autorun`)
+  - ~~Run Lighthouse CI (`lhci autorun`)~~ (follow-up: requires `lighthouserc.js` config)
 
 ### Subtask 26.4: CI Workflow — Security Scan
-- [ ] Enable **CodeQL** analysis via GitHub's built-in action (`github/codeql-action`); configure for `javascript` and `python` languages
-- [ ] Enable **Dependabot** in repository settings (`.github/dependabot.yml`) for both `npm` and `pip` ecosystems
-- [ ] Optionally add **Semgrep** free tier (`semgrep/semgrep-action`) with `p/owasp-top-ten` ruleset
+- [x] Enable **CodeQL** analysis via GitHub's built-in action (`github/codeql-action`); configure for `javascript` and `python` languages
+- [x] Enable **Dependabot** in repository settings (`.github/dependabot.yml`) for both `npm` and `pip` ecosystems
+- [x] Optionally add **Semgrep** free tier (`semgrep/semgrep-action`) with `p/owasp-top-ten` ruleset
 
 ---
 
@@ -339,3 +339,7 @@
 - [ ] Implement new card style as an opt-in variant (`cardStyleVersion: 'v1' | 'v2'`)
 - [ ] Update `CardPreview.tsx` and `PrintableCard.tsx` to support both style versions
 - [ ] Write component tests and visual regression screenshots for both versions
+
+### Task 33: Text Colour Selection
+- [ ] Give user options to select colour of each text field
+- [ ] Give user options to select colour of card border

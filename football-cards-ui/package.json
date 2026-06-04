@@ -26,7 +26,7 @@
     "test": "react-scripts test",
     "test:coverage": "react-scripts test --watchAll=false --coverage",
     "eject": "react-scripts eject",
-    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" \"tests/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "test:e2e": "playwright test"
   },
@@ -48,6 +48,16 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "functions": 80,
+        "branches": 80,
+        "statements": 80
+      }
+    }
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.58.2",
@@ -56,6 +66,7 @@
     "@types/jest-axe": "^3.5.9",
     "eslint-plugin-react": "^7.37.5",
     "jest-axe": "^10.0.0",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "yaml": "^2.4.2"
   }
 }

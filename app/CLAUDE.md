@@ -34,9 +34,10 @@ Copy `.env.example` to `.env` and set `FOOTBALL_DATA_API_KEY` to activate live d
 
 Run before every commit:
 ```bash
-black .        # auto-format (line-length 88, configured in pyproject.toml)
-isort .        # sort imports (black profile)
-pylint app/    # fix all warnings
+black .                        # auto-format (line-length 88, configured in pyproject.toml)
+isort .                        # sort imports (black profile)
+pylint app/ tests/             # lint application and test code — fix all warnings
+flake8 app/ tests/             # style check application and test code
 ```
 
 Import ordering (isort/black enforced):
@@ -114,7 +115,7 @@ Configured in `app/main.py` for `http://localhost:3000`. Update `allow_origins` 
 
 ## Pre-commit Checklist
 
-- [ ] `black . && isort . && pylint app/`
+- [ ] `black . && isort . && pylint app/ tests/ && flake8 app/ tests/`
 - [ ] `pytest tests/unit/ -v`
 - [ ] `pytest tests/contract/ -v`
 - [ ] `behave tests/integration`

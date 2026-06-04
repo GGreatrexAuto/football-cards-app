@@ -1,5 +1,8 @@
 # Football Cards Application 🏆
 
+![CI](https://github.com/GarethGreatrex/football-cards/actions/workflows/ci.yml/badge.svg)
+![Security](https://github.com/GarethGreatrex/football-cards/actions/workflows/security.yml/badge.svg)
+
 A web application for creating Ultimate team football/soccer style trading cards with player stats, customizable designs, and local browser storage.
 
 ## 📋 Quick Links
@@ -27,7 +30,7 @@ A web application for creating Ultimate team football/soccer style trading cards
 python -m venv .venv
 source .venv/Scripts/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 
 cd football-cards-ui && npm install && cd ..
 
@@ -108,10 +111,20 @@ football-cards/
 │   ├── start.sh                  # Start both servers (bash)
 │   └── start.ps1                 # Start both servers (PowerShell)
 │
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml                # CI pipeline (lint, build, test, performance)
+│   │   └── security.yml          # CodeQL + Semgrep security scans
+│   ├── dependabot.yml            # Automated dependency updates (npm + pip)
+│   └── instructions/             # AI coding assistant context files
+│
 ├── GEMINI.md                     # Project configuration & conventions
 ├── PHASE_3_FRONTEND_TODO.md      # Frontend implementation tasks
+├── PHASE_4_TODO.md               # Active Phase 4 backlog
+├── .yamllint.yml                 # YAML linting config
 ├── pyproject.toml                # Python config (black, isort, pytest)
-└── requirements.txt              # Python dependencies
+├── requirements.txt              # Python runtime + dev dependencies
+└── requirements-dev.txt          # Additional dev-only dependencies (pytest-cov, coverage)
 ```
 
 ---
@@ -171,8 +184,8 @@ npm run test:coverage
 
 ### Code Standards
 
-- **Backend**: Use `black`, `flake8`, `pylint`, `isort`
-- **Frontend**: Use ESLint, Prettier, TypeScript strict mode
+- **Backend**: Use `black`, `flake8`, `pylint app/ tests/`, `isort`
+- **Frontend**: Use ESLint (src/ and tests/), Prettier, TypeScript strict mode
 - **Documentation**: Keep docs in sync with code changes
 
 ### Git Workflow
@@ -300,7 +313,7 @@ See [requirements.txt](requirements.txt) for complete list.
 - ✅ Alternate stats styles (Adrenaline / Match Atk)
 - ✅ Print formatter (multi-card A4 layout)
 - ✅ Alternative card form layout & section headings
-- ⏳ CI pipeline (GitHub Actions)
+- ✅ CI pipeline (GitHub Actions — lint, build, test, security, Dependabot)
 - ⏳ CD pipeline & hosting (Vercel/Render)
 - ⏳ Performance optimisation (lazy loading, bundle analysis)
 
@@ -335,7 +348,7 @@ See [football-cards-ui/src/components/CardForm.tsx](football-cards-ui/src/compon
 ## 🤝 Contributing
 
 1. Read [GEMINI.md](GEMINI.md) for coding standards
-2. Check [PHASE_3_FRONTEND_TODO.md](PHASE_3_FRONTEND_TODO.md) for tasks
+2. Check [PHASE_4_TODO.md](PHASE_4_TODO.md) for open tasks
 3. Write tests for new features
 4. Follow code style (ESLint, Prettier, black)
 5. Update documentation
@@ -373,4 +386,4 @@ For issues, questions, or contributions, refer to the project documentation or c
 
 ---
 
-**Last Updated**: June 1, 2026
+**Last Updated**: June 3, 2026
