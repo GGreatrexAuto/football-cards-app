@@ -48,3 +48,42 @@ jobs:
         uses: semgrep/semgrep-action@v1
         with:
           config: p/owasp-top-ten
+
+  # ── Dependency Audit ────────────────────────────────────────────────────────
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Audit Python packages (pip-audit)
+        run: pip-audit -r requirements.txt -r requirements-dev.txt
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: football-cards-ui/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: football-cards-ui
+        run: npm ci
+
+      - name: Audit npm packages
+        working-directory: football-cards-ui
+        # react-scripts 5.x pins several transitive deps (nth-check, serialize-javascript,
+        # uuid via webpack-dev-server) that have unfixable high CVEs without breaking CRA.
+        # Gate at critical until react-scripts is replaced (Vite migration or CRA update).
+        run: npm audit --audit-level=critical

@@ -343,3 +343,71 @@
 ### Task 33: Text Colour Selection
 - [ ] Give user options to select colour of each text field
 - [ ] Give user options to select colour of card border
+
+---
+
+## Task 34: Security Hardening
+
+> **Context:** A security review (2026-06-04) found no directly exploitable vulnerabilities in the current codebase. However, several significant hardening gaps will block production deployment or become exploitable once the app is publicly hosted. Subtasks are ordered by priority — 34.1–34.3 should be completed **before** Task 27 (CD / Hosting).
+
+### Subtask 34.1: Environment-Based Configuration *(Priority 1 — Production Blocker)*
+
+- [ ] Move CORS allowed origins out of `app/main.py` — read `ALLOWED_ORIGINS` from `pydantic-settings` (comma-separated, e.g. `http://localhost:3000,https://your-app.vercel.app`)
+- [ ] Move frontend `axios` `baseURL` to `REACT_APP_API_BASE_URL` environment variable consistently (already partially in place; audit all usages)
+- [ ] Update `.env.example` with `ALLOWED_ORIGINS` and `REACT_APP_API_BASE_URL`
+- [ ] Document both variables in Task 27 deployment instructions
+
+### Subtask 34.2: HTTP Security Headers *(Priority 2 — Quick Win)*
+
+- [ ] Add FastAPI middleware to inject on every response:
+  - `X-Frame-Options: DENY`
+  - `X-Content-Type-Options: nosniff`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
+  - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (skip on localhost — gate on `ENVIRONMENT != development`)
+- [ ] Remove `allow_credentials=True` from CORS config (app has no auth layer — it is redundant)
+- [ ] Restrict CORS `allow_methods` to `["GET"]` and `allow_headers` to `["Content-Type"]`
+- [ ] Add contract test assertions that the security headers are present on API responses
+
+### Subtask 34.3: SECURITY.md *(Priority 2 — completes Task 22.2)*
+
+- [ ] Create `SECURITY.md` at repo root documenting:
+  - Application security model (no auth — intentional for MVP)
+  - XSS prevention approach (React JSX auto-escaping; no `dangerouslySetInnerHTML`)
+  - Data stored in `localStorage` (no PII; card data only)
+  - Known limitations before public hosting (no HTTPS enforcement locally, no auth)
+  - Deployment security checklist (links to Task 27 and Task 34.1)
+  - How to report a vulnerability (email / GitHub private advisory)
+
+### Subtask 34.4: Python Dependency Version Pinning *(Priority 3 — Supply-Chain Risk)*
+
+- [ ] Add `pip-tools` to `requirements-dev.txt`
+- [ ] Run `pip-compile` to generate `requirements.lock` with pinned transitive dependencies
+- [ ] Update CI to install from `requirements.lock` (or add inline version constraints to `requirements.txt`)
+- [ ] Run `pip-audit` locally and resolve any findings
+
+### Subtask 34.5: Dependency Vulnerability Scanning in CI *(Priority 4 — Supply-Chain Gate)*
+
+- [x] Add `pip-audit` to `requirements-dev.txt`
+- [x] Add a `dependency-audit` job to `.github/workflows/security.yml`:
+  - `npm audit --audit-level=critical` — gates on critical CVEs (13 unfixable highs are react-scripts 5.x transitive deps; tighten to `--audit-level=high` when CRA is replaced)
+  - `pip-audit` — scans Python packages against OSV / PyPI Advisory DB
+- [x] Resolve any high-severity `npm audit` findings before enabling the gate (or start with `--audit-level=critical` and tighten once clean) — ran `npm audit fix`; resolved 13 findings incl. axios (→ 1.17.0); 13 highs remain locked in react-scripts transitive deps
+
+### Subtask 34.6: Rate Limiting *(Priority 5 — DoS Protection)*
+
+- [ ] Add `slowapi` to `requirements.txt`
+- [ ] Apply a per-IP rate limit to all `/api/v1/*` endpoints (e.g. 60 requests/min)
+- [ ] Return `429 Too Many Requests` on limit breach
+- [ ] Add a contract test asserting the 429 response schema
+
+### Subtask 34.7: Secrets Scanning in CI *(Priority 6)*
+
+- [ ] Add `gitleaks` or `trufflehog` GitHub Action to `.github/workflows/security.yml`
+- [ ] Confirm `.env` is in `.gitignore` (already is — verify no accidental commits)
+- [ ] Run on every push and PR to `main`
+
+### Subtask 34.8: Request Size Limits *(Priority 7 — Defence in Depth)*
+
+- [ ] Add Starlette `ContentSizeLimitMiddleware` (or equivalent) to `app/main.py` capping request body at 1 MB
+- [ ] Add competition code allowlist validation in `app/core/config.py` (`^[A-Z0-9]{2,5}$` pattern per token)
