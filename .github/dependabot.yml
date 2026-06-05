@@ -4,6 +4,11 @@ updates:
     directory: /football-cards-ui
     schedule:
       interval: weekly
+    groups:
+      mui:
+        patterns:
+          - "@mui/*"
+          - "@emotion/*"
 
   - package-ecosystem: pip
     directory: /
