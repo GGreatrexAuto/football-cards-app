@@ -9,33 +9,29 @@
     "@mui/material": "^7.3.9",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
-    "@types/jest": "^27.5.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.9.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "axios": "^1.17.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.7",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
+    "typescript": "^6.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "test:coverage": "react-scripts test --watchAll=false --coverage",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "bundlesize": "size-limit",
+    "test": "jest",
+    "test:watch": "jest --watchAll",
+    "test:coverage": "jest --watchAll=false --coverage",
+    "test:ci": "jest --watchAll=false --ci",
+    "test:e2e": "playwright test",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" \"tests/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "test:e2e": "playwright test",
-    "bundlesize": "size-limit"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [
@@ -49,33 +45,37 @@
       "last 1 safari version"
     ]
   },
-  "jest": {
-    "coverageThreshold": {
-      "global": {
-        "lines": 80,
-        "functions": 80,
-        "branches": 80,
-        "statements": 80
-      }
-    }
-  },
   "size-limit": [
     {
-      "path": "build/static/js/*.js",
+      "path": "dist/assets/*.js",
       "limit": "225 kB"
     }
   ],
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.0.0",
     "@playwright/test": "^1.58.2",
     "@size-limit/file": "^12.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest-axe": "^3.5.9",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "babel-jest": "^30.0.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.0",
     "jest-axe": "^10.0.0",
+    "jest-environment-jsdom": "^30.0.0",
     "prettier": "^3.8.3",
     "size-limit": "^12.1.0",
+    "vite": "^8.0.0",
     "yaml": "^2.4.2"
   }
 }

@@ -11,6 +11,7 @@
 /playwright-report
 
 # production
+/dist
 /build
 
 # misc
