@@ -18,7 +18,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
 
   test('real backend API data populates all dropdowns', async ({ page }) => {
     // Wait for the form to finish loading API data
-    await page.waitForLoadState('networkidle');
+    await cardCreator.waitForFormReady();
     await checkA11y(page);
 
     // Each dropdown must have at least one real option from the backend
@@ -59,12 +59,15 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
 
     // Fully reload the browser — this re-initialises JS, context, and re-reads localStorage
     await page.reload();
-    await page.waitForLoadState('networkidle');
+    // Wait for the React app to fully mount after reload before running axe
+    await page.waitForSelector('[data-testid="player-name"]', {
+      state: 'visible',
+      timeout: 20000,
+    });
     await checkA11y(page);
 
     // Navigate to My Cards and confirm the card is still there
     await page.getByRole('tab', { name: /my cards/i }).click();
-    await page.waitForLoadState('networkidle');
     await checkA11y(page);
 
     const cards = await page.evaluate(() =>
@@ -85,7 +88,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
     });
 
     // Complete the full journey: load → fill form → save → navigate to gallery
-    await page.waitForLoadState('networkidle');
+    await cardCreator.waitForFormReady();
     await checkA11y(page);
 
     await cardCreator.fillCardForm({
@@ -99,7 +102,7 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
     expect(await cardCreator.isSuccessMessageVisible()).toBeTruthy();
 
     await page.getByRole('tab', { name: /my cards/i }).click();
-    await page.waitForLoadState('networkidle');
+    await expect(page.getByRole('tabpanel')).toBeVisible();
     await checkA11y(page);
 
     expect(consoleErrors).toHaveLength(0);

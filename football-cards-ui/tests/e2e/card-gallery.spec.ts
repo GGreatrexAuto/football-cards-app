@@ -32,7 +32,9 @@ test.describe('Card Gallery — Real Persistence Journeys', () => {
 
     // Navigate to My Cards and open the edit form
     await page.getByRole('tab', { name: /my cards/i }).click();
-    await page.waitForLoadState('networkidle');
+    await expect(
+      page.getByRole('button', { name: /edit/i }).first(),
+    ).toBeVisible();
     await page.getByRole('button', { name: /edit/i }).first().click();
 
     // Modify the player name and save
@@ -42,7 +44,6 @@ test.describe('Card Gallery — Real Persistence Journeys', () => {
 
     // Navigate away then verify real localStorage reflects the update
     await page.getByRole('tab', { name: /my cards/i }).click();
-    await page.waitForLoadState('networkidle');
 
     const cards = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('football-cards') || '[]'),

@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { TestBase } from '../test-base';
 
 /**
@@ -95,6 +95,7 @@ export class CardCreatorPage extends TestBase {
    * Fill player name
    */
   async fillPlayerName(name: string): Promise<void> {
+    await expect(this.playerNameInput).toBeEnabled({ timeout: 20000 });
     await this.playerNameInput.fill(name);
   }
 

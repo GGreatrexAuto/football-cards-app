@@ -54,11 +54,11 @@
 
 ## Task 20: Firefox E2E Compatibility (from Phase 3 Task 15)
 
-- [ ] Reproduce the failure reliably: run `npx playwright test --project=firefox` and confirm the `locator.fill` timeout on `[data-testid="player-name"]`
-- [ ] In `football-cards-ui/tests/e2e/base/CardCreatorPage.ts`, update `fillPlayerName()` to wait for the loading state to clear before calling `fill` — e.g. wait for the loading spinner to be hidden or for the input to be enabled
-- [ ] In `football-cards-ui/tests/e2e/critical-paths.spec.ts` line ~61, replace `waitForLoadState('networkidle')` with a deterministic element wait (e.g. `waitForSelector('[data-testid="player-name"]:not([disabled])')`)
-- [ ] Optionally add a Firefox-specific `actionTimeout` override in `playwright.config.ts` under the `firefox` project config if the above is insufficient
-- [ ] Re-enable Firefox in the pre-commit hook: change `--project=chromium --project=webkit` to `--project=chromium --project=webkit --project=firefox`
+- [x] Reproduce the failure reliably: run `npx playwright test --project=firefox` and confirm the `locator.fill` timeout on `[data-testid="player-name"]`
+- [x] In `football-cards-ui/tests/e2e/base/page-objects/CardCreatorPage.ts`, update `fillPlayerName()` to wait for the input to be enabled before calling `fill` — `await expect(this.playerNameInput).toBeEnabled()`
+- [x] In `football-cards-ui/tests/e2e/critical-paths.spec.ts`, replace all `waitForLoadState('networkidle')` with deterministic waits (`waitForFormReady()`, `toBeVisible()`, or removal where unnecessary)
+- [x] Add a Firefox-specific `actionTimeout: 20000` override in `playwright.config.ts` under the `firefox` project config
+- [x] Re-enable Firefox in the pre-commit hook and in CI (`ci.yml` install + test commands now include `--project=firefox`)
 - [ ] Confirm all E2E tests pass across Chromium, Firefox, and WebKit before closing this task
 
 ---

@@ -187,7 +187,7 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: football-cards-ui
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium webkit firefox
 
       - name: Start FastAPI backend
         run: |
@@ -202,7 +202,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         working-directory: football-cards-ui
-        run: npx playwright test --project=chromium --project=webkit
+        run: npx playwright test --project=chromium --project=webkit --project=firefox
 
       - name: Upload Playwright report on failure
         if: failure()
