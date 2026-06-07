@@ -28,7 +28,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" \"tests/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "bundlesize": "size-limit"
   },
   "eslintConfig": {
     "extends": [
@@ -58,15 +59,23 @@
       }
     }
   },
+  "size-limit": [
+    {
+      "path": "build/static/js/*.js",
+      "limit": "225 kB"
+    }
+  ],
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@playwright/test": "^1.58.2",
+    "@size-limit/file": "^12.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest-axe": "^3.5.9",
     "eslint-plugin-react": "^7.37.5",
     "jest-axe": "^10.0.0",
     "prettier": "^3.8.3",
+    "size-limit": "^12.1.0",
     "yaml": "^2.4.2"
   }
 }
