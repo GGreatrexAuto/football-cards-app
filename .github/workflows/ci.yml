@@ -215,7 +215,7 @@ jobs:
   # ── Performance Tests ───────────────────────────────────────────────────────
   performance:
     name: Performance Tests
-    needs: build
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
