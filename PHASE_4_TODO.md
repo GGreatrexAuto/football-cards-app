@@ -127,10 +127,10 @@
 ## Task 24: Automated Performance Tests (NFT)
 
 ### Subtask 24.1: Bundle Size Gate
-- [ ] Install `bundlesize` as a dev dependency: `npm install --save-dev bundlesize`
-- [ ] Add `bundlesize` config to `package.json` (e.g. `build/static/js/*.js` < 300 kB gzipped)
-- [ ] Add `npm run bundlesize` script and wire it into the CI lint/build stage
-- [ ] Adjust threshold based on actual post-optimisation build size; document the chosen limit
+- [x] Install `bundlesize` as a dev dependency: used `size-limit` + `@size-limit/file` instead (`bundlesize` is unmaintained and has a broken native dependency on Windows/Node 25)
+- [x] Add `size-limit` config to `package.json` (`build/static/js/*.js` < 225 kB brotli; actual build is ~151 kB, threshold is current + 20% headroom rounded to nearest 25 kB)
+- [x] Add `npm run bundlesize` script (aliased to `size-limit`) and wired into CI `build` job after `npm run build`
+- [x] Threshold calibrated: build reported 177 kB gzipped / 151 kB brotli; limit set to 225 kB
 
 ### Subtask 24.2: Playwright Web Vitals
 - [ ] Create `football-cards-ui/tests/e2e/performance.spec.ts`

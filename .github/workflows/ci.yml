@@ -81,6 +81,10 @@ jobs:
         working-directory: football-cards-ui
         run: npm run build
 
+      - name: Check bundle size
+        working-directory: football-cards-ui
+        run: npm run bundlesize
+
       - name: Upload build artefact
         uses: actions/upload-artifact@v4
         with:
