@@ -59,7 +59,7 @@
 - [x] In `football-cards-ui/tests/e2e/critical-paths.spec.ts`, replace all `waitForLoadState('networkidle')` with deterministic waits (`waitForFormReady()`, `toBeVisible()`, or removal where unnecessary)
 - [x] Add a Firefox-specific `actionTimeout: 20000` override in `playwright.config.ts` under the `firefox` project config
 - [x] Re-enable Firefox in the pre-commit hook and in CI (`ci.yml` install + test commands now include `--project=firefox`)
-- [ ] Confirm all E2E tests pass across Chromium, Firefox, and WebKit before closing this task
+- [x] Confirm all E2E tests pass across Chromium, Firefox, and WebKit before closing this task
 
 ---
 

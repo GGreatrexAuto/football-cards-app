@@ -119,6 +119,9 @@ jobs:
       - name: Run backend unit tests
         run: pytest tests/unit/ --tb=short
 
+      - name: Run backend coverage check (unit + contract)
+        run: pytest tests/ --tb=short --cov=app --cov-fail-under=80
+
       - name: Run frontend unit tests (with coverage)
         working-directory: football-cards-ui
         run: npm test -- --watchAll=false --coverage --ci
