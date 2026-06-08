@@ -412,3 +412,35 @@
 
 - [ ] Add Starlette `ContentSizeLimitMiddleware` (or equivalent) to `app/main.py` capping request body at 1 MB
 - [ ] Add competition code allowlist validation in `app/core/config.py` (`^[A-Z0-9]{2,5}$` pattern per token)
+
+---
+
+## Task 35: Accessibility Pipeline Hardening
+
+> **Context:** Current accessibility coverage has two gaps identified in June 2026.
+> `jest-axe` runs at component level and `@axe-core/playwright` is called in some E2E
+> tests, but there is no static lint-time detection and no systematic full-app axe scan.
+> Subtasks are ordered by effort/value — 35.1 gives the highest ROI for the least work.
+
+### Subtask 35.1: `eslint-plugin-jsx-a11y` *(Priority 1 — Lint-time, highest ROI)*
+
+- [x] Install `eslint-plugin-jsx-a11y` as a dev dependency: `npm install --save-dev eslint-plugin-jsx-a11y`
+- [x] Add `"plugin:jsx-a11y/recommended"` to the `extends` array in `football-cards-ui/.eslintrc.json`
+- [x] Add `"jsx-a11y"` to the `plugins` array
+- [x] Run `npm run lint` and fix any violations surfaced by the new rules
+- [x] Confirm `npm run lint -- --max-warnings=0` still exits clean (no new warnings introduced)
+- [x] No CI changes required — the existing `lint` job already runs ESLint with `--max-warnings=0`
+
+### Subtask 35.2: Dedicated Accessibility E2E Spec *(Priority 2 — Systematic runtime scan)*
+
+- [ ] Create `football-cards-ui/tests/e2e/accessibility.spec.ts`
+- [ ] Import `AxeBuilder` from `@axe-core/playwright` (already installed) and the shared `checkA11y` helper from `tests/e2e/base/helpers/test-helpers.ts`
+- [ ] Add one `test.describe` block per major app state, calling `checkA11y(page)` after the page settles:
+  - App initial load (card creator form, empty)
+  - Card creator with all fields populated
+  - Card gallery with at least one saved card
+  - Print preview tab
+  - Print formatter (multi-card) tab
+- [ ] Confirm the spec runs clean: `npx playwright test accessibility.spec.ts --project=chromium`
+- [ ] Tag each test `@a11y` so the suite can be run in isolation: `npx playwright test --grep @a11y`
+- [ ] No CI changes required — the spec is picked up automatically by the existing `e2e-tests` job
