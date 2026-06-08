@@ -433,14 +433,14 @@
 
 ### Subtask 35.2: Dedicated Accessibility E2E Spec *(Priority 2 — Systematic runtime scan)*
 
-- [ ] Create `football-cards-ui/tests/e2e/accessibility.spec.ts`
-- [ ] Import `AxeBuilder` from `@axe-core/playwright` (already installed) and the shared `checkA11y` helper from `tests/e2e/base/helpers/test-helpers.ts`
-- [ ] Add one `test.describe` block per major app state, calling `checkA11y(page)` after the page settles:
+- [x] Create `football-cards-ui/tests/e2e/accessibility.spec.ts`
+- [x] Import `AxeBuilder` from `@axe-core/playwright` (already installed) and the shared `checkA11y` helper from `tests/e2e/base/helpers/test-helpers.ts`
+- [x] Add one `test.describe` block per major app state, calling `checkA11y(page)` after the page settles:
   - App initial load (card creator form, empty)
   - Card creator with all fields populated
   - Card gallery with at least one saved card
   - Print preview tab
   - Print formatter (multi-card) tab
-- [ ] Confirm the spec runs clean: `npx playwright test accessibility.spec.ts --project=chromium`
-- [ ] Tag each test `@a11y` so the suite can be run in isolation: `npx playwright test --grep @a11y`
-- [ ] No CI changes required — the spec is picked up automatically by the existing `e2e-tests` job
+- [x] Confirm the spec runs clean: `npx playwright test accessibility.spec.ts --project=chromium`
+- [x] Tag each test `@a11y` so the suite can be run in isolation: `npx playwright test --grep @a11y`
+- [x] No CI changes required — the spec is picked up automatically by the existing `e2e-tests` job

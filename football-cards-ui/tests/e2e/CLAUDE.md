@@ -109,15 +109,25 @@ npm run test:e2e -- --grep "saves a card" # specific test
 
 E2E tests are the right place to verify accessibility that can only be proven in a real browser: axe violations under real DOM, and keyboard-only user journeys.
 
-**axe-playwright** (`@axe-core/playwright`) is installed as a dev dependency. Call `checkA11y(page)` after major navigation steps:
+**Canonical axe spec**: `accessibility.spec.ts` covers all five major app states with a dedicated axe scan each. This is the regression gate for new violations — do not remove or weaken these tests. Run it in isolation with:
+```bash
+npx playwright test accessibility.spec.ts --project=chromium
+npx playwright test --grep "@a11y"   # tag-filtered run (all browsers)
+```
+
+**`@a11y` tag convention**: Prefix the test title with `@a11y` to opt the test into the `--grep "@a11y"` filter. This mirrors the `@smoke` convention already used in `card-creation.spec.ts`.
+
+**axe-playwright** (`@axe-core/playwright`) is installed as a dev dependency. Always import `checkA11y` from the shared helper — do not construct `AxeBuilder` directly in tests:
 
 ```typescript
-import { checkA11y } from '@axe-core/playwright';
+import { checkA11y } from './base/helpers/test-helpers';
 
 // After the page has settled, run axe
-await page.waitForSelector('[aria-label="Player Name"]');
+await creator.waitForFormReady();
 await checkA11y(page);
 ```
+
+The helper already disables the 4 pre-existing violations (`region`, `landmark-one-main`, `color-contrast`, `heading-order`) so tests only fail on *new* regressions.
 
 **Keyboard-only test pattern** — use `page.keyboard` instead of `page.click`/`page.fill` to simulate a mouse-free journey:
 
