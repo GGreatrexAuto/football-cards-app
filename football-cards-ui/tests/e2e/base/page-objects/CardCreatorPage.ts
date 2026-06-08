@@ -39,16 +39,16 @@ export class CardCreatorPage extends TestBase {
       'input[data-testid="player-name"], input[aria-label="Player Name"]',
     );
     this.clubSelect = this.page.locator(
-      '[data-testid="club-select"], [aria-label="Club"]',
+      '[data-testid="club-select"] [role="combobox"]',
     );
     this.nationalitySelect = this.page.locator(
-      '[data-testid="nationality-select"], [aria-label="Nationality"]',
+      '[data-testid="nationality-select"] [role="combobox"]',
     );
     this.leagueSelect = this.page.locator(
-      '[data-testid="league-select"], [aria-label="League"]',
+      '[data-testid="league-select"] [role="combobox"]',
     );
     this.positionSelect = this.page.locator(
-      '[data-testid="position-select"], [aria-label="Position"]',
+      '[data-testid="position-select"] [role="combobox"]',
     );
 
     // Stats

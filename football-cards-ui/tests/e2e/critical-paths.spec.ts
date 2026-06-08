@@ -22,7 +22,9 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
     await checkA11y(page);
 
     // Each dropdown must have at least one real option from the backend
-    const clubOptions = page.locator('[aria-label="Club"]');
+    const clubOptions = page.locator(
+      '[data-testid="club-select"] [role="combobox"]',
+    );
     await clubOptions.click();
     const clubItems = page.locator('[role="option"]');
     await expect(clubItems.first()).toBeVisible();
@@ -30,14 +32,18 @@ test.describe('Critical Paths — Real Browser + Real Backend', () => {
     expect(clubCount).toBeGreaterThan(0);
     await page.keyboard.press('Escape');
 
-    const nationalityOptions = page.locator('[aria-label="Nationality"]');
+    const nationalityOptions = page.locator(
+      '[data-testid="nationality-select"] [role="combobox"]',
+    );
     await nationalityOptions.click();
     const nationalityItems = page.locator('[role="option"]');
     await expect(nationalityItems.first()).toBeVisible();
     expect(await nationalityItems.count()).toBeGreaterThan(0);
     await page.keyboard.press('Escape');
 
-    const leagueOptions = page.locator('[aria-label="League"]');
+    const leagueOptions = page.locator(
+      '[data-testid="league-select"] [role="combobox"]',
+    );
     await leagueOptions.click();
     const leagueItems = page.locator('[role="option"]');
     await expect(leagueItems.first()).toBeVisible();
