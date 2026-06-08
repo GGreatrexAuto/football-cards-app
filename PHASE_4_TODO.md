@@ -390,9 +390,10 @@
 
 - [x] Add `pip-audit` to `requirements-dev.txt`
 - [x] Add a `dependency-audit` job to `.github/workflows/security.yml`:
-  - `npm audit --audit-level=critical` — gates on critical CVEs (13 unfixable highs are react-scripts 5.x transitive deps; tighten to `--audit-level=high` when CRA is replaced)
+  - `npm audit --audit-level=high` — gates on high + critical CVEs (CRA removed; 0 vulnerabilities as of June 2026)
   - `pip-audit` — scans Python packages against OSV / PyPI Advisory DB
 - [x] Resolve any high-severity `npm audit` findings before enabling the gate (or start with `--audit-level=critical` and tighten once clean) — ran `npm audit fix`; resolved 13 findings incl. axios (→ 1.17.0); 13 highs remain locked in react-scripts transitive deps
+- [x] Tighten `npm audit` gate to `--audit-level=high` — CRA removed, 0 vulnerabilities remain
 
 ### Subtask 34.6: Rate Limiting *(Priority 5 — DoS Protection)*
 

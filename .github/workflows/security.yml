@@ -83,7 +83,4 @@ jobs:
 
       - name: Audit npm packages
         working-directory: football-cards-ui
-        # react-scripts 5.x pins several transitive deps (nth-check, serialize-javascript,
-        # uuid via webpack-dev-server) that have unfixable high CVEs without breaking CRA.
-        # Gate at critical until react-scripts is replaced (Vite migration or CRA update).
-        run: npm audit --audit-level=critical
+        run: npm audit --audit-level=high

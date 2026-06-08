@@ -89,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-build
-          path: football-cards-ui/build/
+          path: football-cards-ui/dist/
           retention-days: 1
 
   # ── Unit Tests ──────────────────────────────────────────────────────────────
@@ -190,7 +190,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: react-build
-          path: football-cards-ui/build/
+          path: football-cards-ui/dist/
 
       - name: Install Playwright browsers
         working-directory: football-cards-ui
@@ -204,7 +204,7 @@ jobs:
       - name: Start React frontend (serve build)
         working-directory: football-cards-ui
         run: |
-          npx serve -s build --listen 3000 &
+          npx serve -s dist --listen 3000 &
           until curl -sf http://localhost:3000; do sleep 1; done
 
       - name: Run Playwright E2E tests
