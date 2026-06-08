@@ -136,7 +136,7 @@ beforeEach(() => {
 
 ### MUI act() Warning Suppression
 
-MUI v7 + React 19 triggers spurious `not wrapped in act()` warnings from SelectInput, Tooltip, and Popper internal state updates during Modal/Popover exit animations. Suppress only these known-safe warnings in each test file's `beforeEach`/`afterEach` pair:
+MUI v9 + React 19 triggers spurious `not wrapped in act()` warnings from SelectInput, Tooltip, and Popper internal state updates during Modal/Popover exit animations. Suppress only these known-safe warnings in each test file's `beforeEach`/`afterEach` pair:
 
 ```typescript
 const originalConsoleError = console.error;

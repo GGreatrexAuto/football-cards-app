@@ -283,7 +283,7 @@ Target coverage: **80%+ globally** (achieved: ~90% statements)
 ```
 react@19.2.4
 react-dom@19.2.4
-@mui/material@7.3.9
+@mui/material@9.1.0
 axios@1.13.6
 typescript@5.x
 ```

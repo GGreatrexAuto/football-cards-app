@@ -176,7 +176,9 @@ const PrintFormatter: React.FC<PrintFormatterProps> = ({
                   checked={isSelected}
                   onChange={() => handleToggleCard(id)}
                   onClick={(e) => e.stopPropagation()}
-                  inputProps={{ 'aria-label': `Select ${displayName}` }}
+                  slotProps={{
+                    input: { 'aria-label': `Select ${displayName}` },
+                  }}
                   sx={{ p: 0 }}
                 />
                 <Avatar
