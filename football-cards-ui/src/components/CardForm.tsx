@@ -437,15 +437,17 @@ const CardForm: React.FC = () => {
             helperText={
               playerNameError ? 'Player name is required.' : undefined
             }
-            FormHelperTextProps={{ id: 'player-name-error' }}
-            inputProps={{
-              'data-testid': 'player-name',
-              'aria-label': 'Player Name',
-              'aria-required': 'true',
-              'aria-invalid': playerNameError ? 'true' : 'false',
-              'aria-describedby': playerNameError
-                ? 'player-name-error'
-                : undefined,
+            slotProps={{
+              formHelperText: { id: 'player-name-error' },
+              htmlInput: {
+                'data-testid': 'player-name',
+                'aria-label': 'Player Name',
+                'aria-required': 'true',
+                'aria-invalid': playerNameError ? 'true' : 'false',
+                'aria-describedby': playerNameError
+                  ? 'player-name-error'
+                  : undefined,
+              },
             }}
           />
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
@@ -502,9 +504,11 @@ const CardForm: React.FC = () => {
                       setCustomLeagueName(e.target.value);
                       updateCard({ league: e.target.value });
                     }}
-                    inputProps={{
-                      'data-testid': 'custom-league-input',
-                      'aria-label': 'Custom League Name',
+                    slotProps={{
+                      htmlInput: {
+                        'data-testid': 'custom-league-input',
+                        'aria-label': 'Custom League Name',
+                      },
                     }}
                     sx={{ mt: 1 }}
                   />
@@ -559,9 +563,11 @@ const CardForm: React.FC = () => {
                       setCustomClubName(e.target.value);
                       updateCard({ club: e.target.value });
                     }}
-                    inputProps={{
-                      'data-testid': 'custom-club-input',
-                      'aria-label': 'Custom Club Name',
+                    slotProps={{
+                      htmlInput: {
+                        'data-testid': 'custom-club-input',
+                        'aria-label': 'Custom Club Name',
+                      },
                     }}
                     sx={{ mt: 1 }}
                   />
@@ -777,12 +783,14 @@ const CardForm: React.FC = () => {
                     onChange={(e) =>
                       updateCard({ defence: Number(e.target.value) })
                     }
-                    inputProps={{
-                      min: 0,
-                      max: 100,
-                      'data-testid': 'defence-input',
-                      'aria-label': 'Defence',
-                      'aria-invalid': defenceInvalid ? 'true' : undefined,
+                    slotProps={{
+                      htmlInput: {
+                        min: 0,
+                        max: 100,
+                        'data-testid': 'defence-input',
+                        'aria-label': 'Defence',
+                        'aria-invalid': defenceInvalid ? 'true' : undefined,
+                      },
                     }}
                   />
                   <Tooltip title="Randomise Defence">
@@ -807,12 +815,14 @@ const CardForm: React.FC = () => {
                     onChange={(e) =>
                       updateCard({ control: Number(e.target.value) })
                     }
-                    inputProps={{
-                      min: 0,
-                      max: 100,
-                      'data-testid': 'control-input',
-                      'aria-label': 'Control',
-                      'aria-invalid': controlInvalid ? 'true' : undefined,
+                    slotProps={{
+                      htmlInput: {
+                        min: 0,
+                        max: 100,
+                        'data-testid': 'control-input',
+                        'aria-label': 'Control',
+                        'aria-invalid': controlInvalid ? 'true' : undefined,
+                      },
                     }}
                   />
                   <Tooltip title="Randomise Control">
@@ -837,12 +847,14 @@ const CardForm: React.FC = () => {
                     onChange={(e) =>
                       updateCard({ attack: Number(e.target.value) })
                     }
-                    inputProps={{
-                      min: 0,
-                      max: 100,
-                      'data-testid': 'attack-input',
-                      'aria-label': 'Attack',
-                      'aria-invalid': attackInvalid ? 'true' : undefined,
+                    slotProps={{
+                      htmlInput: {
+                        min: 0,
+                        max: 100,
+                        'data-testid': 'attack-input',
+                        'aria-label': 'Attack',
+                        'aria-invalid': attackInvalid ? 'true' : undefined,
+                      },
                     }}
                   />
                   <Tooltip title="Randomise Attack">
@@ -923,12 +935,14 @@ const CardForm: React.FC = () => {
                       onChange={(e) =>
                         updateCard({ [field]: Number(e.target.value) })
                       }
-                      inputProps={{
-                        min: 0,
-                        max: 100,
-                        'data-testid': testId,
-                        'aria-label': label,
-                        'aria-invalid': invalid ? 'true' : undefined,
+                      slotProps={{
+                        htmlInput: {
+                          min: 0,
+                          max: 100,
+                          'data-testid': testId,
+                          'aria-label': label,
+                          'aria-invalid': invalid ? 'true' : undefined,
+                        },
                       }}
                     />
                     <Tooltip title={`Randomise ${label}`}>
@@ -990,9 +1004,11 @@ const CardForm: React.FC = () => {
             fullWidth
             value={photoUrl}
             onChange={(e) => setPhotoUrl(e.target.value)}
-            inputProps={{
-              'data-testid': 'photo-url',
-              'aria-label': 'Photo URL',
+            slotProps={{
+              htmlInput: {
+                'data-testid': 'photo-url',
+                'aria-label': 'Photo URL',
+              },
             }}
           />
           <Button
@@ -1138,7 +1154,11 @@ const CardForm: React.FC = () => {
                   image={bg.url}
                   alt={bg.description}
                 />
-                <Typography variant="caption" align="center" display="block">
+                <Typography
+                  variant="caption"
+                  align="center"
+                  sx={{ display: 'block' }}
+                >
                   {bg.name}
                 </Typography>
               </Card>

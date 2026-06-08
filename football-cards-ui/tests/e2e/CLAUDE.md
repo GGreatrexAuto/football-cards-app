@@ -36,7 +36,7 @@ test.describe('Card Creation Journey', () => {
   test('saves a card with all fields filled', async ({ page }) => {
     // 1. Act
     await page.fill('input[aria-label="Player Name"]', 'Test Player');
-    await page.click('[aria-label="Club"]');
+    await page.click('[data-testid="club-select"] [role="combobox"]');
     await page.click('text=Arsenal');
     await page.click('button:has-text("Save Card")');
 
@@ -66,7 +66,7 @@ await page.waitForURL('**/gallery');
 
 // Form
 await page.fill('input[aria-label="Player Name"]', 'John Doe');
-await page.click('[aria-label="Club"]');   // open MUI dropdown
+await page.click('[data-testid="club-select"] [role="combobox"]');   // open MUI dropdown
 await page.click('text=Arsenal');          // select option
 
 // Assert
