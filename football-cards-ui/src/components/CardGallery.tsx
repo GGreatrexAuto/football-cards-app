@@ -190,7 +190,7 @@ const CardGallery: React.FC<CardGalleryProps> = ({
                   }}
                 >
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6">{card.rating}</Typography>
+                    <Typography variant="h6">{card.rating ?? '-'}</Typography>
                     <Typography variant="caption">Rating</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
