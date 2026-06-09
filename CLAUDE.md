@@ -104,7 +104,7 @@ Conventional commits: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`. Keep commi
 
 ### TypeScript/React (frontend)
 - **Strict mode ON** — no `any` types, everything explicitly typed
-- **Linter/formatter**: ESLint + Prettier (single quotes, trailing commas); covers `src/` and `tests/e2e/`
+- **Linter/formatter**: ESLint (+ `eslint-plugin-jsx-a11y`) + Prettier (single quotes, trailing commas); covers `src/` and `tests/e2e/`
 - Run before committing: `npm run lint && npm run format`
 
 ### Testing

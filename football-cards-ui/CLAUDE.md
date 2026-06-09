@@ -194,6 +194,7 @@ describe('CardForm', () => {
 
 Every new component must satisfy these before merging:
 
+- **Lint**: `eslint-plugin-jsx-a11y/recommended` is active — violations are caught at lint time (`npm run lint`) before tests run
 - Every interactive element has `aria-label` or an associated `<label>`
 - Required fields declare `aria-required="true"`; invalid fields set `aria-invalid="true"` with `aria-describedby` pointing to the error element
 - Error/success alerts use `role="alert"`; loading regions use `role="status"` and `aria-live="polite"`
@@ -212,6 +213,7 @@ See `.github/instructions/frontend.instructions.md` for code patterns and `.gith
 - [ ] **A11y**: `role="alert"` on notifications; `role="status"` on loading regions
 - [ ] **A11y**: `<fieldset>` + `<legend>` for grouped inputs
 - [ ] `ComponentName.test.tsx` with mocked services including `toHaveNoViolations()` (jest-axe)
+- [ ] No jsx-a11y lint errors: `npm run lint`
 - [ ] No TypeScript errors: `tsc --noEmit`
 - [ ] Tests pass: `npm test -- --watchAll=false`
 - [ ] Coverage still ≥ 80%: `npm run test:coverage`

@@ -110,17 +110,17 @@ export function generateRandomCardData(
   const randomPosition =
     SAMPLE_POSITIONS[Math.floor(Math.random() * SAMPLE_POSITIONS.length)];
 
+  const defence = Math.floor(Math.random() * 100) + 1;
+  const control = Math.floor(Math.random() * 100) + 1;
+  const attack = Math.floor(Math.random() * 100) + 1;
   return {
     name: `Test Player ${Math.floor(Math.random() * 1000)}`,
     club: randomClub,
     nationality: randomNationality,
     league: randomLeague,
     position: randomPosition,
-    stats: {
-      defence: Math.floor(Math.random() * 100) + 1,
-      control: Math.floor(Math.random() * 100) + 1,
-      attack: Math.floor(Math.random() * 100) + 1,
-    },
+    stats: { defence, control, attack },
+    rating: Math.round((defence + control + attack) / 3),
     ...overrides,
   };
 }
