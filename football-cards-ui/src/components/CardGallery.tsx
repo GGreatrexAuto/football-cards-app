@@ -39,6 +39,13 @@ const CardGallery: React.FC<CardGalleryProps> = ({
   const createNewInHeaderRef = useRef<HTMLButtonElement>(null);
   const createNewInEmptyRef = useRef<HTMLButtonElement>(null);
 
+  const loadCards = async () => {
+    setIsLoading(true);
+    const savedCards = await Promise.resolve(getSavedCards());
+    setCards(savedCards);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     loadCards();
   }, []);
@@ -49,13 +56,6 @@ const CardGallery: React.FC<CardGalleryProps> = ({
       setPendingFocusCreateNew(false);
     }
   }, [pendingFocusCreateNew, deleteDialog.open, isLoading]);
-
-  const loadCards = async () => {
-    setIsLoading(true);
-    const savedCards = await Promise.resolve(getSavedCards());
-    setCards(savedCards);
-    setIsLoading(false);
-  };
 
   const handleEditCard = (card: CardState) => {
     updateCard(card);
