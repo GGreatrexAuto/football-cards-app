@@ -143,11 +143,13 @@ await page.keyboard.press('Space');         // toggle a button
 
 `performance.spec.ts` captures Core Web Vitals on the initial app load and asserts they meet budget thresholds:
 
-| Metric | Threshold |
-|--------|-----------|
-| LCP (Largest Contentful Paint) | < 2500 ms |
-| FCP (First Contentful Paint) | < 1800 ms |
-| CLS (Cumulative Layout Shift) | < 0.1 |
+| Metric | Threshold | Baseline (10-run max) |
+|--------|-----------|----------------------|
+| LCP (Largest Contentful Paint) | < 1600 ms | 1224 ms |
+| FCP (First Contentful Paint) | < 1600 ms | 1224 ms |
+| CLS (Cumulative Layout Shift) | < 0.1 | 0.0000 |
+
+Thresholds are set at ~25% above the worst observed value from 10 serial local runs against the dev server.
 
 These tests are **Chromium-only** — the `largest-contentful-paint` and `layout-shift` PerformanceObserver entry types are only available in Chromium. On Firefox and WebKit the tests are automatically skipped (not failed).
 

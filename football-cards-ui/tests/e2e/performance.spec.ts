@@ -46,8 +46,8 @@ test.describe('@performance Web Vitals', () => {
         }),
     );
 
-    expect(metrics.lcp, `LCP was ${metrics.lcp} ms`).toBeLessThan(2500);
-    expect(metrics.fcp, `FCP was ${metrics.fcp} ms`).toBeLessThan(1800);
+    expect(metrics.lcp, `LCP was ${metrics.lcp} ms`).toBeLessThan(1600);
+    expect(metrics.fcp, `FCP was ${metrics.fcp} ms`).toBeLessThan(1600);
     expect(metrics.cls, `CLS was ${metrics.cls}`).toBeLessThan(0.1);
   });
 });
