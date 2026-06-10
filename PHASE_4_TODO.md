@@ -116,12 +116,24 @@
 - [ ] Convert stock player photo assets and card background images to WebP format
 - [ ] Update `CardForm.tsx` stock photo and background arrays to use `<picture>` elements with WebP source + PNG/JPG fallback
 - [ ] Update `CardPreview.tsx` and `PrintableCard.tsx` to use WebP background images where applicable
+- [ ] Self-host the stock photos currently fetched at runtime from `picsum.photos` / `randomuser.me` (third-party round-trips on page load; Lighthouse "Improve image delivery" est. 35 KiB) and add `loading="lazy"` to below-the-fold gallery images
 
 ### Subtask 23.3: Bundle Analysis
+- [ ] Enable `build.sourcemap: true` in `vite.config.ts` — prerequisite for source-map-explorer and clears the Lighthouse `valid-source-maps` audit
 - [ ] Install `source-map-explorer` or `webpack-bundle-analyzer` as a dev dependency
 - [ ] Run `npm run build` then analyse the bundle; document the 3 largest contributors
-- [ ] Apply any quick wins (e.g. tree-shake unused MUI icons, lazy-load heavy deps)
+- [ ] Apply any quick wins (e.g. tree-shake unused MUI icons, lazy-load heavy deps) — Lighthouse measures 77 KiB of the 180 KiB JS transfer (~43%) unused at first paint; consider Vite `manualChunks` to split vendor code alongside the `React.lazy` work in 23.1
 - [ ] After optimisation, raise the Lighthouse performance gate back to `0.8` in `tests/performance/ui/lighthouserc.yml` (lowered to `0.7` in 24.3 against the unsplit-bundle baseline of 72–74)
+
+### Subtask 23.4: Font Loading Optimisation (from Lighthouse baseline, 24.3)
+> The Google Fonts stylesheet (8 families in one request) is the **largest render-blocking resource** — est. ~800 ms of the 2.9–3.2 s FCP; the LCP element is the `<h1>` page title (3.3 s) waiting on it. Largest single performance win available.
+- [ ] Add `<link rel="preconnect">` for `fonts.googleapis.com` and `fonts.gstatic.com` in `index.html`
+- [ ] Load only Roboto (MUI default) upfront; defer the 7 card-text fonts (FontSelector options) — load them asynchronously or on first use
+- [ ] Consider self-hosting fonts via `@fontsource/*` packages to remove third-party round-trips entirely
+- [ ] Re-run `npm run lighthouse` and confirm FCP/LCP improve
+
+### Subtask 23.5: Static Asset Cache Policy (deployment prerequisite)
+- [ ] Lighthouse flags 177 KiB served without long cache lifetimes — local `npx serve` sends no long-TTL headers. Vite already emits content-hashed filenames, so document the required hosting config (`Cache-Control: public, max-age=31536000, immutable` for `assets/*`) ready for whichever host is chosen at deployment
 
 ---
 
