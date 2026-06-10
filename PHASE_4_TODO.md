@@ -133,11 +133,11 @@
 - [x] Threshold calibrated: build reported 177 kB gzipped / 151 kB brotli; limit set to 225 kB
 
 ### Subtask 24.2: Playwright Web Vitals
-- [ ] Create `football-cards-ui/tests/e2e/performance.spec.ts`
-- [ ] After app load, use `page.evaluate` to capture LCP, FCP, and CLS from `performance.getEntriesByType('navigation')` / `PerformanceObserver`
-- [ ] Assert LCP < 2500 ms, FCP < 1800 ms, CLS < 0.1
-- [ ] Run only in Chromium (Web Vitals API support varies across engines)
-- [ ] Tag test `@performance` so it can be run separately from the main E2E suite
+- [x] Create `football-cards-ui/tests/e2e/performance.spec.ts`
+- [x] After app load, use `page.evaluate` to capture LCP, FCP, and CLS from `performance.getEntriesByType('navigation')` / `PerformanceObserver`
+- [x] Assert LCP < 2500 ms, FCP < 1800 ms, CLS < 0.1
+- [x] Run only in Chromium (Web Vitals API support varies across engines)
+- [x] Tag test `@performance` so it can be run separately from the main E2E suite
 
 ### Subtask 24.3: Lighthouse CI
 - [ ] Install `@lhci/cli` as a dev dependency: `npm install --save-dev @lhci/cli`

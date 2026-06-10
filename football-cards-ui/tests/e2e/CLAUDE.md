@@ -139,6 +139,34 @@ await page.keyboard.press('ArrowDown');     // navigate dropdown options
 await page.keyboard.press('Space');         // toggle a button
 ```
 
+## Performance Tests
+
+`performance.spec.ts` captures Core Web Vitals on the initial app load and asserts they meet budget thresholds:
+
+| Metric | Threshold | Baseline (10-run max) |
+|--------|-----------|----------------------|
+| LCP (Largest Contentful Paint) | < 1600 ms | 1224 ms |
+| FCP (First Contentful Paint) | < 1600 ms | 1224 ms |
+| CLS (Cumulative Layout Shift) | < 0.1 | 0.0000 |
+
+Thresholds are set at ~25% above the worst observed value from 10 serial local runs against the dev server.
+
+These tests are **Chromium-only** — the `largest-contentful-paint` and `layout-shift` PerformanceObserver entry types are only available in Chromium. On Firefox and WebKit the tests are automatically skipped (not failed).
+
+```bash
+# Run performance tests (both servers must be running)
+npx playwright test --grep "@performance" --project=chromium
+
+# Run multiple times to observe variance before tightening thresholds
+npx playwright test performance.spec.ts --project=chromium --repeat-each=5
+```
+
+**`@performance` tag convention**: Prefix the test title (or `describe` block) with `@performance` to opt it into the `--grep "@performance"` filter. This mirrors the `@smoke` and `@a11y` conventions.
+
+Performance tests are **excluded from the main CI E2E job** (`--grep-invert "@performance"`) to avoid flaky timing assertions on shared CI runners. Run them locally or on-demand to calibrate thresholds.
+
+**Threshold calibration**: After any significant frontend change, run the test several times and confirm the highest observed values still sit comfortably below the thresholds. If thresholds need updating, set them to ~20% above the highest measured value.
+
 ---
 
 ## Checklist for New E2E Tests
