@@ -52,6 +52,10 @@
       "limit": "225 kB"
     }
   ],
+  "overrides": {
+    "tmp": "^0.2.7",
+    "uuid": "^11.1.1"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@babel/core": "^7.0.0",
