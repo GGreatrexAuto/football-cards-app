@@ -3,6 +3,7 @@
 Applies to all test code under `tests/` (unit, contract, integration).
 For frontend component tests see `football-cards-ui/CLAUDE.md`.
 For E2E Playwright tests see `football-cards-ui/tests/e2e/CLAUDE.md`.
+For performance tests (backend benchmarks + UI Lighthouse) see `tests/performance/CLAUDE.md`.
 
 ## Test Pyramid
 
@@ -202,21 +203,9 @@ Run specific feature: `behave tests/integration/features/clubs.feature`
 
 ---
 
-## Performance Tests (`tests/performance/backend/`)
+## Performance Tests (`tests/performance/`)
 
-pytest-benchmark tests that start a **real uvicorn server** (port 8001) and measure actual HTTP latency. Always run against mock data (no `FOOTBALL_DATA_API_KEY` required). Run **separately** from the main test suite — they are not included in `pytest tests/`.
-
-- Marker: `@pytest.mark.performance`
-- Fixture: session-scoped `live_server` patches `football_api.settings` to force mock data, starts uvicorn in a background thread, and polls `/api/v1/health` before yielding
-- Assertion: `benchmark.stats['mean'] < 0.05` (50 ms floor; actual mean ~1–2 ms with mock data)
-- Baseline: stored in `.benchmarks/` (committed to repo)
-
-```bash
-pytest tests/performance/backend/ -v                                    # run benchmarks
-pytest tests/performance/backend/ --benchmark-autosave                  # save/update baseline
-# CI regression check — fail if mean regresses > 20%:
-pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%
-```
+Backend pytest-benchmark tests (`backend/`) and the frontend Lighthouse audit config (`ui/`) live in `tests/performance/` — see `tests/performance/CLAUDE.md` for markers, fixtures, thresholds, and run commands. They run **separately** from the main test suite and are not included in `pytest tests/`.
 
 ---
 

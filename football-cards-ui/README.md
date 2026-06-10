@@ -250,6 +250,28 @@ Located in tests/e2e/:
 
 **Target coverage**: 80%+ globally
 
+### Lighthouse (Performance Audit)
+
+Lighthouse CI audits the production build in CI (job: **Performance Tests - Frontend - Lighthouse CI**, after the E2E tests) and fails the pipeline below these category scores: performance ≥ 70 (baseline 72–74; raise to 80 after bundle code-splitting, Task 23.3), accessibility ≥ 90, best-practices ≥ 85. Config lives in `../tests/performance/ui/lighthouserc.yml`; full HTML report URLs are printed in the CI job log (temporary public storage, valid ~7 days).
+
+**Run locally** — audit the production build (dev-server scores are not representative):
+
+```bash
+npm run build
+npx serve -s dist --listen 3000        # terminal 1 — serve the build
+uvicorn app.main:app --port 8000       # terminal 2 — backend (repo root)
+npm run lighthouse                     # terminal 3 — collect + assert + upload
+```
+
+To collect reports only (no assertions; reports written to `.lighthouseci/`):
+
+```bash
+npx lhci collect --url=http://localhost:3000
+npx lhci open                          # open the report in a browser
+```
+
+See `../tests/performance/CLAUDE.md` for thresholds and threshold-change guidance.
+
 ---
 
 ## ✅ TypeScript Strict Mode
@@ -411,3 +433,4 @@ This project uses **Vite v8** as the build tool and dev server, **Jest v30** as 
 | `npm run format` | Prettier |
 | `npm run typecheck` | TypeScript — type-check only, no emit |
 | `npm run bundlesize` | size-limit bundle size check |
+| `npm run lighthouse` | Lighthouse CI audit (requires both servers running) |

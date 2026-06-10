@@ -1,0 +1,26 @@
+# Lighthouse CI configuration (Task 24.3).
+# Run via `npm run lighthouse` from football-cards-ui/ (where @lhci/cli is
+# installed) after starting the FastAPI backend on :8000 and serving the
+# production build on :3000. See tests/performance/CLAUDE.md.
+ci:
+  collect:
+    url:
+      - 'http://localhost:3000'
+    numberOfRuns: 3
+    settings:
+      chromeFlags: '--no-sandbox --disable-dev-shm-usage'
+  assert:
+    assertions:
+      # Calibrated to the current baseline (0.72-0.74 with the single 578 kB JS
+      # chunk). Raise back to 0.8 once Task 23.3 (bundle code-splitting) lands.
+      'categories:performance':
+        - error
+        - minScore: 0.7
+      'categories:accessibility':
+        - error
+        - minScore: 0.9
+      'categories:best-practices':
+        - error
+        - minScore: 0.85
+  upload:
+    target: temporary-public-storage
