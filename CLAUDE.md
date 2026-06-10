@@ -27,8 +27,9 @@ football-cards/
 │   ├── unit/
 │   ├── contract/
 │   ├── integration/
-│   └── performance/
-│       └── backend/            # pytest-benchmark endpoint benchmarks
+│   └── performance/            # see tests/performance/CLAUDE.md
+│       ├── backend/            # pytest-benchmark endpoint benchmarks
+│       └── ui/                 # Lighthouse CI config (lighthouserc.yml)
 ├── scripts/                    # Developer convenience scripts
 │   ├── start.sh                # Start both servers (bash)
 │   └── start.ps1               # Start both servers (PowerShell)

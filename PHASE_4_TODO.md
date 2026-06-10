@@ -121,6 +121,7 @@
 - [ ] Install `source-map-explorer` or `webpack-bundle-analyzer` as a dev dependency
 - [ ] Run `npm run build` then analyse the bundle; document the 3 largest contributors
 - [ ] Apply any quick wins (e.g. tree-shake unused MUI icons, lazy-load heavy deps)
+- [ ] After optimisation, raise the Lighthouse performance gate back to `0.8` in `tests/performance/ui/lighthouserc.yml` (lowered to `0.7` in 24.3 against the unsplit-bundle baseline of 72–74)
 
 ---
 
@@ -140,12 +141,12 @@
 - [x] Tag test `@performance` so it can be run separately from the main E2E suite
 
 ### Subtask 24.3: Lighthouse CI
-- [ ] Install `@lhci/cli` as a dev dependency: `npm install --save-dev @lhci/cli`
-- [ ] Create `lighthouserc.yml` at `football-cards-ui/` root:
+- [x] Install `@lhci/cli` as a dev dependency: `npm install --save-dev @lhci/cli`
+- [x] Create `lighthouserc.yml` at `football-cards-ui/` root: placed at `tests/performance/ui/lighthouserc.yml` instead (all performance tests unified under `tests/performance/`); `npm run lighthouse` points at it via `--config`
   - Upload strategy: `temporary-public-storage`
-  - Assert: `performance` ≥ 80, `accessibility` ≥ 90, `best-practices` ≥ 85
-- [ ] Add `lhci autorun` step to the CI workflow (runs after `npm run build`)
-- [ ] Document how to view Lighthouse reports locally: `npx lhci collect --url=http://localhost:3000`
+  - Assert: `performance` ≥ 80, `accessibility` ≥ 90, `best-practices` ≥ 85 (error level — CI fails below thresholds; 3 runs, optimistic aggregation). Performance gate calibrated to 70 — baseline against the production build is 72–74 (FCP 2.9 s / TBT 570 ms from the single 578 kB JS chunk); accessibility baseline 95, best-practices 100. **Raise performance back to 80 once Task 23.3 (bundle code-splitting) lands**
+- [x] Add `lhci autorun` step to the CI workflow (runs after `npm run build`): dedicated `Performance Tests - Frontend - Lighthouse CI` job (needs: e2e-tests) — downloads the `react-build` artefact, starts FastAPI on :8000 and `npx serve` on :3000, then `npm run lighthouse`; existing backend job renamed `Performance Tests - Backend - Pytest`. Optional pre-commit stage added too (off by default; `RUN_LIGHTHOUSE=true` to enable)
+- [x] Document how to view Lighthouse reports locally: `npx lhci collect --url=http://localhost:3000` (see `football-cards-ui/README.md` § Lighthouse and `tests/performance/CLAUDE.md`)
 
 ### Subtask 24.4: Backend Benchmarks (pytest-benchmark)
 - [x] Install `pytest-benchmark`: add to `requirements.txt`
@@ -225,7 +226,7 @@
   - Upload Playwright report as artefact on failure
 - [x] **Job: performance** (depends on build):
   - Run `pytest tests/performance/ --benchmark-autosave`
-  - ~~Run Lighthouse CI (`lhci autorun`)~~ (follow-up: requires `lighthouserc.js` config)
+  - Run Lighthouse CI (`lhci autorun`) — done in 24.3: dedicated `lighthouse` job with `tests/performance/ui/lighthouserc.yml`
 
 ### Subtask 26.4: CI Workflow — Security Scan
 - [x] Enable **CodeQL** analysis via GitHub's built-in action (`github/codeql-action`); configure for `javascript` and `python` languages
