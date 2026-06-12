@@ -874,12 +874,23 @@ describe('CardPreview — cardLayout variants', () => {
     const Setup = () => {
       const { updateCard } = useCard();
       useEffect(() => {
-        updateCard({ textColors: { playerName: '#ff0000', clubText: '#ffffff', countryText: '#ffffff', statsText: '#ffffff' } });
+        updateCard({
+          textColors: {
+            playerName: '#ff0000',
+            clubText: '#ffffff',
+            countryText: '#ffffff',
+            statsText: '#ffffff',
+          },
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
       return <CardPreview />;
     };
-    render(<CardProvider><Setup /></CardProvider>);
+    render(
+      <CardProvider>
+        <Setup />
+      </CardProvider>,
+    );
     const nameEl = await screen.findByTestId('player-name-text');
     expect(nameEl).toHaveStyle({ color: 'rgb(255, 0, 0)' });
   });

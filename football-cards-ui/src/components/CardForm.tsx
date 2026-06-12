@@ -19,7 +19,11 @@ import {
   Tooltip,
 } from '@mui/material';
 import Casino from '@mui/icons-material/Casino';
-import { useCard, DEFAULT_TEXT_FONTS, DEFAULT_TEXT_COLORS } from '../context/CardContext';
+import {
+  useCard,
+  DEFAULT_TEXT_FONTS,
+  DEFAULT_TEXT_COLORS,
+} from '../context/CardContext';
 import type {
   ImageFrameType,
   ImageCropFocus,
@@ -1388,9 +1392,21 @@ const CardForm: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {(
             [
-              { field: 'playerName', label: 'Player Name', testId: 'player-name' },
-              { field: 'clubText', label: 'Club / League / Position', testId: 'club-text' },
-              { field: 'countryText', label: 'Nationality', testId: 'country-text' },
+              {
+                field: 'playerName',
+                label: 'Player Name',
+                testId: 'player-name',
+              },
+              {
+                field: 'clubText',
+                label: 'Club / League / Position',
+                testId: 'club-text',
+              },
+              {
+                field: 'countryText',
+                label: 'Nationality',
+                testId: 'country-text',
+              },
               { field: 'statsText', label: 'Stats', testId: 'stats-text' },
             ] as const
           ).map(({ field, label, testId }) => (
@@ -1430,7 +1446,9 @@ const CardForm: React.FC = () => {
           <Button
             variant="outlined"
             size="small"
-            onClick={() => updateCard({ textColors: { ...DEFAULT_TEXT_COLORS } })}
+            onClick={() =>
+              updateCard({ textColors: { ...DEFAULT_TEXT_COLORS } })
+            }
             data-testid="reset-text-colors"
             aria-label="Reset Text Colours"
             sx={{ mt: 0.5 }}

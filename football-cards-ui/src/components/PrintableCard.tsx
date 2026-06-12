@@ -222,7 +222,10 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
         {cardLayout === 'statsBottom' ? (
           <>
             {/* Rating appears above stats in statsBottom */}
-            <Box sx={{ textAlign: 'center', mb: 0.5 }} data-testid="rating-section">
+            <Box
+              sx={{ textAlign: 'center', mb: 0.5 }}
+              data-testid="rating-section"
+            >
               <Typography
                 variant="h4"
                 component="div"
@@ -248,22 +251,92 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
             </Box>
             <Box data-testid="stats-section">
               {statsStyle === 'adrenaline' ? (
-                <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 0.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    mb: 0.5,
+                  }}
+                >
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold', fontSize: '0.9rem' }}>{defence}</Typography>
-                    <Typography variant="caption" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}>DEF</Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {defence}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      DEF
+                    </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold', fontSize: '0.9rem' }}>{control}</Typography>
-                    <Typography variant="caption" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}>CTRL</Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {control}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      CTRL
+                    </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold', fontSize: '0.9rem' }}>{attack}</Typography>
-                    <Typography variant="caption" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}>ATT</Typography>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {attack}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      ATT
+                    </Typography>
                   </Box>
                 </Box>
               ) : (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', mb: 0.5 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    mb: 0.5,
+                  }}
+                >
                   {(
                     [
                       { label: 'SPD', value: speed },
@@ -274,9 +347,31 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
                       { label: 'PAS', value: pass },
                     ] as const
                   ).map(({ label, value }) => (
-                    <Box key={label} sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}>
-                      <Typography variant="h6" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold', fontSize: '0.8rem' }}>{value}</Typography>
-                      <Typography variant="caption" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.55rem' }}>{label}</Typography>
+                    <Box
+                      key={label}
+                      sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontWeight: 'bold',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontSize: '0.55rem',
+                        }}
+                      >
+                        {label}
+                      </Typography>
                     </Box>
                   ))}
                 </Box>
@@ -296,7 +391,11 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
           >
             {statsStyle === 'adrenaline' ? (
               <Box
-                sx={{ display: 'flex', justifyContent: 'space-around', mb: 0.5 }}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  mb: 0.5,
+                }}
               >
                 <Box sx={{ textAlign: 'center' }}>
                   <Typography
@@ -312,7 +411,11 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
                   </Typography>
                   <Typography
                     variant="caption"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
+                    }}
                   >
                     DEF
                   </Typography>
@@ -331,7 +434,11 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
                   </Typography>
                   <Typography
                     variant="caption"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
+                    }}
                   >
                     CTRL
                   </Typography>
@@ -350,7 +457,11 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
                   </Typography>
                   <Typography
                     variant="caption"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontSize: '0.6rem' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
+                    }}
                   >
                     ATT
                   </Typography>

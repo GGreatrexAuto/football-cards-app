@@ -118,7 +118,12 @@ describe('PrintableCard — explicit cardData prop', () => {
       cardBorderColor: '#ffffff',
       cardType: 'club' as const,
       cardLayout: 'default' as const,
-      textColors: { playerName: '#ffffff', clubText: '#ffffff', countryText: '#ffffff', statsText: '#ffffff' },
+      textColors: {
+        playerName: '#ffffff',
+        clubText: '#ffffff',
+        countryText: '#ffffff',
+        statsText: '#ffffff',
+      },
     };
 
     render(

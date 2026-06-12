@@ -13,8 +13,12 @@ test.describe('Card Layout', () => {
     const preview = page.locator('[data-testid="card-preview"]');
 
     // Default layout: stats-section precedes rating-section
-    const statsSectionDefault = preview.locator('[data-testid="stats-section"]');
-    const ratingSectionDefault = preview.locator('[data-testid="rating-section"]');
+    const statsSectionDefault = preview.locator(
+      '[data-testid="stats-section"]',
+    );
+    const ratingSectionDefault = preview.locator(
+      '[data-testid="rating-section"]',
+    );
     await expect(statsSectionDefault).toBeVisible();
     await expect(ratingSectionDefault).toBeVisible();
 
@@ -52,7 +56,9 @@ test.describe('Card Layout', () => {
     await page.getByRole('button', { name: /Portrait of a male/i }).click();
 
     const defaultMaxWidth = await preview.evaluate((el) => {
-      const img = el.querySelector('[data-testid="player-photo"]') as HTMLImageElement | null;
+      const img = el.querySelector(
+        '[data-testid="player-photo"]',
+      ) as HTMLImageElement | null;
       return img ? img.style.maxWidth : null;
     });
 
@@ -60,7 +66,9 @@ test.describe('Card Layout', () => {
     await page.getByRole('button', { name: /Large photo layout/i }).click();
 
     const largeMaxWidth = await preview.evaluate((el) => {
-      const img = el.querySelector('[data-testid="player-photo"]') as HTMLImageElement | null;
+      const img = el.querySelector(
+        '[data-testid="player-photo"]',
+      ) as HTMLImageElement | null;
       return img ? img.style.maxWidth : null;
     });
 

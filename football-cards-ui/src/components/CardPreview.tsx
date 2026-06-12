@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
-import type { ImageFrameType, ImageCropFocus, CardLayout } from '../context/CardContext';
+import type {
+  ImageFrameType,
+  ImageCropFocus,
+  CardLayout,
+} from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
 import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
@@ -255,7 +259,10 @@ const CardPreview: React.FC = () => {
                 <Typography
                   variant="body2"
                   data-testid="nationality-text"
-                  sx={{ fontFamily: textFonts.countryText, color: textColors.countryText }}
+                  sx={{
+                    fontFamily: textFonts.countryText,
+                    color: textColors.countryText,
+                  }}
                 >
                   {nationality}
                 </Typography>
@@ -278,7 +285,11 @@ const CardPreview: React.FC = () => {
           {(position || preferredFoot) && (
             <Typography
               variant="body2"
-              sx={{ fontFamily: textFonts.clubText, color: textColors.clubText, textAlign: 'center' }}
+              sx={{
+                fontFamily: textFonts.clubText,
+                color: textColors.clubText,
+                textAlign: 'center',
+              }}
             >
               {position} {preferredFoot && `(${preferredFoot})`}
             </Typography>
@@ -289,7 +300,10 @@ const CardPreview: React.FC = () => {
         {cardLayout === 'statsBottom' ? (
           <>
             {/* Rating appears above stats in statsBottom */}
-            <Box sx={{ textAlign: 'center', mb: 1 }} data-testid="rating-section">
+            <Box
+              sx={{ textAlign: 'center', mb: 1 }}
+              data-testid="rating-section"
+            >
               <Typography
                 variant="h4"
                 component="div"
@@ -314,22 +328,92 @@ const CardPreview: React.FC = () => {
             </Box>
             <Box data-testid="stats-section">
               {statsStyle === 'adrenaline' ? (
-                <Box sx={{ display: 'flex', justifyContent: 'space-around', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    mb: 2,
+                  }}
+                >
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" data-testid="stat-value-defence" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}>{defence}</Typography>
-                    <Typography variant="caption" data-testid="stat-label-def" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}>DEF</Typography>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-defence"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {defence}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-def"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      DEF
+                    </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" data-testid="stat-value-control" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}>{control}</Typography>
-                    <Typography variant="caption" data-testid="stat-label-ctrl" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}>CTRL</Typography>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-control"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {control}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-ctrl"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      CTRL
+                    </Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" data-testid="stat-value-attack" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}>{attack}</Typography>
-                    <Typography variant="caption" data-testid="stat-label-att" sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}>ATT</Typography>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-attack"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {attack}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-att"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      ATT
+                    </Typography>
                   </Box>
                 </Box>
               ) : (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    mb: 2,
+                  }}
+                >
                   {(
                     [
                       { label: 'SPD', value: speed, testId: 'speed' },
@@ -340,9 +424,32 @@ const CardPreview: React.FC = () => {
                       { label: 'PAS', value: pass, testId: 'pass' },
                     ] as const
                   ).map(({ label, value, testId }) => (
-                    <Box key={testId} sx={{ textAlign: 'center', width: '30%', mb: 1 }}>
-                      <Typography variant="h6" data-testid={`stat-value-${testId}`} sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold', fontSize: '0.95rem' }}>{value}</Typography>
-                      <Typography variant="caption" data-testid={`stat-label-${label.toLowerCase()}`} sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}>{label}</Typography>
+                    <Box
+                      key={testId}
+                      sx={{ textAlign: 'center', width: '30%', mb: 1 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        data-testid={`stat-value-${testId}`}
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontWeight: 'bold',
+                          fontSize: '0.95rem',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        data-testid={`stat-label-${label.toLowerCase()}`}
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                        }}
+                      >
+                        {label}
+                      </Typography>
                     </Box>
                   ))}
                 </Box>
@@ -368,14 +475,21 @@ const CardPreview: React.FC = () => {
                   <Typography
                     variant="h6"
                     data-testid="stat-value-defence"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                    }}
                   >
                     {defence}
                   </Typography>
                   <Typography
                     variant="caption"
                     data-testid="stat-label-def"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
                   >
                     DEF
                   </Typography>
@@ -384,14 +498,21 @@ const CardPreview: React.FC = () => {
                   <Typography
                     variant="h6"
                     data-testid="stat-value-control"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                    }}
                   >
                     {control}
                   </Typography>
                   <Typography
                     variant="caption"
                     data-testid="stat-label-ctrl"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
                   >
                     CTRL
                   </Typography>
@@ -400,14 +521,21 @@ const CardPreview: React.FC = () => {
                   <Typography
                     variant="h6"
                     data-testid="stat-value-attack"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText, fontWeight: 'bold' }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                    }}
                   >
                     {attack}
                   </Typography>
                   <Typography
                     variant="caption"
                     data-testid="stat-label-att"
-                    sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
                   >
                     ATT
                   </Typography>
@@ -452,7 +580,10 @@ const CardPreview: React.FC = () => {
                     <Typography
                       variant="caption"
                       data-testid={`stat-label-${label.toLowerCase()}`}
-                      sx={{ fontFamily: textFonts.statsText, color: textColors.statsText }}
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
                     >
                       {label}
                     </Typography>
@@ -462,7 +593,10 @@ const CardPreview: React.FC = () => {
             )}
 
             {/* Rating */}
-            <Box sx={{ textAlign: 'center', mt: 'auto' }} data-testid="rating-section">
+            <Box
+              sx={{ textAlign: 'center', mt: 'auto' }}
+              data-testid="rating-section"
+            >
               <Typography
                 variant="h4"
                 component="div"
