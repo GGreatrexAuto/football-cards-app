@@ -171,13 +171,13 @@
 - [x] Configure `--benchmark-compare` to fail if any benchmark regresses > 20% vs. stored baseline
 
 ### Subtask 24.5: Locust Load Test
-- [ ] Install `locust`: add to `requirements.txt`
-- [ ] Create `tests/load/locustfile.py` with a `CardApiUser` task set:
+- [x] Install `locust`: add to `requirements.txt`
+- [x] Create `tests/performance/backend/load/locustfile.py` with a `CardApiUser` task set:
   - Tasks: `GET /api/v1/clubs`, `GET /api/v1/nations`, `GET /api/v1/leagues`, `GET /api/v1/positions` (equal weight)
   - Target: 50 concurrent users, ramp-up 5 users/second
-- [ ] Add `npm run test:load` script (or `make load-test`) that runs: `locust --headless -u 50 -r 5 --run-time 120s --host http://localhost:8000`
-- [ ] Define pass criteria: p95 response time < 500 ms, error rate < 1% — fail the script on breach
-- [ ] Document how to run the load test locally and how to view the Locust web UI (`locust --host http://localhost:8000`)
+- [x] Add `npm run test:load` script (or `make load-test`) that runs: `locust --headless -u 50 -r 5 --run-time 120s --host http://localhost:8000`
+- [x] Define pass criteria: p95 response time < 500 ms, error rate < 1% — fail the script on breach
+- [x] Document how to run the load test locally and how to view the Locust web UI (`locust --host http://localhost:8000`)
 
 ---
 

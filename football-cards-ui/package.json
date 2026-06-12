@@ -30,6 +30,7 @@
     "test:coverage": "jest --watchAll=false --coverage",
     "test:ci": "jest --watchAll=false --ci",
     "test:e2e": "playwright test",
+    "test:load": "locust --headless -u 50 -r 5 --run-time 120s --host http://localhost:8000 -f ../tests/performance/backend/load/locustfile.py",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" \"tests/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "typecheck": "tsc --noEmit"

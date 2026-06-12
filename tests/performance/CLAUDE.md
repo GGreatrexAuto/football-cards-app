@@ -11,7 +11,7 @@ Performance tests run **separately** from the main suite — none are collected 
 
 ---
 
-## Backend Benchmarks (`backend/`)
+## Backend Benchmarks (`backend/unit_benchmark/`)
 
 pytest-benchmark tests that start a **real uvicorn server** (port 8001) and measure actual HTTP latency. Always run against mock data (no `FOOTBALL_DATA_API_KEY` required). Run **separately** from the main test suite — they are not included in `pytest tests/`.
 
@@ -21,13 +21,40 @@ pytest-benchmark tests that start a **real uvicorn server** (port 8001) and meas
 - Baseline: stored in `.benchmarks/` (committed to repo)
 
 ```bash
-pytest tests/performance/backend/ -v                                    # run benchmarks
-pytest tests/performance/backend/ --benchmark-autosave                  # save/update baseline
+pytest tests/performance/backend/unit_benchmark/ -v                                    # run benchmarks
+pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave                  # save/update baseline
 # CI regression check — fail if mean regresses > 20%:
-pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%
+pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%
 ```
 
 CI runs these in the `Performance Tests - Backend - Pytest` job.
+
+---
+
+## Backend Load Tests (`backend/load/`)
+
+Locust load tests that hit the four main API endpoints concurrently. Run against mock data (no `FOOTBALL_DATA_API_KEY` required). Run **separately** from the main test suite.
+
+- Entry point: `tests/performance/backend/load/locustfile.py`
+- Task set: `CardApiUser` — weighted GET requests to `/api/v1/clubs`, `/nations`, `/leagues`, `/positions`
+- Pass criteria: p95 < 50 ms, error rate < 1%
+
+```bash
+# Full flow (starts backend, runs test, cleans up):
+bash scripts/load-test.sh          # Bash
+.\scripts\load-test.ps1            # PowerShell
+
+# Manual run (backend must already be running on :8000 in mock mode):
+locust --headless -u 50 -r 5 --run-time 120s \
+    --host http://localhost:8000 \
+    -f tests/performance/backend/load/locustfile.py
+
+# Interactive web UI:
+locust --host http://localhost:8000 -f tests/performance/backend/load/locustfile.py
+# Then open http://localhost:8089
+```
+
+CI runs these in the `Performance Tests - Backend - Locust` job.
 
 ---
 

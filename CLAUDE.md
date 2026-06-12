@@ -28,7 +28,9 @@ football-cards/
 │   ├── contract/
 │   ├── integration/
 │   └── performance/            # see tests/performance/CLAUDE.md
-│       ├── backend/            # pytest-benchmark endpoint benchmarks
+│       ├── backend/            # all backend performance tests
+│       │   ├── load/           # Locust load tests (locustfile.py)
+│       │   └── unit_benchmark/ # pytest-benchmark endpoint benchmarks
 │       └── ui/                 # Lighthouse CI config (lighthouserc.yml)
 ├── scripts/                    # Developer convenience scripts
 │   ├── start.sh                # Start both servers (bash)
@@ -79,9 +81,17 @@ behave tests/integration       # BDD integration tests
 pytest tests/ --cov=app        # full suite with coverage
 
 # Backend performance benchmarks (run separately — starts a real uvicorn server on port 8001)
-pytest tests/performance/backend/ -v
-pytest tests/performance/backend/ --benchmark-autosave                                                         # save/update baseline
-pytest tests/performance/backend/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%  # CI regression check
+pytest tests/performance/backend/unit_benchmark/ -v
+pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave                                                         # save/update baseline
+pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave --benchmark-compare --benchmark-compare-fail=mean:+20%  # CI regression check
+
+# Load test — Locust (backend must run WITHOUT FOOTBALL_DATA_API_KEY to use mock data)
+bash scripts/load-test.sh          # full flow: starts backend in mock mode, runs, cleans up
+.\scripts\load-test.ps1            # PowerShell equivalent
+# Or from football-cards-ui/ (backend already running in mock mode):
+npm run test:load
+# Interactive web UI (open http://localhost:8089 after running):
+locust --host http://localhost:8000 -f tests/performance/backend/load/locustfile.py
 
 # Frontend
 cd football-cards-ui

@@ -291,4 +291,32 @@ jobs:
           until curl -sf http://localhost:8001/api/v1/clubs; do sleep 1; done
 
       - name: Run backend performance benchmarks
-        run: pytest tests/performance/backend/ --benchmark-autosave
+        run: pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave
+
+  # ── Performance Tests — Backend (Locust Load Test) ───────────────────────────
+  load-test:
+    name: Performance Tests - Backend - Locust
+    needs: performance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Start FastAPI backend (mock mode — no API key set)
+        run: |
+          uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+          until curl -sf http://localhost:8000/api/v1/clubs; do sleep 1; done
+
+      - name: Run Locust load test (headless)
+        run: |
+          locust --headless -u 50 -r 5 --run-time 120s \
+            --host http://localhost:8000 \
+            -f tests/performance/backend/load/locustfile.py
