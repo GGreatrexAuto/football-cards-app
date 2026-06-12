@@ -217,5 +217,5 @@ pytest tests/contract/ -v                          # contract tests
 behave tests/integration                           # BDD integration tests
 pytest tests/ --cov=app --cov-report=term-missing  # full suite + coverage
 # Performance benchmarks (run separately):
-pytest tests/performance/backend/ --benchmark-autosave
+pytest tests/performance/backend/unit_benchmark/ --benchmark-autosave
 ```
