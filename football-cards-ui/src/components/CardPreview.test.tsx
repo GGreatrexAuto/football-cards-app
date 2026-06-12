@@ -10,7 +10,7 @@ import {
   DEFAULT_TEXT_FONTS,
   TextFonts,
 } from '../context/CardContext';
-import type { NationalityDisplay } from '../context/CardContext';
+import type { NationalityDisplay, CardLayout } from '../context/CardContext';
 
 // Regression guard: this assignment will fail to compile if a new field is added
 // to TextFonts without updating DEFAULT_TEXT_FONTS and all test fixtures.
@@ -795,5 +795,104 @@ describe('CardPreview Component', () => {
       await screen.findByTestId('nationality-flag');
       expect(await axe(container)).toHaveNoViolations();
     });
+  });
+});
+
+describe('CardPreview — cardLayout variants', () => {
+  const renderWithLayout = (layout: CardLayout, withPhoto = true) => {
+    const Setup = () => {
+      const { updateCard } = useCard();
+      useEffect(() => {
+        updateCard({
+          cardLayout: layout,
+          playerPhoto: withPhoto ? 'https://example.com/photo.jpg' : null,
+          playerName: 'Layout Test',
+          defence: 70,
+          control: 70,
+          attack: 70,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      return <CardPreview />;
+    };
+    return render(
+      <CardProvider>
+        <Setup />
+      </CardProvider>,
+    );
+  };
+
+  test('largePhoto layout renders photo with maxWidth 180px', async () => {
+    renderWithLayout('largePhoto');
+    const photo = await screen.findByTestId('player-photo');
+    expect(photo).toHaveStyle({ maxWidth: '180px' });
+  });
+
+  test('smallPhoto layout renders photo with maxWidth 60px', async () => {
+    renderWithLayout('smallPhoto');
+    const photo = await screen.findByTestId('player-photo');
+    expect(photo).toHaveStyle({ maxWidth: '60px' });
+  });
+
+  test('default layout renders photo with maxWidth 120px', async () => {
+    renderWithLayout('default');
+    const photo = await screen.findByTestId('player-photo');
+    expect(photo).toHaveStyle({ maxWidth: '120px' });
+  });
+
+  test('mediumPhoto layout renders photo with maxWidth 120px', async () => {
+    renderWithLayout('mediumPhoto');
+    const photo = await screen.findByTestId('player-photo');
+    expect(photo).toHaveStyle({ maxWidth: '120px' });
+  });
+
+  test('statsBottom layout: stats-section appears after rating-section in the DOM', async () => {
+    renderWithLayout('statsBottom');
+    await screen.findByTestId('stat-value-rating');
+    const ratingSection = screen.getByTestId('rating-section');
+    const statsSection = screen.getByTestId('stats-section');
+    // Node.DOCUMENT_POSITION_FOLLOWING means statsSection comes after ratingSection
+    expect(
+      ratingSection.compareDocumentPosition(statsSection) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  test('default layout: stats-section appears before rating-section in the DOM', async () => {
+    renderWithLayout('default');
+    await screen.findByTestId('stat-value-rating');
+    const ratingSection = screen.getByTestId('rating-section');
+    const statsSection = screen.getByTestId('stats-section');
+    // Node.DOCUMENT_POSITION_PRECEDING means statsSection comes before ratingSection
+    expect(
+      ratingSection.compareDocumentPosition(statsSection) &
+        Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
+  });
+
+  test('applies custom playerName textColor', async () => {
+    const Setup = () => {
+      const { updateCard } = useCard();
+      useEffect(() => {
+        updateCard({ textColors: { playerName: '#ff0000', clubText: '#ffffff', countryText: '#ffffff', statsText: '#ffffff' } });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      return <CardPreview />;
+    };
+    render(<CardProvider><Setup /></CardProvider>);
+    const nameEl = await screen.findByTestId('player-name-text');
+    expect(nameEl).toHaveStyle({ color: 'rgb(255, 0, 0)' });
+  });
+
+  test('has no accessibility violations with largePhoto layout', async () => {
+    const { container } = renderWithLayout('largePhoto');
+    await screen.findByTestId('player-photo');
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  test('has no accessibility violations with statsBottom layout', async () => {
+    const { container } = renderWithLayout('statsBottom');
+    await screen.findByTestId('stat-value-rating');
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

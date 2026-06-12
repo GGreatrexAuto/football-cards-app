@@ -308,15 +308,17 @@
 
 > These are new feature tasks carried forward from Phase 3 backlog items.
 
-### Task 28: Alternative Card Layouts
-- [ ] Design at least 2 alternative layout options (e.g. "Stats at Bottom", "Large Photo")
-- [ ] Add `cardLayout: 'default' | 'statsBottom' | 'largePhoto'` to `CardState` in `CardContext.tsx`
-- [ ] Add layout selector control to `CardForm.tsx`
-- [ ] Update `CardPreview.tsx` to render the selected layout variant
-- [ ] Update `PrintableCard.tsx` to support the same layout variants
-- [ ] Add field to `storage.ts` save/load cycle with graceful default for legacy cards
-- [ ] Write component tests for each layout variant
-- [ ] Write E2E smoke test confirming layout selector updates the preview
+### Task 28: Alternative Card Layouts ✅
+- [x] Design multiple alternative layout options (e.g. "Stats at Bottom", "Large Photo")
+- [x] Add `cardLayout: 'default' | 'statsBottom' | 'largePhoto' | 'mediumPhoto' | 'smallPhoto'` to `CardState` in `CardContext.tsx` (`statsMiddle` dropped — redundant with default)
+- [x] Add layout selector control to `CardForm.tsx`
+- [x] Update `CardPreview.tsx` to render the selected layout variant
+- [x] Update `PrintableCard.tsx` to support the same layout variants
+- [x] Add field to `storage.ts` save/load cycle with graceful default for legacy cards
+- [x] Write component tests for each layout variant
+- [x] Write E2E smoke test confirming layout selector updates the preview
+- [x] Give user options to select colour of each text field
+- [x] Give user options to select colour of card border (already implemented in prior task)
 
 ### Task 29: Card Form — Section Heading & Field Reordering ✅
 - [x] Review and agree revised field order (Card Type → Player Info → Stats → Visual → Save)
@@ -352,10 +354,6 @@
 - [ ] Implement new card style as an opt-in variant (`cardStyleVersion: 'v1' | 'v2'`)
 - [ ] Update `CardPreview.tsx` and `PrintableCard.tsx` to support both style versions
 - [ ] Write component tests and visual regression screenshots for both versions
-
-### Task 33: Text Colour Selection
-- [ ] Give user options to select colour of each text field
-- [ ] Give user options to select colour of card border
 
 ---
 
@@ -425,6 +423,11 @@
 
 - [ ] Add Starlette `ContentSizeLimitMiddleware` (or equivalent) to `app/main.py` capping request body at 1 MB
 - [ ] Add competition code allowlist validation in `app/core/config.py` (`^[A-Z0-9]{2,5}$` pattern per token)
+
+### Subtask 34.9 Insecure Randomness (football-cards-ui/tests/e2e/base/fixtures/test-data.ts:119)
+> Flagged by github "security & quality"
+
+- [ ] Math.random() Using a cryptographically weak pseudo-random number generator to generate a security-sensitive value, such as a password, makes it easier for an attacker to predict the value.
 
 ---
 

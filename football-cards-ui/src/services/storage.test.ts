@@ -13,6 +13,8 @@ import {
   DEFAULT_CARD_BORDER_SHAPE,
   DEFAULT_CARD_BORDER_COLOR,
   DEFAULT_STATS_STYLE,
+  DEFAULT_CARD_LAYOUT,
+  DEFAULT_TEXT_COLORS,
 } from '../context/CardContext';
 
 const card: CardState = {
@@ -49,6 +51,8 @@ const card: CardState = {
   cardBorderShape: 'shield',
   cardBorderColor: '#ff0000',
   cardType: 'club',
+  cardLayout: DEFAULT_CARD_LAYOUT,
+  textColors: { ...DEFAULT_TEXT_COLORS },
 };
 
 describe('Storage service', () => {

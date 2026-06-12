@@ -54,6 +54,8 @@ football-cards/
 - Frontend state managed via React Context API; cards persisted to `localStorage`
 - **External API**: Football-Data.org v4 — set `FOOTBALL_DATA_API_KEY` in `.env` (copy `.env.example`). Without a key the backend returns built-in mock data automatically.
 - **`CardState`** includes `statsStyle: 'adrenaline' | 'matchAtk'` (Task 31). Adrenaline = DEF/CTRL/ATT (average of 3); Match Atk = SPD/TAC/PWR/SHT/SKL/PAS (weighted average, PWR and SHT count double). Legacy cards without `statsStyle` default to `'adrenaline'` on load.
+- **`CardState`** also includes `cardLayout: 'default' | 'statsBottom' | 'largePhoto' | 'mediumPhoto' | 'smallPhoto'` (Task 28). Controls photo size (large=180px/80px print, medium/default=120px/50px, small=60px/30px) and element order (`statsBottom` moves stats below the rating badge). Legacy cards default to `'default'`.
+- **`CardState`** also includes `textColors: TextColors` (Task 28) — per-field hex colours for `playerName`, `clubText`, `countryText`, `statsText`. Mirrors `textFonts` structure. Legacy cards default to `'#ffffff'` for all fields.
 
 ## Quick Start
 
