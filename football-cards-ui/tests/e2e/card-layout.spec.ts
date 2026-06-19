@@ -53,7 +53,7 @@ test.describe('Card Layout', () => {
     const preview = page.locator('[data-testid="card-preview"]');
 
     // Set a player photo so the <img> renders (not the Avatar fallback)
-    await page.getByRole('button', { name: /Portrait of a male/i }).click();
+    await page.getByTestId('stock-photo-stock1').click();
 
     const defaultMaxWidth = await preview.evaluate((el) => {
       const img = el.querySelector(
