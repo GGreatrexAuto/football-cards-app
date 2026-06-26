@@ -19,7 +19,11 @@ import {
   Tooltip,
 } from '@mui/material';
 import Casino from '@mui/icons-material/Casino';
-import { useCard, DEFAULT_TEXT_FONTS } from '../context/CardContext';
+import {
+  useCard,
+  DEFAULT_TEXT_FONTS,
+  DEFAULT_TEXT_COLORS,
+} from '../context/CardContext';
 import type {
   ImageFrameType,
   ImageCropFocus,
@@ -27,6 +31,7 @@ import type {
   CardBorderShape,
   CardType,
   StatsStyle,
+  CardLayout,
 } from '../context/CardContext';
 import { BORDER_SHAPE_LABELS } from './CardBorderShapes';
 import CardBorderShapeIcon from './CardBorderShapeIcon';
@@ -1272,6 +1277,61 @@ const CardForm: React.FC = () => {
         </Box>
       </Box>
 
+      {/* Card Layout Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Card Layout
+        </Typography>
+        <Box
+          component="fieldset"
+          sx={{ border: 'none', p: 0, m: 0, position: 'relative' }}
+        >
+          <Box
+            component="legend"
+            sx={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
+          >
+            Card layout
+          </Box>
+          <ToggleButtonGroup
+            value={card.cardLayout}
+            exclusive
+            onChange={(_: React.MouseEvent, value: CardLayout | null) => {
+              if (value !== null) updateCard({ cardLayout: value });
+            }}
+            aria-label="Card layout"
+            data-testid="card-layout-selector"
+            size="small"
+            fullWidth
+          >
+            <ToggleButton value="default" aria-label="Default layout">
+              Default
+            </ToggleButton>
+            <ToggleButton value="statsBottom" aria-label="Stats bottom layout">
+              Stats Bottom
+            </ToggleButton>
+            <ToggleButton value="largePhoto" aria-label="Large photo layout">
+              Large Photo
+            </ToggleButton>
+            <ToggleButton value="mediumPhoto" aria-label="Medium photo layout">
+              Medium Photo
+            </ToggleButton>
+            <ToggleButton value="smallPhoto" aria-label="Small photo layout">
+              Small Photo
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      </Box>
+
       {/* Text Customisation Section */}
       <Box>
         <Typography variant="h6" gutterBottom>
@@ -1320,6 +1380,80 @@ const CardForm: React.FC = () => {
             aria-label="Reset Text Fonts"
           >
             Reset Text Fonts
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Text Colours Section */}
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Text Colours
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {(
+            [
+              {
+                field: 'playerName',
+                label: 'Player Name',
+                testId: 'player-name',
+              },
+              {
+                field: 'clubText',
+                label: 'Club / League / Position',
+                testId: 'club-text',
+              },
+              {
+                field: 'countryText',
+                label: 'Nationality',
+                testId: 'country-text',
+              },
+              { field: 'statsText', label: 'Stats', testId: 'stats-text' },
+            ] as const
+          ).map(({ field, label, testId }) => (
+            <Box
+              key={field}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}
+            >
+              <Typography
+                variant="subtitle2"
+                aria-hidden="true"
+                sx={{ flex: 1 }}
+              >
+                {label}
+              </Typography>
+              <Box
+                component="input"
+                type="color"
+                aria-label={`${label} text colour`}
+                value={card.textColors[field]}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateCard({
+                    textColors: { ...card.textColors, [field]: e.target.value },
+                  })
+                }
+                data-testid={`text-color-picker-${testId}`}
+                sx={{
+                  width: 48,
+                  height: 32,
+                  cursor: 'pointer',
+                  border: '1px solid #ccc',
+                  borderRadius: 1,
+                  padding: '2px',
+                }}
+              />
+            </Box>
+          ))}
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() =>
+              updateCard({ textColors: { ...DEFAULT_TEXT_COLORS } })
+            }
+            data-testid="reset-text-colors"
+            aria-label="Reset Text Colours"
+            sx={{ mt: 0.5 }}
+          >
+            Reset Text Colours
           </Button>
         </Box>
       </Box>

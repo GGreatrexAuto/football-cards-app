@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard, CardState } from '../context/CardContext';
+import type { CardLayout } from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
 import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
@@ -33,9 +34,19 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
     playerPhoto,
     cardBackground,
     textFonts,
+    textColors,
     cardBorderShape,
     cardBorderColor,
+    cardLayout,
   } = card;
+
+  const photoSize: Record<CardLayout, number> = {
+    largePhoto: 80,
+    mediumPhoto: 50,
+    default: 50,
+    statsBottom: 50,
+    smallPhoto: 30,
+  };
 
   const flagUrl = getFlagUrl(nationalityCode);
 
@@ -101,9 +112,11 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
           <Avatar
             src={playerPhoto || undefined}
+            data-testid="printable-card-avatar"
+            data-photo-size={photoSize[cardLayout]}
             sx={{
-              width: 50,
-              height: 50,
+              width: photoSize[cardLayout],
+              height: photoSize[cardLayout],
               bgcolor: playerPhoto ? 'transparent' : '#fff',
               border: '2px solid white',
             }}
@@ -126,6 +139,7 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
           data-testid="player-name-text"
           sx={{
             fontFamily: textFonts.playerName,
+            color: textColors.playerName,
             textAlign: 'center',
             fontWeight: 'bold',
             fontSize: '0.9rem',
@@ -137,12 +151,13 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
         </Typography>
 
         {/* Player Details */}
-        <Box sx={{ mb: 0.5 }}>
+        <Box sx={{ mb: 0.5, ...(cardLayout === 'statsBottom' && { flex: 1 }) }}>
           {club && (
             <Typography
               variant="body2"
               sx={{
                 fontFamily: textFonts.clubText,
+                color: textColors.clubText,
                 textAlign: 'center',
                 fontSize: '0.7rem',
                 mb: 0.2,
@@ -179,6 +194,7 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
                   data-testid="nationality-text"
                   sx={{
                     fontFamily: textFonts.countryText,
+                    color: textColors.countryText,
                     fontSize: '0.7rem',
                   }}
                 >
@@ -192,6 +208,7 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
               variant="body2"
               sx={{
                 fontFamily: textFonts.clubText,
+                color: textColors.clubText,
                 textAlign: 'center',
                 fontSize: '0.7rem',
               }}
@@ -201,146 +218,332 @@ const PrintableCard: React.FC<PrintableCardProps> = ({ cardData }) => {
           )}
         </Box>
 
-        {/* Stats */}
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          {statsStyle === 'adrenaline' ? (
+        {/* Stats + Rating — order swapped for statsBottom layout */}
+        {cardLayout === 'statsBottom' ? (
+          <>
+            {/* Rating appears above stats in statsBottom */}
             <Box
-              sx={{ display: 'flex', justifyContent: 'space-around', mb: 0.5 }}
+              sx={{ textAlign: 'center', mb: 0.5 }}
+              data-testid="rating-section"
             >
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontFamily: textFonts.statsText,
-                    fontWeight: 'bold',
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  {defence}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-                >
-                  DEF
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontFamily: textFonts.statsText,
-                    fontWeight: 'bold',
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  {control}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-                >
-                  CTRL
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontFamily: textFonts.statsText,
-                    fontWeight: 'bold',
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  {attack}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{ fontFamily: textFonts.statsText, fontSize: '0.6rem' }}
-                >
-                  ATT
-                </Typography>
-              </Box>
+              <Typography
+                variant="h4"
+                component="div"
+                data-testid="stat-value-rating"
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  color: textColors.statsText,
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  border: '2px solid white',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {rating}
+              </Typography>
             </Box>
-          ) : (
-            /* Match Atk: 6 stats in 2 rows of 3 */
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-around',
-                mb: 0.5,
-              }}
-            >
-              {(
-                [
-                  { label: 'SPD', value: speed },
-                  { label: 'TAC', value: tackle },
-                  { label: 'PWR', value: power },
-                  { label: 'SHT', value: shoot },
-                  { label: 'SKL', value: skill },
-                  { label: 'PAS', value: pass },
-                ] as const
-              ).map(({ label, value }) => (
+            <Box data-testid="stats-section">
+              {statsStyle === 'adrenaline' ? (
                 <Box
-                  key={label}
-                  sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    mb: 0.5,
+                  }}
                 >
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {defence}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      DEF
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {control}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      CTRL
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {attack}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.6rem',
+                      }}
+                    >
+                      ATT
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    mb: 0.5,
+                  }}
+                >
+                  {(
+                    [
+                      { label: 'SPD', value: speed },
+                      { label: 'TAC', value: tackle },
+                      { label: 'PWR', value: power },
+                      { label: 'SHT', value: shoot },
+                      { label: 'SKL', value: skill },
+                      { label: 'PAS', value: pass },
+                    ] as const
+                  ).map(({ label, value }) => (
+                    <Box
+                      key={label}
+                      sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontWeight: 'bold',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontSize: '0.55rem',
+                        }}
+                      >
+                        {label}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          </>
+        ) : (
+          /* Default / photo-size layouts: stats above rating */
+          <Box
+            data-testid="stats-section"
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            {statsStyle === 'adrenaline' ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-around',
+                  mb: 0.5,
+                }}
+              >
+                <Box sx={{ textAlign: 'center' }}>
                   <Typography
                     variant="h6"
                     sx={{
                       fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
                       fontWeight: 'bold',
-                      fontSize: '0.8rem',
+                      fontSize: '0.9rem',
                     }}
                   >
-                    {value}
+                    {defence}
                   </Typography>
                   <Typography
                     variant="caption"
                     sx={{
                       fontFamily: textFonts.statsText,
-                      fontSize: '0.55rem',
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
                     }}
                   >
-                    {label}
+                    DEF
                   </Typography>
                 </Box>
-              ))}
-            </Box>
-          )}
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    {control}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
+                    }}
+                  >
+                    CTRL
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    {attack}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontSize: '0.6rem',
+                    }}
+                  >
+                    ATT
+                  </Typography>
+                </Box>
+              </Box>
+            ) : (
+              /* Match Atk: 6 stats in 2 rows of 3 */
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-around',
+                  mb: 0.5,
+                }}
+              >
+                {(
+                  [
+                    { label: 'SPD', value: speed },
+                    { label: 'TAC', value: tackle },
+                    { label: 'PWR', value: power },
+                    { label: 'SHT', value: shoot },
+                    { label: 'SKL', value: skill },
+                    { label: 'PAS', value: pass },
+                  ] as const
+                ).map(({ label, value }) => (
+                  <Box
+                    key={label}
+                    sx={{ textAlign: 'center', width: '30%', mb: 0.25 }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      {value}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontSize: '0.55rem',
+                      }}
+                    >
+                      {label}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
 
-          {/* Rating */}
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography
-              variant="h4"
-              component="div"
-              sx={{
-                fontFamily: textFonts.statsText,
-                fontWeight: 'bold',
-                fontSize: '1.5rem',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                border: '2px solid white',
-                borderRadius: '50%',
-                width: '50px',
-                height: '50px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-              }}
-            >
-              {rating}
-            </Typography>
+            {/* Rating */}
+            <Box sx={{ textAlign: 'center' }} data-testid="rating-section">
+              <Typography
+                variant="h4"
+                component="div"
+                data-testid="stat-value-rating"
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  color: textColors.statsText,
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  border: '2px solid white',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {rating}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        )}
       </CardContent>
     </Card>
   );

@@ -6,6 +6,8 @@ import {
   DEFAULT_CARD_BORDER_SHAPE,
   DEFAULT_CARD_BORDER_COLOR,
   DEFAULT_STATS_STYLE,
+  DEFAULT_CARD_LAYOUT,
+  DEFAULT_TEXT_COLORS,
 } from '../context/CardContext';
 
 const CARDS_KEY = 'football-cards';
@@ -32,6 +34,8 @@ export const getSavedCards = (): CardState[] => {
     cardBorderShape: c.cardBorderShape ?? DEFAULT_CARD_BORDER_SHAPE,
     cardBorderColor: c.cardBorderColor ?? DEFAULT_CARD_BORDER_COLOR,
     statsStyle: c.statsStyle ?? DEFAULT_STATS_STYLE,
+    cardLayout: c.cardLayout ?? DEFAULT_CARD_LAYOUT,
+    textColors: c.textColors ?? { ...DEFAULT_TEXT_COLORS },
     speed: c.speed ?? 50,
     tackle: c.tackle ?? 50,
     power: c.power ?? 50,

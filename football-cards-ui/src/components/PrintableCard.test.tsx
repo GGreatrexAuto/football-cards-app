@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { axe } from 'jest-axe';
 import PrintableCard from './PrintableCard';
 import { CardProvider, useCard } from '../context/CardContext';
+import type { CardLayout } from '../context/CardContext';
 
 // TestSetup seeds known card state via context before rendering PrintableCard.
 // cardBorderShape: 'shield' ensures the decorative SVG overlay is rendered
@@ -116,6 +117,13 @@ describe('PrintableCard — explicit cardData prop', () => {
       cardBorderShape: 'none' as const,
       cardBorderColor: '#ffffff',
       cardType: 'club' as const,
+      cardLayout: 'default' as const,
+      textColors: {
+        playerName: '#ffffff',
+        clubText: '#ffffff',
+        countryText: '#ffffff',
+        statsText: '#ffffff',
+      },
     };
 
     render(
@@ -191,5 +199,85 @@ describe('PrintableCard — Match Atk Stats Style', () => {
     const { container } = renderMatchAtkCard();
     const results = await axe(container);
     expect(results).toHaveNoViolations();
+  });
+});
+
+describe('PrintableCard — cardLayout variants', () => {
+  const renderWithLayout = (layout: CardLayout) => {
+    const Setup: React.FC = () => {
+      const { updateCard } = useCard();
+      useEffect(() => {
+        updateCard({
+          cardLayout: layout,
+          playerName: 'Layout Test',
+          defence: 70,
+          control: 70,
+          attack: 70,
+          rating: 70,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      return <PrintableCard />;
+    };
+    return render(
+      <CardProvider>
+        <Setup />
+      </CardProvider>,
+    );
+  };
+
+  test('largePhoto layout renders Avatar with data-photo-size 80', async () => {
+    renderWithLayout('largePhoto');
+    await screen.findByText('Layout Test');
+    expect(screen.getByTestId('printable-card-avatar')).toHaveAttribute(
+      'data-photo-size',
+      '80',
+    );
+  });
+
+  test('smallPhoto layout renders Avatar with data-photo-size 30', async () => {
+    renderWithLayout('smallPhoto');
+    await screen.findByText('Layout Test');
+    expect(screen.getByTestId('printable-card-avatar')).toHaveAttribute(
+      'data-photo-size',
+      '30',
+    );
+  });
+
+  test('default layout renders Avatar with data-photo-size 50', async () => {
+    renderWithLayout('default');
+    await screen.findByText('Layout Test');
+    expect(screen.getByTestId('printable-card-avatar')).toHaveAttribute(
+      'data-photo-size',
+      '50',
+    );
+  });
+
+  test('statsBottom layout: stats-section appears after rating-section in DOM', async () => {
+    renderWithLayout('statsBottom');
+    await screen.findByTestId('stat-value-rating');
+    const ratingSection = screen.getByTestId('rating-section');
+    const statsSection = screen.getByTestId('stats-section');
+    expect(
+      ratingSection.compareDocumentPosition(statsSection) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  test('default layout: stats-section appears before rating-section in DOM', async () => {
+    renderWithLayout('default');
+    await screen.findByTestId('stat-value-rating');
+    const ratingSection = screen.getByTestId('rating-section');
+    const statsSection = screen.getByTestId('stats-section');
+    expect(
+      ratingSection.compareDocumentPosition(statsSection) &
+        Node.DOCUMENT_POSITION_PRECEDING,
+    ).toBeTruthy();
+  });
+
+  test('has no accessibility violations with statsBottom layout', async () => {
+    const { container } = renderWithLayout('statsBottom');
+    await screen.findByTestId('stat-value-rating');
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

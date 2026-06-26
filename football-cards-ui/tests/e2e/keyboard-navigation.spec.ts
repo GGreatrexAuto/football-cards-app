@@ -36,7 +36,7 @@ test.describe('Keyboard-Only Journey — Create and View a Card', () => {
     page,
   }) => {
     // --- Player Name ---
-    await page.getByRole('textbox', { name: /player name/i }).focus();
+    await page.getByTestId('player-name').focus();
     await page.keyboard.type('Keyboard Test Player');
 
     // --- Club ---

@@ -27,9 +27,30 @@ export type ImageCropFocus = 'top' | 'centre' | 'bottom';
 export type NationalityDisplay = 'text' | 'flag' | 'both';
 export type CardType = 'club' | 'national';
 export type StatsStyle = 'adrenaline' | 'matchAtk';
+export type CardLayout =
+  | 'default'
+  | 'statsBottom'
+  | 'largePhoto'
+  | 'mediumPhoto'
+  | 'smallPhoto';
 export const DEFAULT_IMAGE_FRAME_TYPE: ImageFrameType = 'face';
 export const DEFAULT_IMAGE_CROP_FOCUS: ImageCropFocus = 'top';
 export const DEFAULT_STATS_STYLE: StatsStyle = 'adrenaline';
+export const DEFAULT_CARD_LAYOUT: CardLayout = 'default';
+
+export interface TextColors {
+  playerName: string;
+  clubText: string;
+  countryText: string;
+  statsText: string;
+}
+
+export const DEFAULT_TEXT_COLORS: TextColors = {
+  playerName: '#ffffff',
+  clubText: '#ffffff',
+  countryText: '#ffffff',
+  statsText: '#ffffff',
+};
 
 export interface CardState {
   playerName: string;
@@ -60,6 +81,8 @@ export interface CardState {
   cardBorderShape: CardBorderShape;
   cardBorderColor: string;
   cardType: CardType;
+  cardLayout: CardLayout;
+  textColors: TextColors;
 }
 
 const initialState: CardState = {
@@ -91,6 +114,8 @@ const initialState: CardState = {
   cardBorderShape: DEFAULT_CARD_BORDER_SHAPE,
   cardBorderColor: DEFAULT_CARD_BORDER_COLOR,
   cardType: 'club',
+  cardLayout: DEFAULT_CARD_LAYOUT,
+  textColors: { ...DEFAULT_TEXT_COLORS },
 };
 
 interface CardContextType {

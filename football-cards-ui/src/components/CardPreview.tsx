@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { Card, CardContent, Typography, Box, Avatar } from '@mui/material';
 import { useCard } from '../context/CardContext';
-import type { ImageFrameType, ImageCropFocus } from '../context/CardContext';
+import type {
+  ImageFrameType,
+  ImageCropFocus,
+  CardLayout,
+} from '../context/CardContext';
 import { getFlagUrl } from '../utils/flags';
 import { BORDER_SHAPE_PATHS } from './CardBorderShapes';
 
@@ -57,11 +61,21 @@ const CardPreview: React.FC = () => {
     playerPhoto,
     cardBackground,
     textFonts,
+    textColors,
     imageFrameType,
     imageCropFocus,
     cardBorderShape,
     cardBorderColor,
+    cardLayout,
   } = card;
+
+  const photoMaxWidth: Record<CardLayout, number> = {
+    largePhoto: 180,
+    mediumPhoto: 120,
+    default: 120,
+    statsBottom: 120,
+    smallPhoto: 60,
+  };
 
   const flagUrl = getFlagUrl(nationalityCode);
 
@@ -163,7 +177,7 @@ const CardPreview: React.FC = () => {
                 objectFit: 'cover',
                 objectPosition: CROP_POSITION_MAP[imageCropFocus],
                 width: '100%',
-                maxWidth: 120,
+                maxWidth: photoMaxWidth[cardLayout],
                 border: '3px solid white',
                 display: 'block',
               }}
@@ -193,6 +207,7 @@ const CardPreview: React.FC = () => {
           data-testid="player-name-text"
           sx={{
             fontFamily: textFonts.playerName,
+            color: textColors.playerName,
             textAlign: 'center',
             fontWeight: 'bold',
             textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
@@ -203,13 +218,14 @@ const CardPreview: React.FC = () => {
         </Typography>
 
         {/* Player Details */}
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, ...(cardLayout === 'statsBottom' && { flex: 1 }) }}>
           {club && (
             <Typography
               variant="body2"
               data-testid="club-text"
               sx={{
                 fontFamily: textFonts.clubText,
+                color: textColors.clubText,
                 textAlign: 'center',
                 mb: 0.5,
               }}
@@ -243,7 +259,10 @@ const CardPreview: React.FC = () => {
                 <Typography
                   variant="body2"
                   data-testid="nationality-text"
-                  sx={{ fontFamily: textFonts.countryText }}
+                  sx={{
+                    fontFamily: textFonts.countryText,
+                    color: textColors.countryText,
+                  }}
                 >
                   {nationality}
                 </Typography>
@@ -255,6 +274,7 @@ const CardPreview: React.FC = () => {
               variant="body2"
               sx={{
                 fontFamily: textFonts.clubText,
+                color: textColors.clubText,
                 textAlign: 'center',
                 mb: 0.5,
               }}
@@ -265,146 +285,342 @@ const CardPreview: React.FC = () => {
           {(position || preferredFoot) && (
             <Typography
               variant="body2"
-              sx={{ fontFamily: textFonts.clubText, textAlign: 'center' }}
+              sx={{
+                fontFamily: textFonts.clubText,
+                color: textColors.clubText,
+                textAlign: 'center',
+              }}
             >
               {position} {preferredFoot && `(${preferredFoot})`}
             </Typography>
           )}
         </Box>
 
-        {/* Stats */}
-        <Box
-          sx={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          {statsStyle === 'adrenaline' ? (
+        {/* Stats + Rating — order swapped for statsBottom layout */}
+        {cardLayout === 'statsBottom' ? (
+          <>
+            {/* Rating appears above stats in statsBottom */}
             <Box
-              sx={{ display: 'flex', justifyContent: 'space-around', mb: 2 }}
+              sx={{ textAlign: 'center', mb: 1 }}
+              data-testid="rating-section"
             >
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  data-testid="stat-value-defence"
-                  sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
-                >
-                  {defence}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  data-testid="stat-label-def"
-                  sx={{ fontFamily: textFonts.statsText }}
-                >
-                  DEF
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  data-testid="stat-value-control"
-                  sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
-                >
-                  {control}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  data-testid="stat-label-ctrl"
-                  sx={{ fontFamily: textFonts.statsText }}
-                >
-                  CTRL
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  data-testid="stat-value-attack"
-                  sx={{ fontFamily: textFonts.statsText, fontWeight: 'bold' }}
-                >
-                  {attack}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  data-testid="stat-label-att"
-                  sx={{ fontFamily: textFonts.statsText }}
-                >
-                  ATT
-                </Typography>
-              </Box>
+              <Typography
+                variant="h4"
+                component="div"
+                data-testid="stat-value-rating"
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  color: textColors.statsText,
+                  fontWeight: 'bold',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  border: '2px solid white',
+                  borderRadius: '50%',
+                  width: '60px',
+                  height: '60px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {rating}
+              </Typography>
             </Box>
-          ) : (
-            /* Match Atk: 6 stats in 2 rows of 3 */
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-around',
-                mb: 2,
-              }}
-            >
-              {(
-                [
-                  { label: 'SPD', value: speed, testId: 'speed' },
-                  { label: 'TAC', value: tackle, testId: 'tackle' },
-                  { label: 'PWR', value: power, testId: 'power' },
-                  { label: 'SHT', value: shoot, testId: 'shoot' },
-                  { label: 'SKL', value: skill, testId: 'skill' },
-                  { label: 'PAS', value: pass, testId: 'pass' },
-                ] as const
-              ).map(({ label, value, testId }) => (
+            <Box data-testid="stats-section">
+              {statsStyle === 'adrenaline' ? (
                 <Box
-                  key={testId}
-                  sx={{ textAlign: 'center', width: '30%', mb: 1 }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-around',
+                    mb: 2,
+                  }}
                 >
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-defence"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {defence}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-def"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      DEF
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-control"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {control}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-ctrl"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      CTRL
+                    </Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography
+                      variant="h6"
+                      data-testid="stat-value-attack"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {attack}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid="stat-label-att"
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      ATT
+                    </Typography>
+                  </Box>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    mb: 2,
+                  }}
+                >
+                  {(
+                    [
+                      { label: 'SPD', value: speed, testId: 'speed' },
+                      { label: 'TAC', value: tackle, testId: 'tackle' },
+                      { label: 'PWR', value: power, testId: 'power' },
+                      { label: 'SHT', value: shoot, testId: 'shoot' },
+                      { label: 'SKL', value: skill, testId: 'skill' },
+                      { label: 'PAS', value: pass, testId: 'pass' },
+                    ] as const
+                  ).map(({ label, value, testId }) => (
+                    <Box
+                      key={testId}
+                      sx={{ textAlign: 'center', width: '30%', mb: 1 }}
+                    >
+                      <Typography
+                        variant="h6"
+                        data-testid={`stat-value-${testId}`}
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                          fontWeight: 'bold',
+                          fontSize: '0.95rem',
+                        }}
+                      >
+                        {value}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        data-testid={`stat-label-${label.toLowerCase()}`}
+                        sx={{
+                          fontFamily: textFonts.statsText,
+                          color: textColors.statsText,
+                        }}
+                      >
+                        {label}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          </>
+        ) : (
+          /* Default / photo-size layouts: stats above rating */
+          <Box
+            data-testid="stats-section"
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            {statsStyle === 'adrenaline' ? (
+              <Box
+                sx={{ display: 'flex', justifyContent: 'space-around', mb: 2 }}
+              >
+                <Box sx={{ textAlign: 'center' }}>
                   <Typography
                     variant="h6"
-                    data-testid={`stat-value-${testId}`}
+                    data-testid="stat-value-defence"
                     sx={{
                       fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
                       fontWeight: 'bold',
-                      fontSize: '0.95rem',
                     }}
                   >
-                    {value}
+                    {defence}
                   </Typography>
                   <Typography
                     variant="caption"
-                    data-testid={`stat-label-${label.toLowerCase()}`}
-                    sx={{ fontFamily: textFonts.statsText }}
+                    data-testid="stat-label-def"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
                   >
-                    {label}
+                    DEF
                   </Typography>
                 </Box>
-              ))}
-            </Box>
-          )}
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography
+                    variant="h6"
+                    data-testid="stat-value-control"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {control}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    data-testid="stat-label-ctrl"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
+                  >
+                    CTRL
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography
+                    variant="h6"
+                    data-testid="stat-value-attack"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {attack}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    data-testid="stat-label-att"
+                    sx={{
+                      fontFamily: textFonts.statsText,
+                      color: textColors.statsText,
+                    }}
+                  >
+                    ATT
+                  </Typography>
+                </Box>
+              </Box>
+            ) : (
+              /* Match Atk: 6 stats in 2 rows of 3 */
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-around',
+                  mb: 2,
+                }}
+              >
+                {(
+                  [
+                    { label: 'SPD', value: speed, testId: 'speed' },
+                    { label: 'TAC', value: tackle, testId: 'tackle' },
+                    { label: 'PWR', value: power, testId: 'power' },
+                    { label: 'SHT', value: shoot, testId: 'shoot' },
+                    { label: 'SKL', value: skill, testId: 'skill' },
+                    { label: 'PAS', value: pass, testId: 'pass' },
+                  ] as const
+                ).map(({ label, value, testId }) => (
+                  <Box
+                    key={testId}
+                    sx={{ textAlign: 'center', width: '30%', mb: 1 }}
+                  >
+                    <Typography
+                      variant="h6"
+                      data-testid={`stat-value-${testId}`}
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                        fontWeight: 'bold',
+                        fontSize: '0.95rem',
+                      }}
+                    >
+                      {value}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      data-testid={`stat-label-${label.toLowerCase()}`}
+                      sx={{
+                        fontFamily: textFonts.statsText,
+                        color: textColors.statsText,
+                      }}
+                    >
+                      {label}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
 
-          {/* Rating */}
-          <Box sx={{ textAlign: 'center', mt: 'auto' }}>
-            <Typography
-              variant="h4"
-              component="div"
-              data-testid="stat-value-rating"
-              sx={{
-                fontFamily: textFonts.statsText,
-                fontWeight: 'bold',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
-                border: '2px solid white',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-              }}
+            {/* Rating */}
+            <Box
+              sx={{ textAlign: 'center', mt: 'auto' }}
+              data-testid="rating-section"
             >
-              {rating}
-            </Typography>
+              <Typography
+                variant="h4"
+                component="div"
+                data-testid="stat-value-rating"
+                sx={{
+                  fontFamily: textFonts.statsText,
+                  color: textColors.statsText,
+                  fontWeight: 'bold',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+                  border: '2px solid white',
+                  borderRadius: '50%',
+                  width: '60px',
+                  height: '60px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {rating}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        )}
       </CardContent>
     </Card>
   );
